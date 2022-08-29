@@ -236,6 +236,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\BitacoraController.cs" />
+    <Compile Include="Controllers\BitacoraMovimientosController.cs" />
     <Compile Include="Controllers\BodegasController.cs" />
     <Compile Include="Controllers\CabysController.cs" />
     <Compile Include="Controllers\CajasController.cs" />

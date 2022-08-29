@@ -18,12 +18,17 @@ namespace WATickets.Controllers
     public class ClientesController : ApiController
     {
         ModelCliente db = new ModelCliente();
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
                 var Clientes = db.Clientes.ToList();
-
+                if (!string.IsNullOrEmpty(filtro.Texto))
+                {
+                    
+                    Clientes = Clientes.Where(a => a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Cedula.ToUpper().Contains(filtro.Texto.ToUpper())
+                    || a.Email.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Telefono.ToUpper().Contains(filtro.Texto.ToUpper()) ).ToList();// filtramos por lo que trae texto
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Clientes);
             }
