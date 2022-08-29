@@ -18,12 +18,18 @@ namespace WATickets.Controllers
     public class UsuariosSucursalesController : ApiController
     {
         ModelCliente db = new ModelCliente();
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
                 var UsuariosS = db.UsuariosSucursales.ToList();
 
+
+                if (!string.IsNullOrEmpty(filtro.Texto))
+                {
+                    // and = &&, or = ||
+                    UsuariosS = UsuariosS.Where(a => a.CodSuc.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, UsuariosS);
             }

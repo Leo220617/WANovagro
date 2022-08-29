@@ -18,12 +18,17 @@ namespace WATickets.Controllers
     public class CajasController : ApiController
     {
         ModelCliente db = new ModelCliente();
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
                 var Cajas = db.Cajas.ToList();
 
+                if (!string.IsNullOrEmpty(filtro.Texto))
+                {
+                    // and = &&, or = ||
+                    Cajas = Cajas.Where(a => a.CodSuc.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Cajas);
             }

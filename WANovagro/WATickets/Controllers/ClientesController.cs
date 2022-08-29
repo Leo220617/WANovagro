@@ -30,6 +30,11 @@ namespace WATickets.Controllers
                     || a.Email.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Telefono.ToUpper().Contains(filtro.Texto.ToUpper()) ).ToList();// filtramos por lo que trae texto
                 }
 
+                if (filtro.Codigo1 > 0) // esto por ser integer
+                {
+                    Clientes = Clientes.Where(a => a.idListaPrecios == filtro.Codigo1).ToList();
+                }
+
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Clientes);
             }
             catch (Exception ex)

@@ -34,7 +34,10 @@ namespace WATickets.Controllers
                 {
                     Productos = Productos.Where(a => a.idBodega == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
                 }
-
+                if (filtro.Codigo2 > 0) // esto por ser integer
+                {
+                    Productos = Productos.Where(a => a.idListaPrecios == filtro.Codigo2).ToList(); 
+                }
 
 
 
