@@ -18,11 +18,24 @@ namespace WATickets.Controllers
     public class ProductosController : ApiController
     {
         ModelCliente db = new ModelCliente();
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro) 
         {
             try
             {
-                var Productos = db.Productos.ToList();
+                var Productos = db.Productos.ToList(); //Traemos el listado de productos
+
+                if(!string.IsNullOrEmpty(filtro.Texto))
+                {
+                    // and = &&, or = ||
+                    Productos = Productos.Where(a => a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper()) ).ToList();// filtramos por lo que trae texto
+                }
+
+                if(filtro.Codigo1 > 0) // esto por ser integer
+                {
+                    Productos = Productos.Where(a => a.idBodega == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
+                }
+
+
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Productos);

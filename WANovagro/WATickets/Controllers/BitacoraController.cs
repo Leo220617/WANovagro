@@ -25,7 +25,7 @@ namespace WATickets.Controllers
         {
             try
             {
-                var time = new DateTime();
+                var time = new DateTime(); // La hora inicial 01/01/0001 00:00:00
                 if (filtro.FechaFinal != time)
                 {
                     filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
