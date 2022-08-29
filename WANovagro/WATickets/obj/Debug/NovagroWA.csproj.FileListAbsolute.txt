@@ -1,0 +1,4 @@
+C:\Users\steve\Dropbox\IT_Softwares\Proyectos\NovagroWA\NovagroWA\WATickets\obj\Debug\NovagroWA.csprojAssemblyReference.cache
+C:\Users\steve\Dropbox\IT_Softwares\Proyectos\NovagroWA\NovagroWA\WATickets\obj\Debug\NovagroWA.csproj.CoreCompileInputs.cache
+C:\Users\steve\Dropbox\IT_Softwares\Proyectos\NovagroWA\NovagroWA\WATickets\obj\Debug\WATickets.dll
+C:\Users\steve\Dropbox\IT_Softwares\Proyectos\NovagroWA\NovagroWA\WATickets\obj\Debug\WATickets.pdb
