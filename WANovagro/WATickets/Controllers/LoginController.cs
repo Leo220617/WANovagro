@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -17,70 +18,75 @@ namespace WATickets.Controllers
     public class LoginController : ApiController
     {
         ModelCliente db = new ModelCliente();
+        [Route("api/Login/Conectar")] //Este metodo lo hacemos entre los dos 
+        public async Task<HttpResponseMessage> GetLoginAsync([FromUri] string nombreUsuario, string clave)
+        {
+                try
+                {
+                    if (!string.IsNullOrEmpty(nombreUsuario) && !string.IsNullOrEmpty(clave))
+                    {
+                        var Usuario = db.Usuarios.Where(a => a.NombreUsuario.ToUpper().Contains(nombreUsuario.ToUpper())).FirstOrDefault();
 
- 
+                        if (Usuario == null)
+                        {
+                            throw new Exception("Usuario o clave incorrecta");
+                        }
 
-        
+                        if (!BCrypt.Net.BCrypt.Verify(clave, Usuario.Clave))
+                        {
+                            throw new Exception("Clave o Usuario incorrectos");
+                        }
+                        if(!Usuario.Activo)
+                        {
+                            throw new Exception("Usuario desactivado");
+                        }
+                        var token = TokenGenerator.GenerateTokenJwt(Usuario.Nombre, Usuario.id.ToString());
+                        var SeguridadModulos = db.SeguridadRolesModulos.Where(a => a.CodRol == Usuario.idRol).ToList();
 
-        //[Route("api/Login/Conectar")] //Este metodo lo hacemos entre los dos 
-        //public async Task<HttpResponseMessage> GetLoginAsync([FromUri] string email, string clave)
-        //{
-        //    try
-        //    {
-        //        if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(clave))
-        //        {
-        //            var Usuario = db.Login.Where(a => a.Email.ToUpper().Contains(email.ToUpper())).FirstOrDefault();
+                    DevolcionLogin de = new DevolcionLogin();
+                                de.id = Usuario.id;
+                                de.Nombre = Usuario.Nombre;
+                                de.idRol = Usuario.idRol;
+                                de.Clave = "";
+                                de.Activo = Usuario.Activo;
+                                de.Email = Usuario.NombreUsuario;
+                                de.CodigoVendedor = "";
+                                de.token = token;
+                                de.Seguridad = SeguridadModulos;
+                    
 
-        //            if (Usuario == null)
-        //            {
-        //                throw new Exception("Usuario o clave incorrecta");
-        //            }
+                                return Request.CreateResponse(HttpStatusCode.OK, de);
 
-        //            if (!BCrypt.Net.BCrypt.Verify(clave, Usuario.Clave))
-        //            {
-        //                throw new Exception("Clave o Usuario incorrectos");
-        //            }
-        //            if(!Usuario.Activo.Value)
-        //            {
-        //                throw new Exception("Usuario desactivado");
-        //            }
-        //            var token = TokenGenerator.GenerateTokenJwt(Usuario.Nombre, Usuario.id.ToString());
-        //            var SeguridadModulos = db.SeguridadRolesModulos.Where(a => a.CodRol == Usuario.idRol).ToList();
+                    }
+                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Debe incluir usuario y clave");
+                        }
+                        catch (Exception ex)
+                        {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
 
-
-        //            DevolcionLogin de = new DevolcionLogin();
-        //            de.id = Usuario.id;
-        //            de.Nombre = Usuario.Nombre;
-        //            de.idRol = Usuario.idRol;
-        //            de.Clave = "";
-        //            de.Activo = Usuario.Activo;
-        //            de.Email = Usuario.Email;
-        //            de.CodigoVendedor = Usuario.CardCode;
-        //            de.token = token;
-        //            de.Seguridad = SeguridadModulos;
-
-        //            return Request.CreateResponse(HttpStatusCode.OK, de);
-
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Debe incluir usuario y clave");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
-        //    }
-        //}
-
-      
-
-
-
-
-    }
-
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
 
    
+                        }
+                    }
 
-    public class DevolcionLogin
+
+
+
+
+
+                }
+
+
+
+
+        public class DevolcionLogin
     {
         public int id { get; set; }
 
