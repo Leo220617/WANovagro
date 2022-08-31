@@ -43,6 +43,7 @@ namespace WATickets.Controllers
                         var token = TokenGenerator.GenerateTokenJwt(Usuario.Nombre, Usuario.id.ToString());
                         var SeguridadModulos = db.SeguridadRolesModulos.Where(a => a.CodRol == Usuario.idRol).ToList();
 
+
                     DevolcionLogin de = new DevolcionLogin();
                                 de.id = Usuario.id;
                                 de.Nombre = Usuario.Nombre;

@@ -33,6 +33,8 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<Sucursales> Sucursales { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
         public virtual DbSet<UsuariosSucursales> UsuariosSucursales { get; set; }
+        public virtual DbSet<Parametros> Parametros { get; set; }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

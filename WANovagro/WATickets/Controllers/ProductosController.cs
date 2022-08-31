@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,6 +20,132 @@ namespace WATickets.Controllers
     public class ProductosController : ApiController
     {
         ModelCliente db = new ModelCliente();
+        G G = new G();
+
+        [Route("api/Productos/InsertarSAP")]
+        public HttpResponseMessage GetExtraeDatos()
+        {
+            try
+            {
+                Parametros parametros = db.Parametros.FirstOrDefault(); //de aqui nos traemos los querys
+                var conexion = G.DevuelveCadena(db); //aqui extraemos la informacion de la tabla de sap para hacerle un query a sap
+
+                var SQL = parametros.SQLProductos; //Preparo el query
+
+                SqlConnection Cn = new SqlConnection(conexion);
+                SqlCommand Cmd = new SqlCommand(SQL, Cn);
+                SqlDataAdapter Da = new SqlDataAdapter(Cmd);
+                DataSet Ds = new DataSet();
+                Cn.Open(); //se abre la conexion 
+                Da.Fill(Ds, "Productos");
+
+                var Productos = db.Productos.ToList();
+                foreach (DataRow item in Ds.Tables["Productos"].Rows)
+                {
+                    var cardCode = item["Codigo"].ToString();
+
+                    var Producto = Productos.Where(a => a.Codigo == cardCode).FirstOrDefault();
+
+                    if (Producto == null) //Existe ?
+                    {
+                        try
+                        {
+                            Producto = new Productos();
+                            Producto.Codigo = item["Codigo"].ToString();
+                            var idBodega = item["idBodega"].ToString();
+                            Producto.idBodega = db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault().id;
+                            var idImpuesto = item["idImpuesto"].ToString();
+                            Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
+                            var idLista = item["ListaPrecio"].ToString();
+                            Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+                            Producto.Nombre = item["Nombre"].ToString();
+                            Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
+                            Producto.UnidadMedida = Convert.ToInt32(item["UnidadMedida"]);
+                            Producto.Cabys = item["Cabys"].ToString();
+                            Producto.TipoCod = item["TipoCodigo"].ToString();
+                            Producto.CodBarras = item["CodigoBarras"].ToString();
+                            Producto.Costo = Convert.ToDecimal(item["Costo"]);
+                            Producto.Stock = Convert.ToDecimal(item["StockReal"]);
+                            Producto.Activo = true;
+                            
+
+                            db.Productos.Add(Producto);
+                            db.SaveChanges();
+
+                        }
+                        catch (Exception ex1)
+                        {
+
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex1.Message;
+                            be.StrackTrace = ex1.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex1);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            db.Entry(Producto).State = EntityState.Modified;
+                            var idBodega = item["idBodega"].ToString();
+                            Producto.idBodega = db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault().id;
+                            var idImpuesto = item["idImpuesto"].ToString();
+                            Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
+                            var idLista = item["ListaPrecio"].ToString();
+                            Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+                            Producto.Nombre = item["Nombre"].ToString();
+                            Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
+                            Producto.UnidadMedida =Convert.ToInt32(item["UnidadMedida"]);
+                            Producto.Cabys = item["Cabys"].ToString();
+                            Producto.TipoCod = item["TipoCodigo"].ToString();
+                            Producto.CodBarras = item["CodigoBarras"].ToString();
+                            Producto.Costo = Convert.ToDecimal(item["Costo"]);
+                            Producto.Stock = Convert.ToDecimal(item["StockReal"]);
+                            Producto.Activo = true;
+
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex1)
+                        {
+
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex1.Message;
+                            be.StrackTrace = ex1.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex1);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+                        }
+
+                    }
+
+
+                }
+
+
+                Cn.Close(); //se cierra la conexion
+                Cn.Dispose();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Procesado con exito");
+
+            }
+            catch (Exception ex)
+            {
+
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
         public HttpResponseMessage GetAll([FromUri] Filtros filtro) 
         {
             try
