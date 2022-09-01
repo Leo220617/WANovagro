@@ -10,9 +10,9 @@ namespace WATickets.Models.Cliente
     {
         public int id { get; set; }
 
-        [StringLength(2)]
+        [StringLength(10)]
         public string Codigo { get; set; }
-
-        public decimal? Tarifa { get; set; }
+        [StringLength(50)]
+        public string Tarifa { get; set; }
     }
 }

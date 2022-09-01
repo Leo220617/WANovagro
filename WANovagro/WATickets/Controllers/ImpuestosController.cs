@@ -42,7 +42,7 @@ namespace WATickets.Controllers
                 var Impuestos = db.Impuestos.ToList();
                 foreach (DataRow item in Ds.Tables["Impuestos"].Rows)
                 {
-                    var cardCode = item["Codigo"].ToString();
+                    var cardCode = item["id"].ToString();
 
                     var Impuesto = Impuestos.Where(a => a.Codigo == cardCode).FirstOrDefault();
 
@@ -52,7 +52,7 @@ namespace WATickets.Controllers
                         {
                             Impuesto = new Impuestos();
                             Impuesto.Codigo = item["id"].ToString();
-                            Impuesto.Tarifa = Convert.ToDecimal(item["Impuesto"]);
+                            Impuesto.Tarifa = item["Impuesto"].ToString();
 
                             db.Impuestos.Add(Impuesto);
                             db.SaveChanges();
@@ -77,7 +77,7 @@ namespace WATickets.Controllers
                             db.Entry(Impuesto).State = EntityState.Modified;
 
                           
-                            Impuesto.Tarifa = Convert.ToDecimal(item["Impuesto"]);
+                            Impuesto.Tarifa = item["Impuesto"].ToString();
                             db.SaveChanges();
                         }
                         catch (Exception ex1)

@@ -158,8 +158,8 @@ D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\bin\es\Microsoft.VisualStudi
 D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\bin\es\Microsoft.VisualStudio.Shell.15.0.resources.dll
 D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\bin\es\Microsoft.VisualStudio.GraphModel.resources.dll
 D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\bin\Select.Html.dep
-D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\obj\Debug\NovagroWA.csprojAssemblyReference.cache
 D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\obj\Debug\NovagroWA.csproj.CoreCompileInputs.cache
 D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\obj\Debug\NovagroWA.csproj.CopyComplete
 D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\obj\Debug\WATickets.dll
 D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\obj\Debug\WATickets.pdb
+D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\obj\Debug\NovagroWA.csprojAssemblyReference.cache

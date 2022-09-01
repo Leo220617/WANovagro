@@ -42,9 +42,12 @@ namespace WATickets.Controllers
                 var Productos = db.Productos.ToList();
                 foreach (DataRow item in Ds.Tables["Productos"].Rows)
                 {
-                    var cardCode = item["Codigo"].ToString();
-
-                    var Producto = Productos.Where(a => a.Codigo == cardCode).FirstOrDefault();
+                    var itemCode = item["Codigo"].ToString();
+                    var Whscode = item["idBodega"].ToString();
+                    var bod = db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault().id;
+                    var PriceList = item["ListaPrecio"].ToString();
+                    var list = db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault().id;
+                    var Producto = Productos.Where(a => a.Codigo == itemCode && a.idBodega == bod && a.idListaPrecios == list).FirstOrDefault();
 
                     if (Producto == null) //Existe ?
                     {

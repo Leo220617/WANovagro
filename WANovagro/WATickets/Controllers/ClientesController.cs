@@ -79,18 +79,22 @@ namespace WATickets.Controllers
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
-                            Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
-                            var canton = item["Canton"].ToString();
-                            Cliente.Canton = db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault() == null ? db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia).FirstOrDefault().CodCanton.ToString() : db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault().CodCanton.ToString();
-                            var canton2 = Convert.ToInt32(Cliente.Canton);
-                            var distrito = item["Distrito"].ToString();
-                            Cliente.Distrito = db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault() == null ? db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2).FirstOrDefault().CodDistrito.ToString() : db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault().CodDistrito.ToString();
-                            var distrito2 = Convert.ToInt32(Cliente.Distrito);
+                            if(!string.IsNullOrEmpty( item["Provincia"].ToString()))
+                            {
+                                Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
+                                var canton = item["Canton"].ToString();
+                                Cliente.Canton = db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault() == null ? db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia).FirstOrDefault().CodCanton.ToString() : db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault().CodCanton.ToString();
+                                var canton2 = Convert.ToInt32(Cliente.Canton);
+                                var distrito = item["Distrito"].ToString();
+                                Cliente.Distrito = db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault() == null ? db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2).FirstOrDefault().CodDistrito.ToString() : db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault().CodDistrito.ToString();
+                                var distrito2 = Convert.ToInt32(Cliente.Distrito);
 
-                            var barrio = item["Barrio"].ToString();
-                            Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
+                                var barrio = item["Barrio"].ToString();
+                                Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
 
-                            Cliente.Sennas = item["Sennas"].ToString();
+                                Cliente.Sennas = item["Sennas"].ToString();
+                            }
+                           
 
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
@@ -103,13 +107,14 @@ namespace WATickets.Controllers
                         catch (Exception ex1)
                         {
 
+                            ModelCliente db2 = new ModelCliente();
                             BitacoraErrores be = new BitacoraErrores();
                             be.Descripcion = ex1.Message;
                             be.StrackTrace = ex1.StackTrace;
                             be.Fecha = DateTime.Now;
                             be.JSON = JsonConvert.SerializeObject(ex1);
-                            db.BitacoraErrores.Add(be);
-                            db.SaveChanges();
+                            db2.BitacoraErrores.Add(be);
+                            db2.SaveChanges();
                         }
                     }
                     else
@@ -144,18 +149,22 @@ namespace WATickets.Controllers
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
-                            Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
-                            var canton = item["Canton"].ToString();
-                            Cliente.Canton = db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault() == null ? db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia).FirstOrDefault().CodCanton.ToString() : db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault().CodCanton.ToString();
-                            var canton2 = Convert.ToInt32(Cliente.Canton);
-                            var distrito = item["Distrito"].ToString();
-                            Cliente.Distrito = db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault() == null ? db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2).FirstOrDefault().CodDistrito.ToString() : db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault().CodDistrito.ToString();
-                            var distrito2 = Convert.ToInt32(Cliente.Distrito);
+                            if(!string.IsNullOrEmpty(item["Provincia"].ToString()))
+                            {
+                                Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
+                                var canton = item["Canton"].ToString();
+                                Cliente.Canton = db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault() == null ? db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia).FirstOrDefault().CodCanton.ToString() : db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault().CodCanton.ToString();
+                                var canton2 = Convert.ToInt32(Cliente.Canton);
+                                var distrito = item["Distrito"].ToString();
+                                Cliente.Distrito = db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault() == null ? db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2).FirstOrDefault().CodDistrito.ToString() : db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault().CodDistrito.ToString();
+                                var distrito2 = Convert.ToInt32(Cliente.Distrito);
 
-                            var barrio = item["Barrio"].ToString();
-                            Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
+                                var barrio = item["Barrio"].ToString();
+                                Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
 
-                            Cliente.Sennas = item["Sennas"].ToString();
+                                Cliente.Sennas = item["Sennas"].ToString();
+                            }
+                            
 
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
@@ -164,14 +173,14 @@ namespace WATickets.Controllers
                         }
                         catch (Exception ex1)
                         {
-
+                            ModelCliente db2 = new ModelCliente();
                             BitacoraErrores be = new BitacoraErrores();
                             be.Descripcion = ex1.Message;
                             be.StrackTrace = ex1.StackTrace;
                             be.Fecha = DateTime.Now;
                             be.JSON = JsonConvert.SerializeObject(ex1);
-                            db.BitacoraErrores.Add(be);
-                            db.SaveChanges();
+                            db2.BitacoraErrores.Add(be);
+                            db2.SaveChanges();
                         }
                        
                     }
@@ -189,13 +198,14 @@ namespace WATickets.Controllers
             catch (Exception ex)
             {
 
+                ModelCliente db2 = new ModelCliente();
                 BitacoraErrores be = new BitacoraErrores();
                 be.Descripcion = ex.Message;
                 be.StrackTrace = ex.StackTrace;
                 be.Fecha = DateTime.Now;
                 be.JSON = JsonConvert.SerializeObject(ex);
-                db.BitacoraErrores.Add(be);
-                db.SaveChanges();
+                db2.BitacoraErrores.Add(be);
+                db2.SaveChanges();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }

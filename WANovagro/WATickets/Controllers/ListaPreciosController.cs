@@ -42,7 +42,7 @@ namespace WATickets.Controllers
                 var ListaPrecios = db.ListaPrecios.ToList();
                 foreach (DataRow item in Ds.Tables["ListaPrecios"].Rows)
                 {
-                    var cardCode = item["Codigo"].ToString();
+                    var cardCode = item["id"].ToString();
 
                     var ListaPrecio = ListaPrecios.Where(a => a.CodSAP == cardCode).FirstOrDefault();
 
@@ -74,7 +74,7 @@ namespace WATickets.Controllers
                     {
                         try
                         {
-                            db.Entry(ListaPrecios).State = EntityState.Modified;
+                            db.Entry(ListaPrecio).State = EntityState.Modified;
 
                             ListaPrecio.Nombre = item["ListaPrecio"].ToString();
 

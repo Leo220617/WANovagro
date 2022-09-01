@@ -42,9 +42,9 @@ namespace WATickets.Controllers
                 Da.Fill(Ds, "Bodegas");
 
                 var Bodegas  = db.Bodegas.ToList();
-                foreach (DataRow item in Ds.Tables["ListaPrecios"].Rows)
+                foreach (DataRow item in Ds.Tables["Bodegas"].Rows)
                 {
-                    var cardCode = item["Codigo"].ToString();
+                    var cardCode = item["id"].ToString();
 
                     var Bodega = Bodegas.Where(a => a.CodSAP == cardCode).FirstOrDefault();
 

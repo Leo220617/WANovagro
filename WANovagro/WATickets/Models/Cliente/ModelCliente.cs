@@ -256,7 +256,7 @@ namespace WATickets.Models.Cliente
 
             modelBuilder.Entity<Impuestos>()
                 .Property(e => e.Tarifa)
-                .HasPrecision(4, 2);
+                .IsUnicode(false);
 
             modelBuilder.Entity<ListaPrecios>()
                 .Property(e => e.CodSAP)
