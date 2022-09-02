@@ -46,58 +46,67 @@ namespace WATickets.Controllers
                 {
                     var cardCode = item["id"].ToString();
 
-                    var Bodega = Bodegas.Where(a => a.CodSAP == cardCode).FirstOrDefault();
+                    var Sucursal = db.Sucursales.Where(a => a.CodSuc == cardCode).FirstOrDefault();
 
-                    if (Bodega == null) //Existe ?
+                    if(Sucursal != null)
                     {
-                        try
-                        {
-                            Bodega = new Bodegas();
-                            Bodega.CodSAP = item["id"].ToString();
-                            Bodega.CodSuc = item["id"].ToString(); 
-                            Bodega.Nombre = item["Bodega"].ToString();
-                            
-                            db.Bodegas.Add(Bodega);
-                            db.SaveChanges();
+                        var Bodega = Bodegas.Where(a => a.CodSAP == cardCode).FirstOrDefault();
 
+                        if (Bodega == null) //Existe ?
+                        {
+                            try
+                            {
+                                Bodega = new Bodegas();
+                                Bodega.CodSAP = item["id"].ToString();
+                                Bodega.CodSuc = item["id"].ToString();
+                                Bodega.Nombre = item["Bodega"].ToString();
+
+                                db.Bodegas.Add(Bodega);
+                                db.SaveChanges();
+
+                            }
+                            catch (Exception ex1)
+                            {
+
+                                ModelCliente db2 = new ModelCliente();
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = ex1.Message;
+                                be.StrackTrace = ex1.StackTrace;
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(ex1);
+                                db2.BitacoraErrores.Add(be);
+                                db2.SaveChanges();
+                            }
                         }
-                        catch (Exception ex1)
+                        else
                         {
+                            try
+                            {
+                                db.Entry(Bodega).State = EntityState.Modified;
 
-                            BitacoraErrores be = new BitacoraErrores();
-                            be.Descripcion = ex1.Message;
-                            be.StrackTrace = ex1.StackTrace;
-                            be.Fecha = DateTime.Now;
-                            be.JSON = JsonConvert.SerializeObject(ex1);
-                            db.BitacoraErrores.Add(be);
-                            db.SaveChanges();
+                                Bodega.CodSuc = item["id"].ToString();
+                                Bodega.Nombre = item["Bodega"].ToString();
+
+
+                                db.SaveChanges();
+                            }
+                            catch (Exception ex1)
+                            {
+
+                                ModelCliente db2 = new ModelCliente();
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = ex1.Message;
+                                be.StrackTrace = ex1.StackTrace;
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(ex1);
+                                db2.BitacoraErrores.Add(be);
+                                db2.SaveChanges();
+                            }
+
                         }
                     }
-                    else
-                    {
-                        try
-                        {
-                            db.Entry(Bodegas).State = EntityState.Modified;
 
-                            Bodega.CodSuc = item["id"].ToString();
-                            Bodega.Nombre = item["Bodega"].ToString();
-
-
-                            db.SaveChanges();
-                        }
-                        catch (Exception ex1)
-                        {
-
-                            BitacoraErrores be = new BitacoraErrores();
-                            be.Descripcion = ex1.Message;
-                            be.StrackTrace = ex1.StackTrace;
-                            be.Fecha = DateTime.Now;
-                            be.JSON = JsonConvert.SerializeObject(ex1);
-                            db.BitacoraErrores.Add(be);
-                            db.SaveChanges();
-                        }
-
-                    }
+                   
 
 
                 }
@@ -112,13 +121,14 @@ namespace WATickets.Controllers
             catch (Exception ex)
             {
 
+                ModelCliente db2 = new ModelCliente();
                 BitacoraErrores be = new BitacoraErrores();
                 be.Descripcion = ex.Message;
                 be.StrackTrace = ex.StackTrace;
                 be.Fecha = DateTime.Now;
                 be.JSON = JsonConvert.SerializeObject(ex);
-                db.BitacoraErrores.Add(be);
-                db.SaveChanges();
+                db2.BitacoraErrores.Add(be);
+                db2.SaveChanges();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }

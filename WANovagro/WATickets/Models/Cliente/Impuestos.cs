@@ -12,7 +12,8 @@ namespace WATickets.Models.Cliente
 
         [StringLength(10)]
         public string Codigo { get; set; }
-        [StringLength(50)]
-        public string Tarifa { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal Tarifa { get; set; }
     }
 }

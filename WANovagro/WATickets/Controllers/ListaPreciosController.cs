@@ -61,13 +61,14 @@ namespace WATickets.Controllers
                         catch (Exception ex1)
                         {
 
+                            ModelCliente db2 = new ModelCliente();
                             BitacoraErrores be = new BitacoraErrores();
                             be.Descripcion = ex1.Message;
                             be.StrackTrace = ex1.StackTrace;
                             be.Fecha = DateTime.Now;
                             be.JSON = JsonConvert.SerializeObject(ex1);
-                            db.BitacoraErrores.Add(be);
-                            db.SaveChanges();
+                            db2.BitacoraErrores.Add(be);
+                            db2.SaveChanges();
                         }
                     }
                     else
@@ -82,14 +83,14 @@ namespace WATickets.Controllers
                         }
                         catch (Exception ex1)
                         {
-
+                            ModelCliente db2 = new ModelCliente();
                             BitacoraErrores be = new BitacoraErrores();
                             be.Descripcion = ex1.Message;
                             be.StrackTrace = ex1.StackTrace;
                             be.Fecha = DateTime.Now;
                             be.JSON = JsonConvert.SerializeObject(ex1);
-                            db.BitacoraErrores.Add(be);
-                            db.SaveChanges();
+                            db2.BitacoraErrores.Add(be);
+                            db2.SaveChanges();
                         }
 
                     }
@@ -106,14 +107,14 @@ namespace WATickets.Controllers
             }
             catch (Exception ex)
             {
-
+                ModelCliente db2 = new ModelCliente();
                 BitacoraErrores be = new BitacoraErrores();
                 be.Descripcion = ex.Message;
                 be.StrackTrace = ex.StackTrace;
                 be.Fecha = DateTime.Now;
                 be.JSON = JsonConvert.SerializeObject(ex);
-                db.BitacoraErrores.Add(be);
-                db.SaveChanges();
+                db2.BitacoraErrores.Add(be);
+                db2.SaveChanges();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
