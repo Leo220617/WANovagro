@@ -10,12 +10,12 @@ namespace WATickets.Models.Cliente
     {
         public int id { get; set; }
 
-        public int? idUsuario { get; set; }
+        public int idUsuario { get; set; }
 
         [StringLength(500)]
         public string Descripcion { get; set; }
 
-        public DateTime? Fecha { get; set; }
+        public DateTime Fecha { get; set; }
 
         [StringLength(100)]
         public string Metodo { get; set; }

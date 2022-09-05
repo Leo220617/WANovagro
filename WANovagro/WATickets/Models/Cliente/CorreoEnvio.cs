@@ -14,9 +14,9 @@ namespace WATickets.Models.Cliente
         [StringLength(500)]
         public string RecepcionHostName { get; set; }
 
-        public int? EnvioPort { get; set; }
+        public int EnvioPort { get; set; }
 
-        public bool? RecepcionUseSSL { get; set; }
+        public bool RecepcionUseSSL { get; set; }
 
         [StringLength(500)]
         public string RecepcionEmail { get; set; }

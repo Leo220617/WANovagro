@@ -12,19 +12,19 @@ namespace WATickets.Models.Cliente
         [StringLength(50)]
         public string Codigo { get; set; }
 
-        public int? idBodega { get; set; }
+        public int idBodega { get; set; }
 
-        public int? idImpuesto { get; set; }
+        public int idImpuesto { get; set; }
 
-        public int? idListaPrecios { get; set; }
+        public int idListaPrecios { get; set; }
 
         [StringLength(50)]
         public string Nombre { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? PrecioUnitario { get; set; }
+        public decimal PrecioUnitario { get; set; }
 
-        public int? UnidadMedida { get; set; }
+        public int UnidadMedida { get; set; }
 
         [StringLength(13)]
         public string Cabys { get; set; }
@@ -36,11 +36,11 @@ namespace WATickets.Models.Cliente
         public string CodBarras { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? Costo { get; set; }
+        public decimal Costo { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? Stock { get; set; }
+        public decimal Stock { get; set; }
 
-        public bool? Activo { get; set; }
+        public bool Activo { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace WATickets.Models.Cliente
 
         public string StrackTrace { get; set; }
 
-        public DateTime? Fecha { get; set; }
+        public DateTime Fecha { get; set; }
 
         public string JSON { get; set; }
     }

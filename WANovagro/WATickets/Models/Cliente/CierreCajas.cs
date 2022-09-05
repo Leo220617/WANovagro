@@ -22,57 +22,57 @@ namespace WATickets.Models.Cliente
         [Column(Order = 2)]
         public DateTime FechaCaja { get; set; }
 
-        public DateTime? FecUltAct { get; set; }
+        public DateTime FecUltAct { get; set; }
 
         [StringLength(20)]
         public string IP { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? EfectivoColones { get; set; }
+        public decimal EfectivoColones { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ChequesColones { get; set; }
+        public decimal ChequesColones { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? TarjetasColones { get; set; }
+        public decimal TarjetasColones { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? OtrosMediosColones { get; set; }
+        public decimal OtrosMediosColones { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? TotalVendidoColones { get; set; }
+        public decimal TotalVendidoColones { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? TotalRegistradoColones { get; set; }
+        public decimal TotalRegistradoColones { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? TotalAperturaColones { get; set; }
+        public decimal TotalAperturaColones { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? EfectivoFC { get; set; }
+        public decimal EfectivoFC { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ChequesFC { get; set; }
+        public decimal ChequesFC { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? TarjetasFC { get; set; }
+        public decimal TarjetasFC { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? OtrosMediosFC { get; set; }
+        public decimal OtrosMediosFC { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? TotalVendidoFC { get; set; }
+        public decimal TotalVendidoFC { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? TotalRegistradoFC { get; set; }
+        public decimal TotalRegistradoFC { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? TotalAperturaFC { get; set; }
+        public decimal TotalAperturaFC { get; set; }
 
-        public bool? Activo { get; set; }
+        public bool Activo { get; set; }
 
-        public DateTime? HoraCierre { get; set; }
+        public DateTime HoraCierre { get; set; }
 
-        public DateTime? TotalizadoMonedas { get; set; }
+        public DateTime TotalizadoMonedas { get; set; }
     }
 }

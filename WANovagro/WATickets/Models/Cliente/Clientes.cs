@@ -12,7 +12,7 @@ namespace WATickets.Models.Cliente
         [StringLength(50)]
         public string Codigo { get; set; }
 
-        public int? idListaPrecios { get; set; }
+        public int idListaPrecios { get; set; }
 
         [StringLength(200)]
         public string Nombre { get; set; }
@@ -32,7 +32,7 @@ namespace WATickets.Models.Cliente
         [StringLength(50)]
         public string Telefono { get; set; }
 
-        public int? Provincia { get; set; }
+        public int Provincia { get; set; }
 
         [StringLength(2)]
         public string Canton { get; set; }
@@ -47,10 +47,10 @@ namespace WATickets.Models.Cliente
         public string Sennas { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? Saldo { get; set; }
+        public decimal Saldo { get; set; }
 
-        public bool? Activo { get; set; }
+        public bool Activo { get; set; }
 
-        public bool? ProcesadoSAP { get; set; }
+        public bool ProcesadoSAP { get; set; }
     }
 }

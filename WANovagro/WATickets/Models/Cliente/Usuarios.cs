@@ -10,7 +10,7 @@ namespace WATickets.Models.Cliente
     {
         public int id { get; set; }
 
-        public int? idRol { get; set; }
+        public int idRol { get; set; }
 
         [StringLength(50)]
         public string Nombre { get; set; }
@@ -23,7 +23,7 @@ namespace WATickets.Models.Cliente
         [StringLength(20)]
         public string ClaveSupervision { get; set; }
 
-        public DateTime? FecUltSup { get; set; }
+        public DateTime FecUltSup { get; set; }
 
         public bool Activo { get; set; }
        
