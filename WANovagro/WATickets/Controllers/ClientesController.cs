@@ -94,7 +94,11 @@ namespace WATickets.Controllers
 
                                 Cliente.Sennas = item["Sennas"].ToString();
                             }
-                           
+                            else
+                            {
+                                Cliente.Provincia = 0;
+                            }
+
 
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
@@ -163,6 +167,10 @@ namespace WATickets.Controllers
                                 Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
 
                                 Cliente.Sennas = item["Sennas"].ToString();
+                            }
+                            else
+                            {
+                                Cliente.Provincia = 0;
                             }
                             
 

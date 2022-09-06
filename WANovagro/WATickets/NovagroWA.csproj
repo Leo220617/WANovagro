@@ -235,13 +235,17 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\BarriosController.cs" />
     <Compile Include="Controllers\BitacoraController.cs" />
     <Compile Include="Controllers\BitacoraMovimientosController.cs" />
     <Compile Include="Controllers\BodegasController.cs" />
     <Compile Include="Controllers\CabysController.cs" />
     <Compile Include="Controllers\CajasController.cs" />
+    <Compile Include="Controllers\CantonesController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\Conexion.cs" />
+    <Compile Include="Controllers\CorreoEnvioController.cs" />
+    <Compile Include="Controllers\DistritosController.cs" />
     <Compile Include="Controllers\G.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImpuestosController.cs" />

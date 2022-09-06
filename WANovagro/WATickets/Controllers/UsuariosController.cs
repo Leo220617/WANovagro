@@ -83,6 +83,7 @@ namespace WATickets.Controllers
                     Usuario.NombreUsuario = usuarios.NombreUsuario;
                     Usuario.Clave = BCrypt.Net.BCrypt.HashPassword(usuarios.Clave);
                     Usuario.Activo = true;
+                    Usuario.FecUltSup = DateTime.Now;
                     db.Usuarios.Add(Usuario);
                     db.SaveChanges();
 
