@@ -289,13 +289,23 @@ namespace WATickets.Controllers
                 if (Cliente == null)
                 {
                     Cliente = new Clientes();
-                    Cliente.Codigo = clientes.Codigo;
+                    Cliente.Codigo = DevuelveCodigoCliente();
+                    var bandera = db.Clientes.Where(a => a.Codigo == Cliente.Codigo).FirstOrDefault() != null; //preguntamos si existe el cliente
+                    while(bandera)
+                    {
+                        
+                            Cliente.Codigo = DevuelveCodigoCliente();
+                            bandera = db.Clientes.Where(a => a.Codigo == Cliente.Codigo).FirstOrDefault() != null;
+
+                    }
+                    
+
                     Cliente.idListaPrecios = clientes.idListaPrecios;
                     Cliente.Nombre = clientes.Nombre;
                     Cliente.TipoCedula = clientes.TipoCedula;
                     Cliente.Cedula = clientes.Cedula;
                     Cliente.Email = clientes.Email;
-                    Cliente.CodPais = clientes.CodPais;
+                    Cliente.CodPais = "506";
                     Cliente.Telefono = clientes.Telefono;
                     Cliente.Provincia = clientes.Provincia;
                     Cliente.Canton = clientes.Canton;
@@ -409,6 +419,35 @@ namespace WATickets.Controllers
                 db.SaveChanges();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        public string DevuelveCodigoCliente()
+        {
+            try
+            {
+                var characters = "0123456789";
+                var Charsarr = new char[4];
+                var random = new Random();
+
+                for (int i = 0; i < Charsarr.Length; i++)
+                {
+                    Charsarr[i] = characters[random.Next(characters.Length)];
+                }
+
+                var resultString = new String(Charsarr);
+                return "C" + resultString;
+            }
+            catch (Exception ex )
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+                return "";
             }
         }
     }

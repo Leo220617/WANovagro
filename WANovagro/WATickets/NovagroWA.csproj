@@ -255,6 +255,7 @@
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SeguridadModulosController.cs" />
     <Compile Include="Controllers\SeguridadRolesModulosController.cs" />
+    <Compile Include="Controllers\SucursalesController.cs" />
     <Compile Include="Controllers\TokenGenerator.cs" />
     <Compile Include="Controllers\TokenValidationHandler.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
