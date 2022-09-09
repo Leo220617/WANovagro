@@ -45,87 +45,96 @@ namespace WATickets.Controllers
                     var itemCode = item["Codigo"].ToString();
                     var Whscode = item["idBodega"].ToString();
                     var bod = db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault().id;
-                    var PriceList = item["ListaPrecio"].ToString();
-                    var list = db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault().id;
-                    var Producto = Productos.Where(a => a.Codigo == itemCode && a.idBodega == bod && a.idListaPrecios == list).FirstOrDefault();
-
-                    if (Producto == null) //Existe ?
+                    if(bod > 0) // si existe la bodega
                     {
-                        try
+                        var PriceList = item["ListaPrecio"].ToString();
+                        var list = db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault().id;
+                        if(list > 0) //si existe la lista
                         {
-                            Producto = new Productos();
-                            Producto.Codigo = item["Codigo"].ToString();
-                            var idBodega = item["idBodega"].ToString();
-                            Producto.idBodega = db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault().id;
-                            var idImpuesto = item["idImpuesto"].ToString();
-                            Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
-                            var idLista = item["ListaPrecio"].ToString();
-                            Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
-                            Producto.Nombre = item["Nombre"].ToString();
-                            Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
-                            Producto.UnidadMedida = Convert.ToInt32(item["UnidadMedida"]);
-                            Producto.Cabys = item["Cabys"].ToString();
-                            Producto.TipoCod = item["TipoCodigo"].ToString();
-                            Producto.CodBarras = item["CodigoBarras"].ToString();
-                            Producto.Costo = Convert.ToDecimal(item["Costo"]);
-                            Producto.Stock = Convert.ToDecimal(item["StockReal"]);
-                            Producto.Activo = true;
-                            
+                            var Producto = Productos.Where(a => a.Codigo == itemCode && a.idBodega == bod && a.idListaPrecios == list).FirstOrDefault();
 
-                            db.Productos.Add(Producto);
-                            db.SaveChanges();
+                            if (Producto == null) //Existe ?
+                            {
+                                try
+                                {
+                                    Producto = new Productos();
+                                    Producto.Codigo = item["Codigo"].ToString();
+                                    var idBodega = item["idBodega"].ToString();
+                                    Producto.idBodega = db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault().id;
+                                    var idImpuesto = item["Impuesto"].ToString();
+                                    Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
+                                    var idLista = item["ListaPrecio"].ToString();
+                                    Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+                                    Producto.Nombre = item["Nombre"].ToString();
+                                    Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
+                                    Producto.UnidadMedida = item["UnidadMedida"].ToString();
+                                    Producto.Cabys = item["Cabys"].ToString();
+                                    Producto.TipoCod = item["TipoCodigo"].ToString();
+                                    Producto.CodBarras = item["CodigoBarras"].ToString();
+                                    Producto.Costo = Convert.ToDecimal(item["Costo"]);
+                                    Producto.Stock = Convert.ToDecimal(item["StockReal"]);
+                                    Producto.Activo = true;
+                                    Producto.ProcesadoSAP = true;
 
+                                    db.Productos.Add(Producto);
+                                    db.SaveChanges();
+
+                                }
+                                catch (Exception ex1)
+                                {
+
+                                    ModelCliente db2 = new ModelCliente();
+                                    BitacoraErrores be = new BitacoraErrores();
+                                    be.Descripcion = ex1.Message;
+                                    be.StrackTrace = ex1.StackTrace;
+                                    be.Fecha = DateTime.Now;
+                                    be.JSON = JsonConvert.SerializeObject(ex1);
+                                    db2.BitacoraErrores.Add(be);
+                                    db2.SaveChanges();
+                                }
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    db.Entry(Producto).State = EntityState.Modified;
+                                    var idBodega = item["idBodega"].ToString();
+                                    Producto.idBodega = db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault().id;
+                                    var idImpuesto = item["Impuesto"].ToString();
+                                    Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
+                                    var idLista = item["ListaPrecio"].ToString();
+                                    Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+                                    Producto.Nombre = item["Nombre"].ToString();
+                                    Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
+                                    Producto.UnidadMedida = item["UnidadMedida"].ToString(); ;
+                                    Producto.Cabys = item["Cabys"].ToString();
+                                    Producto.TipoCod = item["TipoCodigo"].ToString();
+                                    Producto.CodBarras = item["CodigoBarras"].ToString();
+                                    Producto.Costo = Convert.ToDecimal(item["Costo"]);
+                                    Producto.Stock = Convert.ToDecimal(item["StockReal"]);
+                                    Producto.Activo = true;
+                                    Producto.ProcesadoSAP = true;
+
+                                    db.SaveChanges();
+                                }
+                                catch (Exception ex1)
+                                {
+
+                                    ModelCliente db2 = new ModelCliente();
+                                    BitacoraErrores be = new BitacoraErrores();
+                                    be.Descripcion = ex1.Message;
+                                    be.StrackTrace = ex1.StackTrace;
+                                    be.Fecha = DateTime.Now;
+                                    be.JSON = JsonConvert.SerializeObject(ex1);
+                                    db2.BitacoraErrores.Add(be);
+                                    db2.SaveChanges();
+                                }
+
+                            }
                         }
-                        catch (Exception ex1)
-                        {
-
-                            ModelCliente db2 = new ModelCliente();
-                            BitacoraErrores be = new BitacoraErrores();
-                            be.Descripcion = ex1.Message;
-                            be.StrackTrace = ex1.StackTrace;
-                            be.Fecha = DateTime.Now;
-                            be.JSON = JsonConvert.SerializeObject(ex1);
-                            db2.BitacoraErrores.Add(be);
-                            db2.SaveChanges();
-                        }
+                        
                     }
-                    else
-                    {
-                        try
-                        {
-                            db.Entry(Producto).State = EntityState.Modified;
-                            var idBodega = item["idBodega"].ToString();
-                            Producto.idBodega = db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault().id;
-                            var idImpuesto = item["idImpuesto"].ToString();
-                            Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
-                            var idLista = item["ListaPrecio"].ToString();
-                            Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
-                            Producto.Nombre = item["Nombre"].ToString();
-                            Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
-                            Producto.UnidadMedida =Convert.ToInt32(item["UnidadMedida"]);
-                            Producto.Cabys = item["Cabys"].ToString();
-                            Producto.TipoCod = item["TipoCodigo"].ToString();
-                            Producto.CodBarras = item["CodigoBarras"].ToString();
-                            Producto.Costo = Convert.ToDecimal(item["Costo"]);
-                            Producto.Stock = Convert.ToDecimal(item["StockReal"]);
-                            Producto.Activo = true;
-
-                            db.SaveChanges();
-                        }
-                        catch (Exception ex1)
-                        {
-
-                            ModelCliente db2 = new ModelCliente();
-                            BitacoraErrores be = new BitacoraErrores();
-                            be.Descripcion = ex1.Message;
-                            be.StrackTrace = ex1.StackTrace;
-                            be.Fecha = DateTime.Now;
-                            be.JSON = JsonConvert.SerializeObject(ex1);
-                            db2.BitacoraErrores.Add(be);
-                            db2.SaveChanges();
-                        }
-
-                    }
+                    
 
 
                 }
@@ -192,11 +201,11 @@ namespace WATickets.Controllers
 
         }
         [Route("api/Productos/Consultar")]
-        public HttpResponseMessage GetOne([FromUri] string id)
+        public HttpResponseMessage GetOne([FromUri] int id)
         {
             try
             {
-                Productos productos = db.Productos.Where(a => a.Codigo == id).FirstOrDefault();
+                Productos productos = db.Productos.Where(a => a.id == id).FirstOrDefault();
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, productos);
@@ -222,10 +231,11 @@ namespace WATickets.Controllers
         {
             try
             {
-                Productos Producto = db.Productos.Where(a => a.Codigo == productos.Codigo).FirstOrDefault();
+                Productos Producto = db.Productos.Where(a => a.id == productos.id).FirstOrDefault();
                 if (Producto == null)
                 {
                     Producto = new Productos();
+                    Producto.id = productos.id;
                     Producto.Codigo = productos.Codigo;
                     Producto.idBodega = productos.idBodega;
                     Producto.idImpuesto = productos.idImpuesto;
@@ -238,7 +248,8 @@ namespace WATickets.Controllers
                     Producto.CodBarras = productos.CodBarras;
                     Producto.Costo = productos.Costo;
                     Producto.Stock = productos.Stock;
-                    Producto.Activo = productos.Activo;
+                    Producto.Activo = true;
+                    Producto.ProcesadoSAP = false;
                     db.Productos.Add(Producto);
                     db.SaveChanges();
 
@@ -269,7 +280,7 @@ namespace WATickets.Controllers
         {
             try
             {
-                Productos Productos = db.Productos.Where(a => a.Codigo == productos.Codigo).FirstOrDefault();
+                Productos Productos = db.Productos.Where(a => a.id == productos.id).FirstOrDefault();
                 if (Productos != null)
                 {
                     db.Entry(Productos).State = System.Data.Entity.EntityState.Modified;
@@ -311,11 +322,11 @@ namespace WATickets.Controllers
         }
         [Route("api/Productos/Eliminar")]
         [HttpDelete]
-        public HttpResponseMessage Delete([FromUri] string id)
+        public HttpResponseMessage Delete([FromUri] int id)
         {
             try
             {
-                Productos Productos = db.Productos.Where(a => a.Codigo == id).FirstOrDefault();
+                Productos Productos = db.Productos.Where(a => a.id == id).FirstOrDefault();
                 if (Productos != null)
                 {
                     db.Productos.Remove(Productos);

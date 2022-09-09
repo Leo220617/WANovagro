@@ -8,7 +8,8 @@ namespace WATickets.Models.Cliente
 
     public partial class Productos
     {
-        [Key]
+        public int id { get; set; }
+
         [StringLength(50)]
         public string Codigo { get; set; }
 
@@ -24,7 +25,8 @@ namespace WATickets.Models.Cliente
         [Column(TypeName = "money")]
         public decimal PrecioUnitario { get; set; }
 
-        public int UnidadMedida { get; set; }
+        [StringLength(5)]
+        public string UnidadMedida { get; set; }
 
         [StringLength(13)]
         public string Cabys { get; set; }
@@ -42,5 +44,7 @@ namespace WATickets.Models.Cliente
         public decimal Stock { get; set; }
 
         public bool Activo { get; set; }
+
+        public bool ProcesadoSAP { get; set; }
     }
 }

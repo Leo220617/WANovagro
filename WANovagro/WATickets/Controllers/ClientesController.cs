@@ -422,6 +422,42 @@ namespace WATickets.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/Clientes/SincronizarSAP")]
+        public HttpResponseMessage GetSincronizar([FromUri] string id)
+        {
+            try
+            {
+                Clientes cliente = db.Clientes.Where(a => a.Codigo == id).FirstOrDefault();
+
+                if (cliente != null)
+                {
+                    var client = (SAPbobsCOM.BusinessPartners)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oBusinessPartners);
+                    client.CardName = cliente.Nombre;
+                    client.EmailAddress = cliente.Email;
+                }
+                else
+                {
+                    throw new Exception("El cliente no existe");
+                }
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, cliente);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+
+            }
+
+        }
+
         public string DevuelveCodigoCliente()
         {
             try
