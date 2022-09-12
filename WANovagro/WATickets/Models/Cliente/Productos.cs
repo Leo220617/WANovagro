@@ -19,7 +19,7 @@ namespace WATickets.Models.Cliente
 
         public int idListaPrecios { get; set; }
 
-        [StringLength(50)]
+        [StringLength(500)]
         public string Nombre { get; set; }
 
         [Column(TypeName = "money")]

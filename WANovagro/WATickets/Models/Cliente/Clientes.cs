@@ -9,6 +9,8 @@ namespace WATickets.Models.Cliente
     public partial class Clientes
     {
         [Key]
+        public int id { get; set; }
+
         [StringLength(50)]
         public string Codigo { get; set; }
 
