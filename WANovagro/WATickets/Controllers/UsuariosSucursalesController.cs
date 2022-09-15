@@ -48,28 +48,49 @@ namespace WATickets.Controllers
             }
 
         }
-        [Route("api/UsuariosSucursales/Insertar")]
+       
         [HttpPost]
-        public HttpResponseMessage Post([FromBody] UsuariosSucursales usuariossucursales)
+        public HttpResponseMessage Post([FromBody] UsuariosSucursales[] objeto)
         {
+            var t = db.Database.BeginTransaction();
             try
             {
-                UsuariosSucursales UsuarioSucursal = db.UsuariosSucursales.Where(a => a.idUsuario == usuariossucursales.idUsuario & a.CodSuc == usuariossucursales.CodSuc).FirstOrDefault();
-                if (UsuarioSucursal == null)
+                var primero = objeto[0].CodSuc;
+                var usuariosSucursales = db.UsuariosSucursales.Where(a => a.CodSuc == primero).ToList();
+                foreach (var item in usuariosSucursales)
                 {
-                    UsuarioSucursal = new UsuariosSucursales();
-                    UsuarioSucursal.idUsuario = usuariossucursales.idUsuario;
-                    UsuarioSucursal.CodSuc = usuariossucursales.CodSuc;
-                    db.UsuariosSucursales.Add(UsuarioSucursal);
-                    db.SaveChanges();
+                    var Objeto = db.UsuariosSucursales.Where(a => a.CodSuc == item.CodSuc && a.idUsuario == item.idUsuario).FirstOrDefault();
 
-                }
-                else
-                {
-                    throw new Exception("Ya existe un UsuarioSucursal con este ID");
+                    if (Objeto != null)
+                    {
+                        db.UsuariosSucursales.Remove(Objeto);
+                        db.SaveChanges();
+                    }
                 }
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                foreach (var item in objeto)
+                {
+
+
+
+                    var Objeto = db.UsuariosSucursales.Where(a => a.CodSuc == item.CodSuc && a.idUsuario == item.idUsuario).FirstOrDefault();
+
+                    if (Objeto == null)
+                    {
+                        var Objetos = new UsuariosSucursales();
+                        Objetos.CodSuc = item.CodSuc;
+                        Objetos.idUsuario = item.idUsuario;
+
+
+                        db.UsuariosSucursales.Add(Objetos);
+                        db.SaveChanges();
+
+                    }
+
+
+                }
+                t.Commit();
+                return Request.CreateResponse(HttpStatusCode.OK, objeto);
             }
             catch (Exception ex)
             {
@@ -81,7 +102,9 @@ namespace WATickets.Controllers
                 db.BitacoraErrores.Add(be);
                 db.SaveChanges();
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
+                t.Rollback();
+
             }
         }
 

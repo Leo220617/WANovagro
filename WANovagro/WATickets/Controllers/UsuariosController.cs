@@ -18,12 +18,16 @@ namespace WATickets.Controllers
     public class UsuariosController : ApiController
     {
         ModelCliente db = new ModelCliente();
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
                 var Usuarios = db.Usuarios.ToList();
 
+                if(filtro.Codigo1 > 0)
+                {
+                    Usuarios = Usuarios.Where(a => a.idRol == filtro.Codigo1).ToList();
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Usuarios);
             }
