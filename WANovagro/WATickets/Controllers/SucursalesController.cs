@@ -16,7 +16,7 @@ using WATickets.Models.Cliente;
 
 namespace WATickets.Controllers
 {
-    [Authorize]
+    
     public class SucursalesController : ApiController
     {
         ModelCliente db = new ModelCliente();

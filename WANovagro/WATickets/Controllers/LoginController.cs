@@ -105,6 +105,12 @@ namespace WATickets.Controllers
 
 
                     var Usuario = db.Usuarios.Where(a => a.NombreUsuario.ToUpper().Contains(nombreUsuario.ToUpper())).FirstOrDefault();
+                    var UsuariosSucursales = db.UsuariosSucursales.Where(a => a.CodSuc == CodSuc && a.idUsuario == Usuario.id).FirstOrDefault();
+
+                    if(UsuariosSucursales == null)
+                    {
+                        throw new Exception("Usuario no pertenece a esta sucursal");
+                    }
 
                     if (Usuario == null)
                     {
