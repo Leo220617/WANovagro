@@ -79,7 +79,7 @@ namespace WATickets.Controllers
 
 
         [Route("api/Login/ConectarPOS")] //Este metodo lo hacemos entre los dos 
-        public async Task<HttpResponseMessage> GetLoginPOSAsync([FromUri]string CodSuc, int idCaja, string nombreUsuario, string clave)
+        public async Task<HttpResponseMessage> GetLoginPOSAsync([FromUri]string CodSuc, int idCaja, string nombreUsuario, string clave, string ip)
         {
             try
             {
@@ -138,7 +138,7 @@ namespace WATickets.Controllers
                         CierreCaja.idUsuario = Usuario.id;
                         CierreCaja.FechaCaja = FechaActual;
                         CierreCaja.FecUltAct = DateTime.Now;
-                        CierreCaja.IP = "";
+                        CierreCaja.IP = ip;
                         CierreCaja.EfectivoColones = 0;
                         CierreCaja.EfectivoFC = 0;
                         CierreCaja.ChequesColones = 0;

@@ -251,6 +251,7 @@
     <Compile Include="Controllers\ImpuestosController.cs" />
     <Compile Include="Controllers\ListaPreciosController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\OfertasController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SeguridadModulosController.cs" />
@@ -263,6 +264,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\APIS\Ofertas.cs" />
     <Compile Include="Models\Cliente\Barrios.cs" />
     <Compile Include="Models\Cliente\BitacoraErrores.cs" />
     <Compile Include="Models\Cliente\BitacoraMovimientos.cs" />
@@ -274,7 +276,9 @@
     <Compile Include="Models\Cliente\Clientes.cs" />
     <Compile Include="Models\Cliente\ConexionSAP.cs" />
     <Compile Include="Models\Cliente\CorreoEnvio.cs" />
+    <Compile Include="Models\Cliente\DetOferta.cs" />
     <Compile Include="Models\Cliente\Distritos.cs" />
+    <Compile Include="Models\Cliente\EncOferta.cs" />
     <Compile Include="Models\Cliente\Impuestos.cs" />
     <Compile Include="Models\Cliente\ListaPrecios.cs" />
     <Compile Include="Models\Cliente\ModelCliente.cs" />
