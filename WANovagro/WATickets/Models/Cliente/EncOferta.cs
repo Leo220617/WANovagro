@@ -7,7 +7,7 @@ namespace WATickets.Models.Cliente
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
-
+    [Table("EncOferta")]
     public partial class EncOferta
     {
         public int id { get; set; }

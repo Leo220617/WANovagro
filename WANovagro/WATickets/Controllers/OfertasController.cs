@@ -136,7 +136,7 @@ namespace WATickets.Controllers
                     Oferta.TotalDescuento = oferta.TotalDescuento;
                     Oferta.TotalCompra = oferta.TotalCompra;
                     Oferta.PorDescto = oferta.PorDescto;
-
+                   
                     db.EncOferta.Add(Oferta);
                     db.SaveChanges();
 
@@ -152,6 +152,7 @@ namespace WATickets.Controllers
                         det.TotalImpuesto = item.TotalImpuesto;
                         det.Cantidad = item.Cantidad;
                         det.Descuento = item.Descuento;
+                        det.TotalLinea = ((det.PrecioUnitario * det.Cantidad) - det.Descuento) + det.TotalImpuesto;
                         db.DetOferta.Add(det);
                         db.SaveChanges();
                         i++;

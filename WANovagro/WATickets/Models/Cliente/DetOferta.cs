@@ -7,6 +7,7 @@ namespace WATickets.Models.Cliente
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
+    [Table("DetOferta")]
 
     public partial class DetOferta
     {
@@ -19,5 +20,6 @@ namespace WATickets.Models.Cliente
         public decimal PrecioUnitario { get; set; }
         public decimal PorDescto { get; set; }
         public decimal Descuento { get; set; }
+        public decimal TotalLinea { get; set; }
     }
 }
