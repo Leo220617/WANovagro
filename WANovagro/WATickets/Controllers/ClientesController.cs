@@ -325,7 +325,7 @@ namespace WATickets.Controllers
                     throw new Exception("Ya existe un cliente con este ID");
                 }
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Cliente);
             }
             catch (Exception ex)
             {
