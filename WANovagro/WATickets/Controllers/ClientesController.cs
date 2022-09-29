@@ -451,7 +451,7 @@ namespace WATickets.Controllers
                     client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);
                     client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
                     client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
-                    client.UserFields.Fields.Item("U_LDT_State").Value = cliente.Provincia;
+                    client.UserFields.Fields.Item("U_LDT_State").Value = cliente.Provincia.ToString();
                     switch(cliente.Provincia)
                     {
                         case 1:
@@ -490,14 +490,14 @@ namespace WATickets.Controllers
                                 break;
                             }
                     }
-                    client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia + "-" + cliente.Canton;
+                    client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia.ToString() + "-" + cliente.Canton;
                     var canton = Convert.ToInt32(cliente.Canton);
                     client.UserFields.Fields.Item("U_LDT_Nom_County").Value = db.Cantones.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton).FirstOrDefault().NomCanton;
-                    client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia + "-" + cliente.Canton;
-                    client.UserFields.Fields.Item("U_LDT_District").Value = cliente.Provincia + "-" + cliente.Canton + "-" + cliente.Distrito;
+                    //client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia + "-" + cliente.Canton;
+                    client.UserFields.Fields.Item("U_LDT_District").Value = cliente.Provincia.ToString() + "-" + cliente.Canton + "-" + cliente.Distrito;
                     var distrito = Convert.ToInt32(cliente.Distrito);
                     client.UserFields.Fields.Item("U_LDT_Nom_District").Value = db.Distritos.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito).FirstOrDefault().NomDistrito;
-                    client.UserFields.Fields.Item("U_LDT_NeighB").Value = cliente.Provincia + "-" + cliente.Canton + "-" + cliente.Distrito + "-" + cliente.Barrio;
+                    client.UserFields.Fields.Item("U_LDT_NeighB").Value = cliente.Provincia.ToString() + "-" + cliente.Canton + "-" + cliente.Distrito + "-" + cliente.Barrio;
                     var barrio = Convert.ToInt32(cliente.Barrio);
                     client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
                     client.UserFields.Fields.Item("U_LDT_Direccion").Value = cliente.Sennas;
@@ -506,11 +506,11 @@ namespace WATickets.Controllers
 
                     if (respuesta == 0)
                     {
-                        Conexion.Desconectar();
                         db.Entry(cliente).State = EntityState.Modified;
                         cliente.Codigo = Conexion.Company.GetNewObjectKey();
                         cliente.ProcesadoSAP = true;
                         db.SaveChanges();
+                        Conexion.Desconectar();
                     }
                     else
                     {

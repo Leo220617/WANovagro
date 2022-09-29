@@ -162,6 +162,8 @@ namespace WATickets.Controllers
                         det.Cantidad = item.Cantidad;
                         det.Descuento = item.Descuento;
                         det.TotalLinea = ((det.PrecioUnitario * det.Cantidad) - det.Descuento) + det.TotalImpuesto;
+                        det.Cabys = item.Cabys;
+                        det.idExoneracion = item.idExoneracion;
                         db.DetOferta.Add(det);
                         db.SaveChanges();
                         i++;
@@ -244,6 +246,8 @@ namespace WATickets.Controllers
                         det.TotalImpuesto = item.TotalImpuesto;
                         det.Cantidad = item.Cantidad;
                         det.Descuento = item.Descuento;
+                        det.Cabys = item.Cabys;
+                        det.idExoneracion = item.idExoneracion;
                         db.DetOferta.Add(det);
                         db.SaveChanges();
                         i++;
