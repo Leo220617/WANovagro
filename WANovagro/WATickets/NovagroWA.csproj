@@ -243,9 +243,11 @@
     <Compile Include="Controllers\CajasController.cs" />
     <Compile Include="Controllers\CantonesController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
+    <Compile Include="Controllers\CondicionesPagosController.cs" />
     <Compile Include="Controllers\Conexion.cs" />
     <Compile Include="Controllers\CorreoEnvioController.cs" />
     <Compile Include="Controllers\DistritosController.cs" />
+    <Compile Include="Controllers\ExoneracionesController.cs" />
     <Compile Include="Controllers\G.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImpuestosController.cs" />
@@ -274,11 +276,13 @@
     <Compile Include="Models\Cliente\Cantones.cs" />
     <Compile Include="Models\Cliente\CierreCajas.cs" />
     <Compile Include="Models\Cliente\Clientes.cs" />
+    <Compile Include="Models\Cliente\CondicionesPagos.cs" />
     <Compile Include="Models\Cliente\ConexionSAP.cs" />
     <Compile Include="Models\Cliente\CorreoEnvio.cs" />
     <Compile Include="Models\Cliente\DetOferta.cs" />
     <Compile Include="Models\Cliente\Distritos.cs" />
     <Compile Include="Models\Cliente\EncOferta.cs" />
+    <Compile Include="Models\Cliente\Exoneraciones.cs" />
     <Compile Include="Models\Cliente\Impuestos.cs" />
     <Compile Include="Models\Cliente\ListaPrecios.cs" />
     <Compile Include="Models\Cliente\ModelCliente.cs" />

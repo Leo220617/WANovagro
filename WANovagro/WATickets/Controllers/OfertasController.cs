@@ -40,6 +40,7 @@ namespace WATickets.Controllers
                     a.TotalDescuento,
                     a.TotalCompra,
                     a.PorDescto,
+                    a.Status,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).ToList(); //Traemos el listado de productos
@@ -55,6 +56,10 @@ namespace WATickets.Controllers
                     Ofertas = Ofertas.Where(a => a.idUsuarioCreador == filtro.Codigo2).ToList();
                 }
 
+                if (!string.IsNullOrEmpty(filtro.ItemCode)) // esto por ser string
+                {
+                    Ofertas = Ofertas.Where(a => a.Status == filtro.ItemCode).ToList();
+                }
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Ofertas);
@@ -93,6 +98,7 @@ namespace WATickets.Controllers
                     a.TotalDescuento,
                     a.TotalCompra,
                     a.PorDescto,
+                    a.Status,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => a.id == id).FirstOrDefault();
@@ -136,7 +142,10 @@ namespace WATickets.Controllers
                     Oferta.TotalDescuento = oferta.TotalDescuento;
                     Oferta.TotalCompra = oferta.TotalCompra;
                     Oferta.PorDescto = oferta.PorDescto;
-                   
+                    Oferta.Status = "0";
+                    
+                    // 0 is open, 1 is closed
+
                     db.EncOferta.Add(Oferta);
                     db.SaveChanges();
 
@@ -209,6 +218,8 @@ namespace WATickets.Controllers
                     Oferta.TotalDescuento = oferta.TotalDescuento;
                     Oferta.TotalCompra = oferta.TotalCompra;
                     Oferta.PorDescto = oferta.PorDescto;
+                    Oferta.Status = oferta.Status;
+                    
                      
                     db.SaveChanges();
 

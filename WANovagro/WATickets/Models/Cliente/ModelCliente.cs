@@ -36,6 +36,9 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<Parametros> Parametros { get; set; }
         public virtual DbSet<EncOferta> EncOferta { get; set; }
         public virtual DbSet<DetOferta> DetOferta { get; set; }
+        public virtual DbSet<CondicionesPagos> CondicionesPagos { get; set; }
+        public virtual DbSet<Exoneraciones> Exoneraciones { get; set; }
+
 
 
 

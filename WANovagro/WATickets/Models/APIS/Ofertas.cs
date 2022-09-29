@@ -19,6 +19,7 @@ namespace WATickets.Models.APIS
         public decimal TotalDescuento { get; set; }
         public decimal TotalCompra { get; set; }
         public decimal PorDescto { get; set; }
+        public string Status { get; set; }
         public List<DetOferta> Detalle { get; set; }
     }
 }

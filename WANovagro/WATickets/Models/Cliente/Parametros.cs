@@ -20,5 +20,7 @@
         public string SQLListaPrecios { get; set; }
 
         public string SQLBodegas { get; set; }
+
+        public string SQLCondiciones { get; set; }
     }
 }

@@ -104,7 +104,8 @@ namespace WATickets.Controllers
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
                             Cliente.ProcesadoSAP = true;
-
+                            var idCond = item["idCondPago"].ToString();
+                            Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault() == null ? 1 : db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault().id;
                             db.Clientes.Add(Cliente);
                             db.SaveChanges();
 
@@ -173,7 +174,8 @@ namespace WATickets.Controllers
                             {
                                 Cliente.Provincia = 0;
                             }
-                            
+                            var idCond = item["idCondPago"].ToString();
+                            Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault() == null ? 1 : db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault().id;
 
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
@@ -313,6 +315,7 @@ namespace WATickets.Controllers
                     Cliente.Distrito = clientes.Distrito;
                     Cliente.Barrio = clientes.Barrio;
                     Cliente.Sennas = clientes.Sennas;
+                    Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado".ToLower())).FirstOrDefault() == null ? 1 : db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado".ToLower())).FirstOrDefault().id;
                     Cliente.Saldo = 0;
                     Cliente.Activo = true;
                     Cliente.ProcesadoSAP = false;

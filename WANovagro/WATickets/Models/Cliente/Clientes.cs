@@ -54,5 +54,7 @@ namespace WATickets.Models.Cliente
         public bool Activo { get; set; }
 
         public bool ProcesadoSAP { get; set; }
+
+        public int idCondicionPago { get; set; }
     }
 }
