@@ -15,5 +15,7 @@ namespace WATickets.Models.Cliente
 
         [Column(TypeName = "money")]
         public decimal Tarifa { get; set; }
+
+        public bool Activo { get; set; }
     }
 }

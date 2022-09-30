@@ -46,10 +46,9 @@ namespace WATickets.Controllers
                 {
                     var cardCode = item["id"].ToString();
 
-                    var Sucursal = db.Sucursales.Where(a => a.CodSuc == cardCode).FirstOrDefault();
+                   // var Sucursal = db.Sucursales.Where(a => a.CodSuc == cardCode).FirstOrDefault();
 
-                    if(Sucursal != null)
-                    {
+                     
                         var Bodega = Bodegas.Where(a => a.CodSAP == cardCode).FirstOrDefault();
 
                         if (Bodega == null) //Existe ?
@@ -58,7 +57,7 @@ namespace WATickets.Controllers
                             {
                                 Bodega = new Bodegas();
                                 Bodega.CodSAP = item["id"].ToString();
-                                Bodega.CodSuc = item["id"].ToString();
+                                Bodega.CodSuc = "";
                                 Bodega.Nombre = item["Bodega"].ToString();
 
                                 db.Bodegas.Add(Bodega);
@@ -84,7 +83,7 @@ namespace WATickets.Controllers
                             {
                                 db.Entry(Bodega).State = EntityState.Modified;
 
-                                Bodega.CodSuc = item["id"].ToString();
+                                //Bodega.CodSuc = item["id"].ToString();
                                 Bodega.Nombre = item["Bodega"].ToString();
 
 
@@ -104,7 +103,7 @@ namespace WATickets.Controllers
                             }
 
                         }
-                    }
+                     
 
                    
 
@@ -237,7 +236,7 @@ namespace WATickets.Controllers
                 {
                     db.Entry(Bodegas).State = System.Data.Entity.EntityState.Modified;
                     Bodegas.CodSuc = bodegas.CodSuc;
-                    Bodegas.Nombre = bodegas.Nombre;
+                   //Bodegas.Nombre = bodegas.Nombre;
                     db.SaveChanges();
 
                 }

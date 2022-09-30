@@ -50,9 +50,22 @@ namespace WATickets.Controllers
                     {
                         try
                         {
+                            string Status = item["Status"].ToString();
                             Impuesto = new Impuestos();
                             Impuesto.Codigo = item["id"].ToString();
                             Impuesto.Tarifa = Convert.ToDecimal(item["Impuesto"].ToString());
+                           
+
+                            if(Status == "Y" )
+                            {
+                                Impuesto.Activo = false;
+                            }
+                            else if(Status == "N")
+                            {
+                                Impuesto.Activo = true;
+                            }
+
+                            
 
                             db.Impuestos.Add(Impuesto);
                             db.SaveChanges();
@@ -76,6 +89,18 @@ namespace WATickets.Controllers
                         try
                         {
                             db.Entry(Impuesto).State = EntityState.Modified;
+
+                            string Status = item["Status"].ToString();
+
+                            if (Status == "Y")
+                            {
+                                Impuesto.Activo = false;
+                            }
+                            else if (Status == "N")
+                            {
+                                Impuesto.Activo = true;
+                            }
+
 
 
                             Impuesto.Tarifa = Convert.ToDecimal(item["Impuesto"].ToString());
