@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WATickets.Models;
+using WATickets.Models.APIS;
 using WATickets.Models.Cliente;
 
 namespace WATickets.Controllers
@@ -26,10 +27,19 @@ namespace WATickets.Controllers
         {
             try
             {
-               
+                var Exoneraciones = db.Exoneraciones.Select(a => new {
+                    a.id,
+                    a.TipoDoc,
+                    a.NumDoc,
+                    a.NomInst,
+                    a.FechaEmision,
+                    a.PorExon,
+                    a.idCliente,
+                    a.FechaVencimiento,
+                    a.Imagen,
+                    Detalle = db.DetExoneraciones.Where(b => b.idEncabezado == a.id).ToList()
 
-                var Exoneraciones = db.Exoneraciones.ToList();
-               
+                }).ToList();
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Exoneraciones);
@@ -54,13 +64,23 @@ namespace WATickets.Controllers
         {
             try
             {
-              
 
-                Exoneraciones exoneraciones = db.Exoneraciones.Where(a => a.id == id).FirstOrDefault();
 
-               
+                var Exoneraciones = db.Exoneraciones.Select(a => new {
+                    a.id,
+                    a.TipoDoc,
+                    a.NumDoc,
+                    a.NomInst,
+                    a.FechaEmision,
+                    a.PorExon,
+                    a.idCliente,
+                    a.FechaVencimiento,
+                    a.Imagen,
+                    Detalle = db.DetExoneraciones.Where(b => b.idEncabezado == a.id).ToList()
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, exoneraciones);
+
+                }).Where(a => a.id == id).FirstOrDefault();
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Exoneraciones);
             }
             catch (Exception ex)
             {
@@ -82,7 +102,7 @@ namespace WATickets.Controllers
 
         [Route("api/Exoneraciones/Insertar")]
         [HttpPost]
-        public HttpResponseMessage Post([FromBody] Exoneraciones exoneraciones)
+        public HttpResponseMessage Post([FromBody] ExoneracionesX exoneraciones)
         {
             try
             {
@@ -95,13 +115,30 @@ namespace WATickets.Controllers
                     Exoneracion.id = exoneraciones.id;
                     Exoneracion.TipoDoc = exoneraciones.TipoDoc;
                     Exoneracion.NumDoc = exoneraciones.NumDoc;
+                    byte[] hex = Convert.FromBase64String(exoneraciones.Imagen.Replace("data:image/jpeg;base64,", "").Replace("data:image/png;base64,", ""));
+                    Exoneracion.Imagen = hex;
                     Exoneracion.NomInst = exoneraciones.NomInst;
                     Exoneracion.FechaEmision = exoneraciones.FechaEmision;
                     Exoneracion.PorExon = exoneraciones.PorExon;
+                    Exoneracion.idCliente = exoneraciones.idCliente;
+                    Exoneracion.FechaVencimiento = exoneraciones.FechaVencimiento;
                     db.Exoneraciones.Add(Exoneracion);
                     db.SaveChanges();
 
+                    var i = 0;
+                    foreach (var item in exoneraciones.Detalle)
+                    {
+                        DetExoneraciones det = new DetExoneraciones();
+                        det.idEncabezado = Exoneracion.id;
+                        det.CodCabys = item.CodCabys;
+                        db.DetExoneraciones.Add(det);
+                        db.SaveChanges();               
+                    }
+
+
+                   
                 }
+            
                 else
                 {
                     throw new Exception("Ya existe una exoneración con este ID");
@@ -125,25 +162,52 @@ namespace WATickets.Controllers
         }
         [Route("api/Exoneraciones/Actualizar")]
         [HttpPut]
-        public HttpResponseMessage Put([FromBody] Exoneraciones exoneraciones)
+        public HttpResponseMessage Put([FromBody] ExoneracionesX exoneraciones)
         {
             try
             {
                 Exoneraciones Exoneraciones = db.Exoneraciones.Where(a => a.id == exoneraciones.id).FirstOrDefault();
                 if (Exoneraciones != null)
                 {
+
                     db.Entry(Exoneraciones).State = System.Data.Entity.EntityState.Modified;
                     Exoneraciones.TipoDoc = exoneraciones.TipoDoc;
                     Exoneraciones.NumDoc = exoneraciones.NumDoc;
+                    byte[] hex = Convert.FromBase64String(exoneraciones.Imagen.Replace("data:image/jpeg;base64,", "").Replace("data:image/png;base64,", ""));
+
+                    Exoneraciones.Imagen = hex;
                     Exoneraciones.NomInst = exoneraciones.NomInst;
                     Exoneraciones.FechaEmision = exoneraciones.FechaEmision;
+                    Exoneraciones.idCliente = exoneraciones.idCliente;
+                    Exoneraciones.FechaVencimiento = exoneraciones.FechaVencimiento;
                     Exoneraciones.PorExon = exoneraciones.PorExon;
                     db.SaveChanges();
+
+                    var Detalles = db.DetExoneraciones.Where(a => a.idEncabezado == Exoneraciones.id).ToList();
+
+                    foreach (var item in Detalles)
+                    {
+                        db.DetExoneraciones.Remove(item);
+                        db.SaveChanges();
+                    }
+
+
+                    var i = 0;
+                    foreach (var item in exoneraciones.Detalle)
+                    {
+                        DetExoneraciones det = new DetExoneraciones();
+                        det.idEncabezado = Exoneraciones.id;
+                        det.CodCabys = item.CodCabys;
+                        
+                        db.DetExoneraciones.Add(det);
+                        db.SaveChanges();
+                        i++;
+                    }
 
                 }
                 else
                 {
-                    throw new Exception("No existe una caja" +
+                    throw new Exception("No existe una exoneración" +
                         " con este ID");
                 }
 

@@ -266,6 +266,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\APIS\ExoneracionesViewModel.cs" />
     <Compile Include="Models\APIS\Ofertas.cs" />
     <Compile Include="Models\APIS\SucursalesViewModel.cs" />
     <Compile Include="Models\Cliente\Barrios.cs" />

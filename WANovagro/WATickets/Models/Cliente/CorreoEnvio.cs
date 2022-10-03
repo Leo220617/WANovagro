@@ -23,5 +23,8 @@ namespace WATickets.Models.Cliente
 
         [StringLength(500)]
         public string RecepcionPassword { get; set; }
+
+        [StringLength(3)]
+        public string CodSuc { get; set; }
     }
 }

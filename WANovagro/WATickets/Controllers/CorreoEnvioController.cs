@@ -81,13 +81,24 @@ namespace WATickets.Controllers
                 CorreoEnvio Correo = db.CorreoEnvio.Where(a => a.id == correoEnvio.id).FirstOrDefault();
                 if (Correo == null)
                 {
-                    Correo = new CorreoEnvio();
+                    Correo = new CorreoEnvio(); //Correo es null 
                     Correo.id = correoEnvio.id;
                     Correo.RecepcionHostName = correoEnvio.RecepcionHostName;
                     Correo.EnvioPort = correoEnvio.EnvioPort;
                     Correo.RecepcionUseSSL = correoEnvio.RecepcionUseSSL;
                     Correo.RecepcionEmail = correoEnvio.RecepcionEmail;
                     Correo.RecepcionPassword = correoEnvio.RecepcionPassword;
+
+                    if(db.CorreoEnvio.Where(a => a.CodSuc == correoEnvio.CodSuc).FirstOrDefault() != null)
+                    {
+                        throw new Exception("Ya existe un Correo Envio con esta Sucursal");
+                    }
+                    else
+                    {
+                        Correo.CodSuc = correoEnvio.CodSuc;
+                    }
+                   
+
                     db.CorreoEnvio.Add(Correo);
                     db.SaveChanges();
 
@@ -127,6 +138,7 @@ namespace WATickets.Controllers
                     Correo.RecepcionUseSSL = correoEnvio.RecepcionUseSSL;
                     Correo.RecepcionEmail = correoEnvio.RecepcionEmail;
                     Correo.RecepcionPassword = correoEnvio.RecepcionPassword;
+                    Correo.CodSuc = correoEnvio.CodSuc;
                     db.SaveChanges();
 
                 }

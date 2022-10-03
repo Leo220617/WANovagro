@@ -57,6 +57,7 @@ namespace WATickets.Controllers
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
                             Cliente.Cedula = item["Cedula"].ToString();
+                            //Cliente.Ocupacion = item["Ocupacion"].ToString();
 
                             switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
                             {
@@ -155,7 +156,8 @@ namespace WATickets.Controllers
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
-                            if(!string.IsNullOrEmpty(item["Provincia"].ToString()))
+                            //Cliente.Ocupacion = item["Ocupacion"].ToString();
+                            if (!string.IsNullOrEmpty(item["Provincia"].ToString()))
                             {
                                 Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
                                 var canton = item["Canton"].ToString();

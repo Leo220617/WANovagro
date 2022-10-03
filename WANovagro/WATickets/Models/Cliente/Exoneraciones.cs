@@ -16,5 +16,8 @@ namespace WATickets.Models.Cliente
         public string NomInst { get; set; }
         public DateTime FechaEmision { get; set; }
         public int PorExon { get; set; }
+        public int idCliente { get; set; }
+        public DateTime FechaVencimiento { get; set; }
+        public byte[] Imagen { get; set; }
     }
 }
