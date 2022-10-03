@@ -267,6 +267,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\APIS\ExoneracionesViewModel.cs" />
+    <Compile Include="Models\APIS\ExoneracionesX.cs" />
     <Compile Include="Models\APIS\Ofertas.cs" />
     <Compile Include="Models\APIS\SucursalesViewModel.cs" />
     <Compile Include="Models\Cliente\Barrios.cs" />
@@ -281,6 +282,7 @@
     <Compile Include="Models\Cliente\CondicionesPagos.cs" />
     <Compile Include="Models\Cliente\ConexionSAP.cs" />
     <Compile Include="Models\Cliente\CorreoEnvio.cs" />
+    <Compile Include="Models\Cliente\DetExoneraciones.cs" />
     <Compile Include="Models\Cliente\DetOferta.cs" />
     <Compile Include="Models\Cliente\Distritos.cs" />
     <Compile Include="Models\Cliente\EncOferta.cs" />
