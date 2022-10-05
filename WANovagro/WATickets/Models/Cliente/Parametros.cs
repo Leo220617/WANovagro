@@ -22,5 +22,7 @@
         public string SQLBodegas { get; set; }
 
         public string SQLCondiciones { get; set; }
+
+        public string SQLGrupos { get; set; }
     }
 }

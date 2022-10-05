@@ -18,6 +18,7 @@ namespace WATickets.Models
         public string Categoria { get; set; }
         public DateTime FechaInicial { get; set; }
         public DateTime FechaFinal { get; set; }
+        public bool Procesado { get; set; }
 
     }
 }

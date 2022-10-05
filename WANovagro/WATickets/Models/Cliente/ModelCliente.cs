@@ -39,7 +39,7 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<CondicionesPagos> CondicionesPagos { get; set; }
         public virtual DbSet<Exoneraciones> Exoneraciones { get; set; }
         public virtual DbSet<DetExoneraciones> DetExoneraciones { get; set; }
-
+        public virtual DbSet<GruposClientes> GruposClientes { get; set; }
 
 
 

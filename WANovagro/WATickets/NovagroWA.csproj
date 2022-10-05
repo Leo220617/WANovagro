@@ -249,6 +249,7 @@
     <Compile Include="Controllers\DistritosController.cs" />
     <Compile Include="Controllers\ExoneracionesController.cs" />
     <Compile Include="Controllers\G.cs" />
+    <Compile Include="Controllers\GruposClientesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImpuestosController.cs" />
     <Compile Include="Controllers\ListaPreciosController.cs" />
@@ -287,6 +288,7 @@
     <Compile Include="Models\Cliente\Distritos.cs" />
     <Compile Include="Models\Cliente\EncOferta.cs" />
     <Compile Include="Models\Cliente\Exoneraciones.cs" />
+    <Compile Include="Models\Cliente\GruposClientes.cs" />
     <Compile Include="Models\Cliente\Impuestos.cs" />
     <Compile Include="Models\Cliente\ListaPrecios.cs" />
     <Compile Include="Models\Cliente\ModelCliente.cs" />

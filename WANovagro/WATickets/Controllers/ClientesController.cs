@@ -56,8 +56,8 @@ namespace WATickets.Controllers
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
-                            Cliente.Cedula = item["Cedula"].ToString();
-                            //Cliente.Ocupacion = item["Ocupacion"].ToString();
+                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            
 
                             switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
                             {
@@ -81,7 +81,7 @@ namespace WATickets.Controllers
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
-                            if(!string.IsNullOrEmpty( item["Provincia"].ToString()))
+                            if (!string.IsNullOrEmpty(item["Provincia"].ToString()))
                             {
                                 Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
                                 var canton = item["Canton"].ToString();
@@ -101,12 +101,20 @@ namespace WATickets.Controllers
                                 Cliente.Provincia = 0;
                             }
 
+                            Cliente.CorreoPublicitario = "";
 
-                            Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
+
+
+                                Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
                             Cliente.ProcesadoSAP = true;
+
                             var idCond = item["idCondPago"].ToString();
                             Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault() == null ? 1 : db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault().id;
+
+                            var idGrupo = item["idGrupo"].ToString();
+                            Cliente.idGrupo = db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault() == null ? 1 : db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id;
+
                             db.Clientes.Add(Cliente);
                             db.SaveChanges();
 
@@ -132,7 +140,7 @@ namespace WATickets.Controllers
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
-                            Cliente.Cedula = item["Cedula"].ToString();
+                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
 
                             switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
                             {
@@ -156,7 +164,7 @@ namespace WATickets.Controllers
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
-                            //Cliente.Ocupacion = item["Ocupacion"].ToString();
+                           
                             if (!string.IsNullOrEmpty(item["Provincia"].ToString()))
                             {
                                 Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
@@ -178,10 +186,12 @@ namespace WATickets.Controllers
                             }
                             var idCond = item["idCondPago"].ToString();
                             Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault() == null ? 1 : db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault().id;
-
+                            var idGrupo = item["idGrupo"].ToString();
+                            Cliente.idGrupo = db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault() == null ? 1 : db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id;
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
                             Cliente.ProcesadoSAP = true;
+                           
                             db.SaveChanges();
                         }
                         catch (Exception ex1)
@@ -242,6 +252,19 @@ namespace WATickets.Controllers
                     Clientes = Clientes.Where(a => a.idListaPrecios == filtro.Codigo1).ToList();
                 }
 
+                if (filtro.Procesado != null) 
+                {
+                    Clientes = Clientes.Where(a => a.ProcesadoSAP == filtro.Procesado).ToList();
+                }
+
+                if (filtro.Codigo2 > 0) // esto por ser integer
+                {
+                    Clientes = Clientes.Where(a => a.idGrupo == filtro.Codigo2).ToList();
+                }
+
+
+
+
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Clientes);
             }
             catch (Exception ex)
@@ -293,36 +316,48 @@ namespace WATickets.Controllers
                 Clientes Cliente = db.Clientes.Where(a => a.id == clientes.id).FirstOrDefault();
                 if (Cliente == null)
                 {
-                    Cliente = new Clientes();
-                    Cliente.Codigo = DevuelveCodigoCliente();
-                    var bandera = db.Clientes.Where(a => a.id == Cliente.id).FirstOrDefault() != null; //preguntamos si existe el cliente
-                    while(bandera)
+                    if (db.Clientes.Where(a => a.Cedula == clientes.Cedula && a.TipoCedula == clientes.TipoCedula).FirstOrDefault() == null)
                     {
-                        
+                        Cliente = new Clientes();
+                        Cliente.Codigo = DevuelveCodigoCliente();
+                        var bandera = db.Clientes.Where(a => a.id == Cliente.id).FirstOrDefault() != null; //preguntamos si existe el cliente
+                        while (bandera)
+                        {
+
                             Cliente.Codigo = DevuelveCodigoCliente();
                             bandera = db.Clientes.Where(a => a.id == Cliente.id).FirstOrDefault() != null;
 
-                    }
-                    
+                        }
 
-                    Cliente.idListaPrecios = clientes.idListaPrecios;
-                    Cliente.Nombre = clientes.Nombre;
-                    Cliente.TipoCedula = clientes.TipoCedula;
-                    Cliente.Cedula = clientes.Cedula;
-                    Cliente.Email = clientes.Email;
-                    Cliente.CodPais = "506";
-                    Cliente.Telefono = clientes.Telefono;
-                    Cliente.Provincia = clientes.Provincia;
-                    Cliente.Canton = clientes.Canton;
-                    Cliente.Distrito = clientes.Distrito;
-                    Cliente.Barrio = clientes.Barrio;
-                    Cliente.Sennas = clientes.Sennas;
-                    Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado".ToLower())).FirstOrDefault() == null ? 1 : db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado".ToLower())).FirstOrDefault().id;
-                    Cliente.Saldo = 0;
-                    Cliente.Activo = true;
-                    Cliente.ProcesadoSAP = false;
-                    db.Clientes.Add(Cliente);
-                    db.SaveChanges();
+
+                        Cliente.idListaPrecios = clientes.idListaPrecios;
+                        Cliente.Nombre = clientes.Nombre;
+                        Cliente.TipoCedula = clientes.TipoCedula;
+                        Cliente.Cedula = clientes.Cedula;
+                        Cliente.Email = clientes.Email;
+                        Cliente.CodPais = "506";
+                        Cliente.Telefono = clientes.Telefono;
+                        Cliente.Provincia = clientes.Provincia;
+                        Cliente.Canton = clientes.Canton;
+                        Cliente.Distrito = clientes.Distrito;
+                        Cliente.Barrio = clientes.Barrio;
+                        Cliente.Sennas = clientes.Sennas;
+                        Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado".ToLower())).FirstOrDefault() == null ? 1 : db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado".ToLower())).FirstOrDefault().id;
+                        Cliente.idGrupo = clientes.idGrupo;
+                        Cliente.Saldo = 0;
+                        Cliente.Activo = true;
+                        Cliente.ProcesadoSAP = false;
+
+                        Cliente.CorreoPublicitario = clientes.CorreoPublicitario;
+                        db.Clientes.Add(Cliente);
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        throw new Exception("Ya existe un cliente con esta cedula");
+                    }
+
+
 
                 }
                 else
@@ -349,8 +384,10 @@ namespace WATickets.Controllers
         [HttpPut]
         public HttpResponseMessage Put([FromBody] Clientes clientes)
         {
+            var t = db.Database.BeginTransaction();
             try
             {
+
                 Clientes Clientes = db.Clientes.Where(a => a.id == clientes.id).FirstOrDefault();
                 if (Clientes != null)
                 {
@@ -368,10 +405,116 @@ namespace WATickets.Controllers
                     Clientes.Barrio = clientes.Barrio;
                     Clientes.Sennas = clientes.Sennas;
                     Clientes.Saldo = clientes.Saldo;
-                    Clientes.Activo = clientes.Activo;
+                   
+                    Clientes.idGrupo = clientes.idGrupo;
                     //Clientes.ProcesadoSAP = clientes.ProcesadoSAP;
+                    Clientes.CorreoPublicitario = clientes.CorreoPublicitario;
                     db.SaveChanges();
 
+
+                    try
+                    {
+                        if(Clientes.ProcesadoSAP)
+                        {
+                            var client = (SAPbobsCOM.BusinessPartners)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oBusinessPartners);
+                            if (client.GetByKey(Clientes.Codigo))
+                            {
+                                client.EmailAddress = clientes.Email;
+                                
+                                client.CardForeignName = clientes.Cedula;
+                                client.FederalTaxID = clientes.Cedula;
+                                client.AdditionalID = clientes.Cedula;
+
+                                client.GroupCode = db.GruposClientes.Where(a => a.id == clientes.idGrupo).FirstOrDefault() == null ? Convert.ToInt32(db.GruposClientes.FirstOrDefault()) : Convert.ToInt32(db.GruposClientes.Where(a => a.id == clientes.idGrupo).FirstOrDefault().CodSAP);
+                                
+                                client.Phone1 = clientes.Telefono;
+                            
+
+                                //Campos de usuario
+                                client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(clientes.CodPais);
+                                client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(clientes.TipoCedula);
+                                client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
+                                client.UserFields.Fields.Item("U_LDT_State").Value = clientes.Provincia.ToString();
+                                switch (clientes.Provincia)
+                                {
+                                    case 1:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "San Jose";
+                                            break;
+                                        }
+                                    case 2:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Alajuela";
+                                            break;
+                                        }
+                                    case 3:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Cartago";
+                                            break;
+                                        }
+                                    case 4:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Heredia";
+                                            break;
+                                        }
+                                    case 5:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Guanacaste";
+                                            break;
+                                        }
+                                    case 6:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Puntarenas";
+                                            break;
+                                        }
+                                    case 7:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Limon";
+                                            break;
+                                        }
+                                }
+                                client.UserFields.Fields.Item("U_LDT_County").Value = clientes.Provincia.ToString() + "-" + clientes.Canton;
+                                var canton = Convert.ToInt32(clientes.Canton);
+                                client.UserFields.Fields.Item("U_LDT_Nom_County").Value = db.Cantones.Where(a => a.CodProvincia == clientes.Provincia && a.CodCanton == canton).FirstOrDefault().NomCanton;
+                                //client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia + "-" + cliente.Canton;
+                                client.UserFields.Fields.Item("U_LDT_District").Value = clientes.Provincia.ToString() + "-" + clientes.Canton + "-" + clientes.Distrito;
+                                var distrito = Convert.ToInt32(clientes.Distrito);
+                                client.UserFields.Fields.Item("U_LDT_Nom_District").Value = db.Distritos.Where(a => a.CodProvincia == clientes.Provincia && a.CodCanton == canton && a.CodDistrito == distrito).FirstOrDefault().NomDistrito;
+                                client.UserFields.Fields.Item("U_LDT_NeighB").Value = clientes.Provincia.ToString() + "-" + clientes.Canton + "-" + clientes.Distrito + "-" + clientes.Barrio;
+                                var barrio = Convert.ToInt32(clientes.Barrio);
+                                client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == clientes.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
+                                client.UserFields.Fields.Item("U_LDT_Direccion").Value = clientes.Sennas;
+                                var respuesta = client.Update();
+
+                                if (respuesta == 0)
+                                {
+                                    
+                                    Conexion.Desconectar();
+                                }
+                                else
+                                {
+                                    BitacoraErrores be = new BitacoraErrores();
+
+                                    be.Descripcion = Conexion.Company.GetLastErrorDescription();
+                                    be.StrackTrace = "Editar Cliente";
+                                    be.Fecha = DateTime.Now;
+                                    be.JSON = JsonConvert.SerializeObject(clientes);
+                                    db.BitacoraErrores.Add(be);
+                                    db.SaveChanges();
+                                    Conexion.Desconectar();
+                                }
+
+                            }
+
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+
+                    t.Commit();
                 }
                 else
                 {
@@ -383,6 +526,8 @@ namespace WATickets.Controllers
             }
             catch (Exception ex)
             {
+                t.Rollback();
+
                 BitacoraErrores be = new BitacoraErrores();
                 be.Descripcion = ex.Message;
                 be.StrackTrace = ex.StackTrace;
@@ -444,7 +589,8 @@ namespace WATickets.Controllers
                     client.Series = 70; //Serie para clientes
                     client.CardForeignName = cliente.Cedula; 
                     client.FederalTaxID = cliente.Cedula;
-                    
+                    client.AdditionalID = cliente.Cedula;
+                    client.GroupCode = db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault() == null ? Convert.ToInt32(db.GruposClientes.FirstOrDefault()) : Convert.ToInt32(db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault().CodSAP);
                     client.Currency = "##";
                     client.Phone1 = cliente.Telefono;
                     client.CardType = BoCardTypes.cCustomer;

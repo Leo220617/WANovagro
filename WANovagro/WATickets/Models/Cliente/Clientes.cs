@@ -57,7 +57,11 @@ namespace WATickets.Models.Cliente
 
         public int idCondicionPago { get; set; }
 
-        //[StringLength(200)]
-        //public string Ocupacion { get; set; }
+      
+
+        public string CorreoPublicitario { get; set; }
+
+        public int idGrupo { get; set; }
     }
+       
 }
