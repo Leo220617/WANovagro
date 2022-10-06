@@ -19,5 +19,6 @@ namespace WATickets.Models.Cliente
         public int idCliente { get; set; }
         public DateTime FechaVencimiento { get; set; }
         public byte[] Imagen { get; set; }
+        public bool Activo { get; set; }
     }
 }

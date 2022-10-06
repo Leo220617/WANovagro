@@ -63,17 +63,17 @@ namespace WATickets.Controllers
                             {
                                 case 9:
                                     {
-                                        Cliente.TipoCedula = "1";
+                                        Cliente.TipoCedula = "01";
                                         break;
                                     }
                                 case 10:
                                     {
-                                        Cliente.TipoCedula = "2";
+                                        Cliente.TipoCedula = "02";
                                         break;
                                     }
                                 default:
                                     {
-                                        Cliente.TipoCedula = "3";
+                                        Cliente.TipoCedula = "03";
                                         break;
                                     }
                             }
@@ -146,17 +146,17 @@ namespace WATickets.Controllers
                             {
                                 case 9:
                                     {
-                                        Cliente.TipoCedula = "1";
+                                        Cliente.TipoCedula = "01";
                                         break;
                                     }
                                 case 10:
                                     {
-                                        Cliente.TipoCedula = "2";
+                                        Cliente.TipoCedula = "02";
                                         break;
                                     }
                                 default:
                                     {
-                                        Cliente.TipoCedula = "3";
+                                        Cliente.TipoCedula = "03";
                                         break;
                                     }
                             }

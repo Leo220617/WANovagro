@@ -37,6 +37,7 @@ namespace WATickets.Controllers
                     a.idCliente,
                     a.FechaVencimiento,
                     a.Imagen,
+                    a.Activo,
                     Detalle = db.DetExoneraciones.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).ToList();
@@ -76,6 +77,7 @@ namespace WATickets.Controllers
                     a.idCliente,
                     a.FechaVencimiento,
                     a.Imagen,
+                    a.Activo,
                     Detalle = db.DetExoneraciones.Where(b => b.idEncabezado == a.id).ToList()
 
 
@@ -122,6 +124,7 @@ namespace WATickets.Controllers
                     Exoneracion.PorExon = exoneraciones.PorExon;
                     Exoneracion.idCliente = exoneraciones.idCliente;
                     Exoneracion.FechaVencimiento = exoneraciones.FechaVencimiento;
+                    Exoneracion.Activo = true;
                     db.Exoneraciones.Add(Exoneracion);
                     db.SaveChanges();
 
@@ -236,20 +239,33 @@ namespace WATickets.Controllers
         {
             try
             {
-              
-
                 Exoneraciones Exoneraciones = db.Exoneraciones.Where(a => a.id == id).FirstOrDefault();
                 if (Exoneraciones != null)
                 {
-                    db.Exoneraciones.Remove(Exoneraciones);
-                    db.SaveChanges();
+                    db.Entry(Exoneraciones).State = EntityState.Modified;
 
+
+                    if (Exoneraciones.Activo)
+                    {
+
+                        Exoneraciones.Activo = false;
+
+                    }
+                    else
+                    {
+
+                        Exoneraciones.Activo = true;
+                    }
+
+
+
+
+                    db.SaveChanges();
                 }
                 else
                 {
-                    throw new Exception("No existe una exoneración con este ID");
+                    throw new Exception("No existe un usuario con este ID");
                 }
-                
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
