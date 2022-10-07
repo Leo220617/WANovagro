@@ -19,6 +19,7 @@ namespace WATickets.Models
         public DateTime FechaInicial { get; set; }
         public DateTime FechaFinal { get; set; }
         public bool Procesado { get; set; }
-
+        public bool Externo { get; set; }
+        public bool Activo { get; set; }
     }
 }

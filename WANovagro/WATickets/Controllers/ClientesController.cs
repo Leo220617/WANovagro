@@ -252,7 +252,7 @@ namespace WATickets.Controllers
                     Clientes = Clientes.Where(a => a.idListaPrecios == filtro.Codigo1).ToList();
                 }
 
-                if (filtro.Procesado != null) 
+                if (filtro.Procesado != null && filtro.Externo == false) 
                 {
                     Clientes = Clientes.Where(a => a.ProcesadoSAP == filtro.Procesado).ToList();
                 }
@@ -260,6 +260,10 @@ namespace WATickets.Controllers
                 if (filtro.Codigo2 > 0) // esto por ser integer
                 {
                     Clientes = Clientes.Where(a => a.idGrupo == filtro.Codigo2).ToList();
+                }
+                if(filtro.Activo)
+                {
+                    Clientes = Clientes.Where(a => a.Activo == filtro.Activo).ToList();
                 }
 
 
