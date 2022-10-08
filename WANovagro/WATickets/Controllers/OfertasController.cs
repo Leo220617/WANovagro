@@ -41,11 +41,16 @@ namespace WATickets.Controllers
                     a.TotalCompra,
                     a.PorDescto,
                     a.Status,
+                    a.CodSuc,
+                    a.Moneda,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).ToList(); //Traemos el listado de productos
 
-                
+                if(!string.IsNullOrEmpty(filtro.Texto))
+                {
+                    Ofertas = Ofertas.Where(a => a.CodSuc == filtro.Texto).ToList();
+                }
 
                 if (filtro.Codigo1 > 0) // esto por ser integer
                 {
@@ -101,6 +106,8 @@ namespace WATickets.Controllers
                     a.TotalCompra,
                     a.PorDescto,
                     a.Status,
+                    a.CodSuc,
+                    a.Moneda,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => a.id == id).FirstOrDefault();
@@ -145,7 +152,8 @@ namespace WATickets.Controllers
                     Oferta.TotalCompra = oferta.TotalCompra;
                     Oferta.PorDescto = oferta.PorDescto;
                     Oferta.Status = "0";
-                    
+                    Oferta.CodSuc = oferta.CodSuc;
+                    Oferta.Moneda = oferta.Moneda;
                     // 0 is open, 1 is closed
 
                     db.EncOferta.Add(Oferta);
@@ -222,9 +230,11 @@ namespace WATickets.Controllers
                     Oferta.TotalDescuento = oferta.TotalDescuento;
                     Oferta.TotalCompra = oferta.TotalCompra;
                     Oferta.PorDescto = oferta.PorDescto;
-                   // Oferta.Status = oferta.Status;
-                    
-                     
+                    //Oferta.CodSuc = oferta.CodSuc;
+                    Oferta.Moneda = oferta.Moneda;
+                    // Oferta.Status = oferta.Status;
+
+
                     db.SaveChanges();
 
                     var Detalles = db.DetOferta.Where(a => a.idEncabezado == Oferta.id).ToList();

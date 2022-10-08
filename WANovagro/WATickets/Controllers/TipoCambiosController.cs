@@ -130,12 +130,19 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
-          public HttpResponseMessage GetAll()
+          public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
                 var TipoCambios = db.TipoCambios.ToList();
 
+                var time = new DateTime();
+
+                if(filtro.FechaInicial != time)
+                {
+                    var Fecha = filtro.FechaInicial.Date;
+                    TipoCambios = TipoCambios.Where(a => a.Fecha == Fecha).ToList();
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, TipoCambios);
             }
