@@ -24,5 +24,7 @@
         public string SQLCondiciones { get; set; }
 
         public string SQLGrupos { get; set; }
+
+        public string SQLTipoCambio{ get; set; }
     }
 }

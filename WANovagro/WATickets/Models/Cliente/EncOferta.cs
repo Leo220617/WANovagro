@@ -22,5 +22,7 @@ namespace WATickets.Models.Cliente
         public decimal TotalCompra { get; set; }
         public decimal PorDescto { get; set; }
         public string Status { get; set; }
+        public string CodSuc { get; set; }
+        public string Moneda { get; set; }
     }
 }

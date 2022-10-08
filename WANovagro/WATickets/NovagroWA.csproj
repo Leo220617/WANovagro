@@ -260,6 +260,7 @@
     <Compile Include="Controllers\SeguridadModulosController.cs" />
     <Compile Include="Controllers\SeguridadRolesModulosController.cs" />
     <Compile Include="Controllers\SucursalesController.cs" />
+    <Compile Include="Controllers\TipoCambiosController.cs" />
     <Compile Include="Controllers\TokenGenerator.cs" />
     <Compile Include="Controllers\TokenValidationHandler.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
@@ -298,6 +299,7 @@
     <Compile Include="Models\Cliente\SeguridadModulos.cs" />
     <Compile Include="Models\Cliente\SeguridadRolesModulos.cs" />
     <Compile Include="Models\Cliente\Sucursales.cs" />
+    <Compile Include="Models\Cliente\TipoCambios.cs" />
     <Compile Include="Models\Cliente\Usuarios.cs" />
     <Compile Include="Models\Cliente\UsuariosSucursales.cs" />
     <Compile Include="Models\Filtros.cs" />

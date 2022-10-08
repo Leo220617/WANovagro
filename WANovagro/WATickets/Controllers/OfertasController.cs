@@ -62,6 +62,8 @@ namespace WATickets.Controllers
                 }
 
 
+
+
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Ofertas);
             }
             catch (Exception ex)
@@ -220,7 +222,7 @@ namespace WATickets.Controllers
                     Oferta.TotalDescuento = oferta.TotalDescuento;
                     Oferta.TotalCompra = oferta.TotalCompra;
                     Oferta.PorDescto = oferta.PorDescto;
-                    Oferta.Status = oferta.Status;
+                   // Oferta.Status = oferta.Status;
                     
                      
                     db.SaveChanges();
