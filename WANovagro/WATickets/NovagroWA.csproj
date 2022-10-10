@@ -296,6 +296,7 @@
     <Compile Include="Models\Cliente\GruposClientes.cs" />
     <Compile Include="Models\Cliente\Impuestos.cs" />
     <Compile Include="Models\Cliente\ListaPrecios.cs" />
+    <Compile Include="Models\Cliente\MetodosPagos.cs" />
     <Compile Include="Models\Cliente\ModelCliente.cs" />
     <Compile Include="Models\Cliente\Parametros.cs" />
     <Compile Include="Models\Cliente\Productos.cs" />
