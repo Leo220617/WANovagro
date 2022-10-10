@@ -73,6 +73,7 @@ namespace WATickets.Controllers
                                     Producto.CodBarras = item["CodigoBarras"].ToString();
                                     Producto.Costo = Convert.ToDecimal(item["Costo"]);
                                     Producto.Stock = Convert.ToDecimal(item["StockReal"]);
+                                    Producto.Moneda = item["Moneda"].ToString();
                                     Producto.Activo = true;
                                     Producto.ProcesadoSAP = true;
 
@@ -112,6 +113,8 @@ namespace WATickets.Controllers
                                     Producto.CodBarras = item["CodigoBarras"].ToString();
                                     Producto.Costo = Convert.ToDecimal(item["Costo"]);
                                     Producto.Stock = Convert.ToDecimal(item["StockReal"]);
+                                    Producto.Moneda = item["Moneda"].ToString();
+
                                     Producto.Activo = true;
                                     Producto.ProcesadoSAP = true;
 
@@ -248,6 +251,8 @@ namespace WATickets.Controllers
                     Producto.CodBarras = productos.CodBarras;
                     Producto.Costo = productos.Costo;
                     Producto.Stock = productos.Stock;
+                    Producto.Moneda = Producto.Moneda;
+
                     Producto.Activo = true;
                     Producto.ProcesadoSAP = false;
                     db.Productos.Add(Producto);
@@ -296,6 +301,7 @@ namespace WATickets.Controllers
                     Productos.Costo = productos.Costo;
                     Productos.Stock = productos.Stock;
                     Productos.Activo = productos.Activo;
+                    Productos.Moneda = productos.Moneda;
                     db.SaveChanges();
 
                 }

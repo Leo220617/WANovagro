@@ -22,6 +22,8 @@ namespace WATickets.Models.Cliente
         [StringLength(500)]
         public string Nombre { get; set; }
 
+        public string Moneda { get; set; }
+
         [Column(TypeName = "money")]
         public decimal PrecioUnitario { get; set; }
 
