@@ -47,6 +47,7 @@ namespace WATickets.Controllers
                     a.CodSuc,
                     a.Moneda,
                     a.TipoDocumento,
+                    MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
@@ -119,6 +120,7 @@ namespace WATickets.Controllers
                     a.CodSuc,
                     a.Moneda,
                     a.TipoDocumento,
+                    MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => a.id == id).FirstOrDefault();
@@ -192,6 +194,18 @@ namespace WATickets.Controllers
                         i++;
                     }
 
+                    foreach(var item in documento.MetodosPagos)
+                    {
+                        MetodosPagos MetodosPagos = new MetodosPagos();
+                        MetodosPagos.idEncabezado = Documento.id;
+                        MetodosPagos.Monto = item.Monto;
+                        MetodosPagos.BIN = item.BIN;
+                        MetodosPagos.NumCheque = item.NumCheque;
+                        MetodosPagos.NumReferencia = item.NumReferencia;
+                        db.MetodosPagos.Add(MetodosPagos);
+                        db.SaveChanges();
+
+                    }
 
                     BitacoraMovimientos btm = new BitacoraMovimientos();
                     btm.idUsuario = documento.idUsuarioCreador;
@@ -277,6 +291,27 @@ namespace WATickets.Controllers
                         db.DetDocumento.Add(det);
                         db.SaveChanges();
                         i++;
+                    }
+
+                    var MetodosPagos2 = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id).ToList();
+
+                    foreach (var item in MetodosPagos2)
+                    {
+                        db.MetodosPagos.Remove(item);
+                        db.SaveChanges();
+                    }
+
+                    foreach (var item in documento.MetodosPagos)
+                    {
+                        MetodosPagos MetodosPagos = new MetodosPagos();
+                        MetodosPagos.idEncabezado = Documento.id;
+                        MetodosPagos.Monto = item.Monto;
+                        MetodosPagos.BIN = item.BIN;
+                        MetodosPagos.NumCheque = item.NumCheque;
+                        MetodosPagos.NumReferencia = item.NumReferencia;
+                        db.MetodosPagos.Add(MetodosPagos);
+                        db.SaveChanges();
+
                     }
 
 
