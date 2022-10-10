@@ -29,6 +29,8 @@ namespace WATickets.Controllers
         {
             try
             {
+                var time = DateTime.Now; // 01-01-0001
+
                 var Documentos = db.EncDocumento.Select(a => new {
                     a.id,
                     a.idCliente,
@@ -42,11 +44,17 @@ namespace WATickets.Controllers
                     a.TotalCompra,
                     a.PorDescto,
                     a.Status,
+                    a.CodSuc,
+                    a.Moneda,
+                    a.TipoDocumento,
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).ToList(); //Traemos el listado de productos
+                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
 
-
+                if (!string.IsNullOrEmpty(filtro.Texto))
+                {
+                    Documentos = Documentos.Where(a => a.CodSuc == filtro.Texto).ToList();
+                }
 
                 if (filtro.Codigo1 > 0) // esto por ser integer
                 {
@@ -61,6 +69,12 @@ namespace WATickets.Controllers
                 {
                     Documentos = Documentos.Where(a => a.Status == filtro.ItemCode).ToList();
                 }
+
+                if (!string.IsNullOrEmpty(filtro.CardCode)) // esto por ser string
+                {
+                    Documentos = Documentos.Where(a => a.TipoDocumento == filtro.CardCode).ToList();
+                }
+
 
 
 
@@ -102,6 +116,9 @@ namespace WATickets.Controllers
                     a.TotalCompra,
                     a.PorDescto,
                     a.Status,
+                    a.CodSuc,
+                    a.Moneda,
+                    a.TipoDocumento,
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => a.id == id).FirstOrDefault();
@@ -145,6 +162,9 @@ namespace WATickets.Controllers
                     Documento.TotalDescuento = documento.TotalDescuento;
                     Documento.TotalCompra = documento.TotalCompra;
                     Documento.PorDescto = documento.PorDescto;
+                    Documento.CodSuc = documento.CodSuc;
+                    Documento.Moneda = documento.Moneda;
+                    Documento.TipoDocumento = documento.TipoDocumento;
                     Documento.Status = "0";
 
                     // 0 is open, 1 is closed
@@ -223,6 +243,8 @@ namespace WATickets.Controllers
                     Documento.TotalDescuento = documento.TotalDescuento;
                     Documento.TotalCompra = documento.TotalCompra;
                     Documento.PorDescto = documento.PorDescto;
+                    Documento.Moneda = documento.Moneda;
+                    Documento.TipoDocumento = documento.TipoDocumento;
                     // Documento.Status = documetno.Status;
 
 

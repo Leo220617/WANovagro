@@ -247,6 +247,7 @@
     <Compile Include="Controllers\Conexion.cs" />
     <Compile Include="Controllers\CorreoEnvioController.cs" />
     <Compile Include="Controllers\DistritosController.cs" />
+    <Compile Include="Controllers\DocumentosController.cs" />
     <Compile Include="Controllers\ExoneracionesController.cs" />
     <Compile Include="Controllers\G.cs" />
     <Compile Include="Controllers\GruposClientesController.cs" />
@@ -268,6 +269,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\APIS\Documentos.cs" />
     <Compile Include="Models\APIS\ExoneracionesViewModel.cs" />
     <Compile Include="Models\APIS\ExoneracionesX.cs" />
     <Compile Include="Models\APIS\Ofertas.cs" />
@@ -284,9 +286,11 @@
     <Compile Include="Models\Cliente\CondicionesPagos.cs" />
     <Compile Include="Models\Cliente\ConexionSAP.cs" />
     <Compile Include="Models\Cliente\CorreoEnvio.cs" />
+    <Compile Include="Models\Cliente\DetDocumento.cs" />
     <Compile Include="Models\Cliente\DetExoneraciones.cs" />
     <Compile Include="Models\Cliente\DetOferta.cs" />
     <Compile Include="Models\Cliente\Distritos.cs" />
+    <Compile Include="Models\Cliente\EncDocumento.cs" />
     <Compile Include="Models\Cliente\EncOferta.cs" />
     <Compile Include="Models\Cliente\Exoneraciones.cs" />
     <Compile Include="Models\Cliente\GruposClientes.cs" />

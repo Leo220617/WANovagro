@@ -28,6 +28,7 @@ namespace WATickets.Controllers
         {
             try
             {
+                var time = DateTime.Now; // 01-01-0001
                 var Ofertas = db.EncOferta.Select(a => new {
                     a.id,
                     a.idCliente,
@@ -45,7 +46,7 @@ namespace WATickets.Controllers
                     a.Moneda,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).ToList(); //Traemos el listado de productos
+                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
 
                 if(!string.IsNullOrEmpty(filtro.Texto))
                 {
