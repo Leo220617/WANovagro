@@ -41,6 +41,8 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<DetExoneraciones> DetExoneraciones { get; set; }
         public virtual DbSet<GruposClientes> GruposClientes { get; set; }
         public virtual DbSet<TipoCambios> TipoCambios { get; set; }
+        public virtual DbSet<EncDocumento> EncDocumento { get; set; }
+        public virtual DbSet<DetDocumento> DetDocumento { get; set; }
 
 
 

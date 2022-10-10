@@ -1,0 +1,292 @@
+﻿
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using System.Web.Http.Cors;
+using WATickets.Models;
+using WATickets.Models.APIS;
+using WATickets.Models.Cliente;
+
+namespace WATickets.Controllers
+{
+    [Authorize]
+
+    public class DocumentosController : ApiController
+    {
+        ModelCliente db = new ModelCliente();
+        G G = new G();
+
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
+        {
+            try
+            {
+                var Documentos = db.EncDocumento.Select(a => new {
+                    a.id,
+                    a.idCliente,
+                    a.idUsuarioCreador,
+                    a.Fecha,
+                    a.FechaVencimiento,
+                    a.Comentarios,
+                    a.Subtotal,
+                    a.TotalImpuestos,
+                    a.TotalDescuento,
+                    a.TotalCompra,
+                    a.PorDescto,
+                    a.Status,
+                    Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
+
+                }).ToList(); //Traemos el listado de productos
+
+
+
+                if (filtro.Codigo1 > 0) // esto por ser integer
+                {
+                    Documentos = Documentos.Where(a => a.idCliente == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
+                }
+                if (filtro.Codigo2 > 0) // esto por ser integer
+                {
+                    Documentos = Documentos.Where(a => a.idUsuarioCreador == filtro.Codigo2).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(filtro.ItemCode)) // esto por ser string
+                {
+                    Documentos = Documentos.Where(a => a.Status == filtro.ItemCode).ToList();
+                }
+
+
+
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Documentos);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+
+            }
+
+
+        }
+
+        [Route("api/Documentos/Consultar")]
+        public HttpResponseMessage GetOne([FromUri] int id)
+        {
+            try
+            {
+                var Documento = db.EncDocumento.Select(a => new {
+                    a.id,
+                    a.idCliente,
+                    a.idUsuarioCreador,
+                    a.Fecha,
+                    a.FechaVencimiento,
+                    a.Comentarios,
+                    a.Subtotal,
+                    a.TotalImpuestos,
+                    a.TotalDescuento,
+                    a.TotalCompra,
+                    a.PorDescto,
+                    a.Status,
+                    Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
+
+                }).Where(a => a.id == id).FirstOrDefault();
+
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Documento);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+
+            }
+
+        }
+
+        [Route("api/Documentos/Insertar")]
+        [HttpPost]
+        public HttpResponseMessage Post([FromBody] Documentos documento)
+        {
+            try
+            {
+                EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id).FirstOrDefault();
+                if (Documento == null)
+                {
+                    Documento = new EncDocumento();
+                    Documento.idCliente = documento.idCliente;
+                    Documento.idUsuarioCreador = documento.idUsuarioCreador;
+                    Documento.Fecha = DateTime.Now;
+                    Documento.FechaVencimiento = documento.FechaVencimiento;
+                    Documento.Comentarios = documento.Comentarios;
+                    Documento.Subtotal = documento.Subtotal;
+                    Documento.TotalImpuestos = documento.TotalImpuestos;
+                    Documento.TotalDescuento = documento.TotalDescuento;
+                    Documento.TotalCompra = documento.TotalCompra;
+                    Documento.PorDescto = documento.PorDescto;
+                    Documento.Status = "0";
+
+                    // 0 is open, 1 is closed
+
+                    db.EncDocumento.Add(Documento);
+                    db.SaveChanges();
+
+                    var i = 0;
+                    foreach (var item in documento.Detalle)
+                    {
+                        DetDocumento det = new DetDocumento();
+                        det.idEncabezado = Documento.id;
+                        det.idProducto = item.idProducto;
+                        det.NumLinea = i;
+                        det.PorDescto = item.PorDescto;
+                        det.PrecioUnitario = item.PrecioUnitario;
+                        det.TotalImpuesto = item.TotalImpuesto;
+                        det.Cantidad = item.Cantidad;
+                        det.Descuento = item.Descuento;
+                        det.TotalLinea = ((det.PrecioUnitario * det.Cantidad) - det.Descuento) + det.TotalImpuesto;
+                        det.Cabys = item.Cabys;
+                        det.idExoneracion = item.idExoneracion;
+                        db.DetDocumento.Add(det);
+                        db.SaveChanges();
+                        i++;
+                    }
+
+
+                    BitacoraMovimientos btm = new BitacoraMovimientos();
+                    btm.idUsuario = documento.idUsuarioCreador;
+                    btm.Descripcion = "Se crea un documento para el cliente con el id: " + documento.idCliente;
+                    btm.Fecha = DateTime.Now;
+                    btm.Metodo = "Insercion de Documento";
+                    db.BitacoraMovimientos.Add(btm);
+                    db.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("Ya existe un documento con este ID");
+                }
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+
+        [Route("api/Documentos/Actualizar")]
+        [HttpPut]
+        public HttpResponseMessage Put([FromBody] Documentos documento)
+        {
+            try
+            {
+                EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id).FirstOrDefault();
+                if (Documento != null)
+                {
+                    db.Entry(Documento).State = EntityState.Modified;
+                    Documento.idCliente = documento.idCliente;
+                    Documento.idUsuarioCreador = documento.idUsuarioCreador;
+                    Documento.Fecha = DateTime.Now;
+                    Documento.FechaVencimiento = documento.FechaVencimiento;
+                    Documento.Comentarios = documento.Comentarios;
+                    Documento.Subtotal = documento.Subtotal;
+                    Documento.TotalImpuestos = documento.TotalImpuestos;
+                    Documento.TotalDescuento = documento.TotalDescuento;
+                    Documento.TotalCompra = documento.TotalCompra;
+                    Documento.PorDescto = documento.PorDescto;
+                    // Documento.Status = documetno.Status;
+
+
+                    db.SaveChanges();
+
+                    var Detalles = db.DetDocumento.Where(a => a.idEncabezado == Documento.id).ToList();
+
+                    foreach (var item in Detalles)
+                    {
+                        db.DetDocumento.Remove(item);
+                        db.SaveChanges();
+                    }
+
+
+                    var i = 0;
+                    foreach (var item in documento.Detalle)
+                    {
+                        DetDocumento det = new DetDocumento();
+                        det.idEncabezado = Documento.id;
+                        det.idProducto = item.idProducto;
+                        det.NumLinea = i;
+                        det.PorDescto = item.PorDescto;
+                        det.PrecioUnitario = item.PrecioUnitario;
+                        det.TotalImpuesto = item.TotalImpuesto;
+                        det.Cantidad = item.Cantidad;
+                        det.Descuento = item.Descuento;
+                        det.Cabys = item.Cabys;
+                        det.idExoneracion = item.idExoneracion;
+                        db.DetDocumento.Add(det);
+                        db.SaveChanges();
+                        i++;
+                    }
+
+
+                    BitacoraMovimientos btm = new BitacoraMovimientos();
+                    btm.idUsuario = documento.idUsuarioCreador;
+                    btm.Descripcion = "Se edito el documento: " + Documento.id + " del cliente con el id: " + documento.idCliente;
+                    btm.Fecha = DateTime.Now;
+                    btm.Metodo = "Edicion de Documento";
+                    db.BitacoraMovimientos.Add(btm);
+                    db.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("NO existe un documento con este ID");
+                }
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+
+
+    }
+}
