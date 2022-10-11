@@ -161,9 +161,18 @@ namespace WATickets.Controllers
                     }
                     else
                     {
-                        db.Entry(CierreCaja).State = EntityState.Modified;
-                        CierreCaja.FecUltAct = DateTime.Now;
-                        db.SaveChanges();
+                        if(CierreCaja.Activo == true)
+                        {
+                            db.Entry(CierreCaja).State = EntityState.Modified;
+                            CierreCaja.FecUltAct = DateTime.Now;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            throw new Exception("Caja Cerrada");
+
+                        }
+
                     }
 
 

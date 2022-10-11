@@ -107,7 +107,7 @@ namespace WATickets.Controllers
                     CierreCajas.TotalAperturaFC = cierreCajas.TotalAperturaFC;
                     CierreCajas.Activo = false;
                     CierreCajas.HoraCierre = DateTime.Now;
-                    CierreCajas.TotalizadoMonedas = cierreCajas.TotalVendidoColones + (cierreCajas.TotalVendidoFC * TipoCambio.TipoCambio);
+                    CierreCajas.TotalizadoMonedas = cierreCajas.TotalRegistradoColones + (cierreCajas.TotalRegistradoFC * TipoCambio.TipoCambio);
                     db.SaveChanges();
 
                 }
