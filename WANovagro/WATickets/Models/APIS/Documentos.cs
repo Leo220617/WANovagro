@@ -24,6 +24,7 @@ namespace WATickets.Models.APIS
         public string CodSuc { get; set; }
         public string Moneda { get; set; }
         public string TipoDocumento { get; set; }
+        public int idCaja { get; set; }
         public List<MetodosPagos> MetodosPagos { get; set; }
         public List<DetDocumento> Detalle { get; set; }
     }

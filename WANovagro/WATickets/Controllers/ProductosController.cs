@@ -174,7 +174,15 @@ namespace WATickets.Controllers
                     // and = &&, or = ||
                     Productos = Productos.Where(a => a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper()) ).ToList();// filtramos por lo que trae texto
                 }
+                if(!string.IsNullOrEmpty(filtro.CardCode))
+                {
+                    var Bodegas = db.Bodegas.Where(a => a.CodSuc != filtro.CardCode).ToList();
+                    foreach(var item in Bodegas)
+                    {
+                        Productos = Productos.Where(a => a.idBodega != item.id).ToList();
 
+                    }
+                }
                 if(filtro.Codigo1 > 0) // esto por ser integer
                 {
                     Productos = Productos.Where(a => a.idBodega == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
