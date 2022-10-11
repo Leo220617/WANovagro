@@ -76,7 +76,7 @@ namespace WATickets.Controllers
                 {
                     Documentos = Documentos.Where(a => a.TipoDocumento == filtro.CardCode).ToList();
                 }
-
+              
 
 
 

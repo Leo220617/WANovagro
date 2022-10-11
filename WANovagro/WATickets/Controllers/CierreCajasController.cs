@@ -19,12 +19,26 @@ namespace WATickets.Controllers
         ModelCliente db = new ModelCliente();
         G G = new G();
 
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
-                var Cierre = db.CierreCajas.ToList();
+                var time = DateTime.Now; // 01-01-0001
+                var Cierre = db.CierreCajas.ToList().Where(a => (filtro.FechaInicial != time ? a.FechaCaja >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.FechaCaja <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos;
 
+
+                if (filtro.Codigo1 > 0) // esto por ser integer
+                {
+                    Cierre = Cierre.Where(a => a.idUsuario == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
+                }
+                if (filtro.Codigo2 > 0) // esto por ser integer
+                {
+                    Cierre = Cierre.Where(a => a.idCaja == filtro.Codigo2).ToList();
+                }
+                if (filtro.Activo)
+                {
+                    Cierre = Cierre.Where(a => a.Activo == filtro.Activo).ToList();
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Cierre);
             }
