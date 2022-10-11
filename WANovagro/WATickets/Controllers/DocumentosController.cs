@@ -30,12 +30,17 @@ namespace WATickets.Controllers
             try
             {
                 var time = DateTime.Now; // 01-01-0001
-
+                if(filtro.FechaFinal != time)
+                {
+                    filtro.FechaInicial = filtro.FechaInicial.Date;
+                    filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
+                }
                 var Documentos = db.EncDocumento.Select(a => new
                 {
                     a.id,
                     a.idCliente,
                     a.idUsuarioCreador,
+                    a.idCaja,
                     a.Fecha,
                     a.FechaVencimiento,
                     a.Comentarios,
@@ -76,8 +81,13 @@ namespace WATickets.Controllers
                 {
                     Documentos = Documentos.Where(a => a.TipoDocumento == filtro.CardCode).ToList();
                 }
-              
+                
+                
+                if(filtro.Codigo3 > 0)
+                {
+                    Documentos = Documentos.Where(a => a.idCaja == filtro.Codigo3).ToList();
 
+                }
 
 
 
@@ -110,6 +120,7 @@ namespace WATickets.Controllers
                     a.id,
                     a.idCliente,
                     a.idUsuarioCreador,
+                    a.idCaja,
                     a.Fecha,
                     a.FechaVencimiento,
                     a.Comentarios,
@@ -159,7 +170,7 @@ namespace WATickets.Controllers
                     Documento.idCliente = documento.idCliente;
                     Documento.idUsuarioCreador = documento.idUsuarioCreador;
                     Documento.Fecha = DateTime.Now;
-                    Documento.FechaVencimiento = documento.FechaVencimiento;
+                    Documento.FechaVencimiento = DateTime.Now;//documento.FechaVencimiento;
                     Documento.Comentarios = documento.Comentarios;
                     Documento.Subtotal = documento.Subtotal;
                     Documento.TotalImpuestos = documento.TotalImpuestos;
@@ -170,6 +181,7 @@ namespace WATickets.Controllers
                     Documento.Moneda = documento.Moneda;
                     Documento.TipoDocumento = documento.TipoDocumento;
                     Documento.Status = "0";
+                    Documento.idCaja = documento.idCaja;
 
                     // 0 is open, 1 is closed
 
@@ -331,7 +343,8 @@ namespace WATickets.Controllers
                     Documento.idCliente = documento.idCliente;
                     Documento.idUsuarioCreador = documento.idUsuarioCreador;
                     Documento.Fecha = DateTime.Now;
-                    Documento.FechaVencimiento = documento.FechaVencimiento;
+                    Documento.FechaVencimiento = DateTime.Now;//documento.FechaVencimiento;
+
                     Documento.Comentarios = documento.Comentarios;
                     Documento.Subtotal = documento.Subtotal;
                     Documento.TotalImpuestos = documento.TotalImpuestos;

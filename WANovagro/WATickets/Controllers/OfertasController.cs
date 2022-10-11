@@ -29,6 +29,11 @@ namespace WATickets.Controllers
             try
             {
                 var time = DateTime.Now; // 01-01-0001
+                if (filtro.FechaFinal != time)
+                {
+                    filtro.FechaInicial = filtro.FechaInicial.Date;
+                    filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
+                }
                 var Ofertas = db.EncOferta.Select(a => new {
                     a.id,
                     a.idCliente,

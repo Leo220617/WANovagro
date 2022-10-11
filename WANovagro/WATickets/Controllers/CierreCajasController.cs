@@ -24,6 +24,11 @@ namespace WATickets.Controllers
             try
             {
                 var time = DateTime.Now; // 01-01-0001
+                if (filtro.FechaFinal != time)
+                {
+                    filtro.FechaInicial = filtro.FechaInicial.Date;
+                    filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
+                }
                 var Cierre = db.CierreCajas.ToList().Where(a => (filtro.FechaInicial != time ? a.FechaCaja >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.FechaCaja <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos;
 
 

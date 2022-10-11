@@ -263,7 +263,11 @@ namespace WATickets.Controllers
                 }
                 if(filtro.Activo)
                 {
-                    Clientes = Clientes.Where(a => a.Activo == filtro.Activo).ToList();
+                    if(!filtro.Externo)
+                    {
+                        Clientes = Clientes.Where(a => a.Activo == filtro.Activo).ToList();
+
+                    }
                 }
 
 
