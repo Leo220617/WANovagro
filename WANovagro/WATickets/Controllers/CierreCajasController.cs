@@ -35,7 +35,7 @@ namespace WATickets.Controllers
                 {
                     Cierre = Cierre.Where(a => a.idCaja == filtro.Codigo2).ToList();
                 }
-                if (filtro.Activo)
+                if (filtro.Externo)
                 {
                     Cierre = Cierre.Where(a => a.Activo == filtro.Activo).ToList();
                 }
