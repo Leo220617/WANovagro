@@ -242,6 +242,7 @@
     <Compile Include="Controllers\CabysController.cs" />
     <Compile Include="Controllers\CajasController.cs" />
     <Compile Include="Controllers\CantonesController.cs" />
+    <Compile Include="Controllers\CierreCajasController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\CondicionesPagosController.cs" />
     <Compile Include="Controllers\Conexion.cs" />
