@@ -44,12 +44,19 @@ namespace WATickets.Controllers
 
         }
         [Route("api/CierreCajas/Consultar")]
-        public HttpResponseMessage GetOne([FromUri] int id)
+        public HttpResponseMessage GetOne([FromUri] int id, DateTime Fecha)
         {
-            var time = DateTime.Now.Date;
+            
             try
             {
-                CierreCajas cierreCajas = db.CierreCajas.Where(a => a.idCaja == id && a.FechaCaja == time).FirstOrDefault();
+                var time = new DateTime(); //01-01-0001
+                if (Fecha == time)
+                {
+                    Fecha = DateTime.Now.Date;
+
+                }
+
+                CierreCajas cierreCajas = db.CierreCajas.Where(a => a.idCaja == id && a.FechaCaja == Fecha).FirstOrDefault();
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, cierreCajas);
@@ -78,12 +85,11 @@ namespace WATickets.Controllers
                 CierreCajas CierreCajas = db.CierreCajas.Where(a => a.idCaja == cierreCajas.idCaja && a.FechaCaja == cierreCajas.FechaCaja).FirstOrDefault();
                 if (CierreCajas != null)
                 {
+                    var TipoCambio = db.TipoCambios.Where(a => a.Fecha == cierreCajas.FechaCaja && a.Moneda == "USD").FirstOrDefault();
                     db.Entry(CierreCajas).State = System.Data.Entity.EntityState.Modified;
-                    CierreCajas.idUsuario = cierreCajas.idUsuario;
-                    CierreCajas.idCaja = cierreCajas.idCaja;
-                    CierreCajas.FechaCaja = cierreCajas.FechaCaja;
-                    CierreCajas.FecUltAct = cierreCajas.FecUltAct;
-                    CierreCajas.IP = cierreCajas.IP;
+                    
+                    CierreCajas.FecUltAct = DateTime.Now;
+                  
                     CierreCajas.EfectivoColones = cierreCajas.EfectivoColones;
                     CierreCajas.ChequesColones = cierreCajas.ChequesColones;
                     CierreCajas.TarjetasColones = cierreCajas.TarjetasColones;
@@ -99,17 +105,16 @@ namespace WATickets.Controllers
                     CierreCajas.TotalVendidoFC = cierreCajas.TotalVendidoFC;
                     CierreCajas.TotalRegistradoFC = cierreCajas.TotalRegistradoFC;
                     CierreCajas.TotalAperturaFC = cierreCajas.TotalAperturaFC;
-                    CierreCajas.Activo = cierreCajas.Activo;
-                    CierreCajas.HoraCierre = cierreCajas.HoraCierre;
-                    CierreCajas.TotalizadoMonedas = cierreCajas.TotalizadoMonedas;
-
+                    CierreCajas.Activo = false;
+                    CierreCajas.HoraCierre = DateTime.Now;
+                    CierreCajas.TotalizadoMonedas = cierreCajas.TotalVendidoColones + (cierreCajas.TotalVendidoFC * TipoCambio.TipoCambio);
                     db.SaveChanges();
 
                 }
                 else
                 {
-                    throw new Exception("No existe un impuesto" +
-                        " con este ID");
+                    throw new Exception("No existe un cierre" +
+                        " con estas caracteristicas");
                 }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
