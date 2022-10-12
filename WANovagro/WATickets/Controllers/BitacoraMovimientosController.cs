@@ -18,7 +18,7 @@ namespace WATickets.Controllers
     public class BitacoraMovimientosController : ApiController
     {
         ModelCliente db = new ModelCliente();
-        public HttpResponseMessage Get([FromUri] Filtros filtro)
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
@@ -30,7 +30,38 @@ namespace WATickets.Controllers
 
                 var Bitacora = db.BitacoraMovimientos.Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList();
 
+                if (filtro.Codigo1 > 0) // esto por ser integer
+                {
+                    Bitacora = Bitacora.Where(a => a.idUsuario == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
+                }
+
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Bitacora);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+
+            }
+
+        }
+
+        [Route("api/BitacoraMovimientos/Consultar")]
+        public HttpResponseMessage GetOne([FromUri] int id)
+        {
+            try
+            {
+                BitacoraMovimientos bitacoraMovimientos = db.BitacoraMovimientos.Where(a => a.id == id).FirstOrDefault();
+
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, bitacoraMovimientos);
             }
             catch (Exception ex)
             {
