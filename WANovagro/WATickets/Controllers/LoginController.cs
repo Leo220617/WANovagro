@@ -129,10 +129,16 @@ namespace WATickets.Controllers
                     var SeguridadModulos = db.SeguridadRolesModulos.Where(a => a.CodRol == Usuario.idRol).ToList();
 
                     var FechaActual = DateTime.Now.Date;
-                    var CierreCaja = db.CierreCajas.Where(a => a.idUsuario == Usuario.id && a.idCaja == Caja.id && a.FechaCaja == FechaActual).FirstOrDefault();
+                    var CierreCaja = db.CierreCajas.Where(a => a.idCaja == Caja.id && a.FechaCaja == FechaActual && a.Activo == true).FirstOrDefault();
 
                     if(CierreCaja == null)
                     {
+                        CierreCaja = db.CierreCajas.Where(a => a.idCaja == Caja.id && a.FechaCaja == FechaActual && a.idUsuario == Usuario.id && a.Activo == false).FirstOrDefault();
+                        if(CierreCaja != null)
+                        {
+                            throw new Exception("No se puede abrir una caja ya cerrada por un cajero");
+                        }
+
                         CierreCaja = new CierreCajas();
                         CierreCaja.idCaja = Caja.id;
                         CierreCaja.idUsuario = Usuario.id;
@@ -161,17 +167,25 @@ namespace WATickets.Controllers
                     }
                     else
                     {
-                        if(CierreCaja.Activo == true)
+                        if(CierreCaja.idUsuario != Usuario.id)
                         {
+                            throw new Exception("Caja abierta por otro usuario, realice cierre de caja para utilizarla");
+                        }
+
+                           if(CierreCaja.IP != ip)
+                            {
+                                BitacoraMovimientos bm = new BitacoraMovimientos();
+                                bm.idUsuario = Usuario.id;
+                                bm.Metodo = "Apertura Caja";
+                                bm.Fecha = DateTime.Now;
+                                bm.Descripcion = "El usuario con la ip: '" + ip + "' ha iniciado la caja " + Caja.id + " - " + Caja.Nombre;
+                                db.BitacoraMovimientos.Add(bm);
+                                db.SaveChanges();
+                            }
                             db.Entry(CierreCaja).State = EntityState.Modified;
                             CierreCaja.FecUltAct = DateTime.Now;
                             db.SaveChanges();
-                        }
-                        else
-                        {
-                            throw new Exception("Caja Cerrada");
-
-                        }
+                        
 
                     }
 

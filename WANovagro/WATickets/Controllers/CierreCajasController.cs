@@ -63,7 +63,7 @@ namespace WATickets.Controllers
 
         }
         [Route("api/CierreCajas/Consultar")]
-        public HttpResponseMessage GetOne([FromUri] int id, DateTime Fecha)
+        public HttpResponseMessage GetOne([FromUri] int id, DateTime Fecha, int idUsuario)
         {
             
             try
@@ -75,7 +75,7 @@ namespace WATickets.Controllers
 
                 }
 
-                CierreCajas cierreCajas = db.CierreCajas.Where(a => a.idCaja == id && a.FechaCaja == Fecha).FirstOrDefault();
+                CierreCajas cierreCajas = db.CierreCajas.Where(a => a.idCaja == id && a.FechaCaja == Fecha && a.idUsuario == idUsuario).FirstOrDefault();
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, cierreCajas);
@@ -101,7 +101,7 @@ namespace WATickets.Controllers
         {
             try
             {
-                CierreCajas CierreCajas = db.CierreCajas.Where(a => a.idCaja == cierreCajas.idCaja && a.FechaCaja == cierreCajas.FechaCaja).FirstOrDefault();
+                CierreCajas CierreCajas = db.CierreCajas.Where(a => a.idCaja == cierreCajas.idCaja && a.FechaCaja == cierreCajas.FechaCaja && a.idUsuario == cierreCajas.idUsuario).FirstOrDefault();
                 if (CierreCajas != null)
                 {
                     var TipoCambio = db.TipoCambios.Where(a => a.Fecha == cierreCajas.FechaCaja && a.Moneda == "USD").FirstOrDefault();
