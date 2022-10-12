@@ -200,12 +200,30 @@ namespace WATickets.Controllers
                         det.TotalImpuesto = item.TotalImpuesto;
                         det.Cantidad = item.Cantidad;
                         det.Descuento = item.Descuento;
-                        det.TotalLinea = item.TotalLinea;//((det.PrecioUnitario * det.Cantidad) - det.Descuento) + det.TotalImpuesto;
+                        det.TotalLinea = item.TotalLinea; //((det.PrecioUnitario * det.Cantidad) - det.Descuento) + det.TotalImpuesto;
                         det.Cabys = item.Cabys;
                         det.idExoneracion = item.idExoneracion;
                         db.DetDocumento.Add(det);
                         db.SaveChanges();
                         i++;
+
+                        var prod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
+                        if(prod != null)
+                        {
+                           
+                            db.Entry(prod).State = EntityState.Modified;
+                            if(Documento.TipoDocumento == "01" || Documento.TipoDocumento == "04")
+                            {
+                                prod.Stock -= item.Cantidad;
+
+                            }
+                            else 
+                            {
+                                prod.Stock += item.Cantidad;
+                            }
+                            db.SaveChanges();
+                        }
+
                     }
                     var time = DateTime.Now.Date;
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja).FirstOrDefault();
@@ -362,6 +380,22 @@ namespace WATickets.Controllers
 
                     foreach (var item in Detalles)
                     {
+                        var prod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
+                        if (prod != null)
+                        {
+
+                            db.Entry(prod).State = EntityState.Modified;
+                            if (Documento.TipoDocumento == "01" || Documento.TipoDocumento == "04")
+                            {
+                                prod.Stock += item.Cantidad;
+
+                            }
+                            else
+                            {
+                                prod.Stock -= item.Cantidad;
+                            }
+                            db.SaveChanges();
+                        }
 
                         db.DetDocumento.Remove(item);
                         db.SaveChanges();
@@ -386,6 +420,23 @@ namespace WATickets.Controllers
                         db.DetDocumento.Add(det);
                         db.SaveChanges();
                         i++;
+
+                        var prod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
+                        if (prod != null)
+                        {
+
+                            db.Entry(prod).State = EntityState.Modified;
+                            if (Documento.TipoDocumento == "01" || Documento.TipoDocumento == "04")
+                            {
+                                prod.Stock -= item.Cantidad;
+
+                            }
+                            else
+                            {
+                                prod.Stock += item.Cantidad;
+                            }
+                            db.SaveChanges();
+                        }
                     }
 
                     var MetodosPagos2 = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id).ToList();

@@ -302,6 +302,56 @@ namespace WATickets.Controllers
             }
         }
 
+        [Route("api/Ofertas/Eliminar")]
+        [HttpDelete]
+        public HttpResponseMessage Delete([FromUri] int id)
+        {
+            try
+            {
+                var Oferta = db.EncOferta.Where(a => a.id == id).FirstOrDefault();
+                if (Oferta != null)
+                {
+                    db.Entry(Oferta).State = EntityState.Modified;
+
+
+                    if (Oferta.Status == "0")
+                    {
+
+                        Oferta.Status = "1";
+
+                    }
+                    else
+                    {
+
+                        Oferta.Status = "0";
+
+                    }
+
+
+
+
+                    db.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("No existe una oferta con este ID");
+                }
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
 
 
     }
