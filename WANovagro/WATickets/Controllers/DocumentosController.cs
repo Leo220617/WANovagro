@@ -227,6 +227,7 @@ namespace WATickets.Controllers
                     }
                     var time = DateTime.Now.Date;
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
+                    
                     foreach (var item in documento.MetodosPagos)
                     {
                         MetodosPagos MetodosPagos = new MetodosPagos();
