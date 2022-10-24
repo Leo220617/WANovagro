@@ -247,6 +247,7 @@
     <Compile Include="Controllers\CondicionesPagosController.cs" />
     <Compile Include="Controllers\Conexion.cs" />
     <Compile Include="Controllers\CorreoEnvioController.cs" />
+    <Compile Include="Controllers\CuentasBancariasController.cs" />
     <Compile Include="Controllers\DistritosController.cs" />
     <Compile Include="Controllers\DocumentosController.cs" />
     <Compile Include="Controllers\ExoneracionesController.cs" />
@@ -287,6 +288,7 @@
     <Compile Include="Models\Cliente\CondicionesPagos.cs" />
     <Compile Include="Models\Cliente\ConexionSAP.cs" />
     <Compile Include="Models\Cliente\CorreoEnvio.cs" />
+    <Compile Include="Models\Cliente\CuentasBancarias.cs" />
     <Compile Include="Models\Cliente\DetDocumento.cs" />
     <Compile Include="Models\Cliente\DetExoneraciones.cs" />
     <Compile Include="Models\Cliente\DetOferta.cs" />

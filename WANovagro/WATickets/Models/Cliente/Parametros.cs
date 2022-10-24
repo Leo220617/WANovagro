@@ -26,5 +26,7 @@
         public string SQLGrupos { get; set; }
 
         public string SQLTipoCambio{ get; set; }
+
+      
     }
 }
