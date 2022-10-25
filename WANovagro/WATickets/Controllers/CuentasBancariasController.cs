@@ -25,12 +25,16 @@ namespace WATickets.Controllers
 
        
 
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
                 var CuentasBancarias = db.CuentasBancarias.ToList();
 
+                if(!string.IsNullOrEmpty(filtro.Texto))
+                {
+                    CuentasBancarias = CuentasBancarias.Where(a => a.CodSuc == filtro.Texto).ToList();
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, CuentasBancarias);
             }

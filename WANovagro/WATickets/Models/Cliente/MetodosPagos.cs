@@ -9,6 +9,7 @@ namespace WATickets.Models.Cliente
     {
         public int id { get; set; }
         public int idEncabezado { get; set; }
+        public int idCuentaBancaria { get; set; }
         public decimal Monto { get; set; }
         public string BIN { get; set; }
         public string NumReferencia { get; set; }

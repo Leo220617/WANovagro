@@ -51,6 +51,8 @@ namespace WATickets.Controllers
                     a.Moneda,
                     a.Tipo,
                     a.BaseEntry,
+                    a.DocEntry,
+                    a.ProcesadaSAP,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
@@ -122,6 +124,8 @@ namespace WATickets.Controllers
                     a.Moneda,
                     a.Tipo,
                     a.BaseEntry,
+                    a.DocEntry,
+                    a.ProcesadaSAP,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => a.id == id).FirstOrDefault();
@@ -149,6 +153,8 @@ namespace WATickets.Controllers
         [HttpPost]
         public HttpResponseMessage Post([FromBody] Ofertas oferta)
         {
+            var t = db.Database.BeginTransaction();
+
             try
             {
                 EncOferta Oferta = db.EncOferta.Where(a => a.id == oferta.id).FirstOrDefault();
@@ -170,6 +176,8 @@ namespace WATickets.Controllers
                     Oferta.Moneda = oferta.Moneda;
                     Oferta.Tipo = oferta.Tipo;
                     Oferta.BaseEntry = oferta.BaseEntry;
+                    Oferta.DocEntry = "";
+                    Oferta.ProcesadaSAP = false;
                     // 0 is open, 1 is closed
 
                     db.EncOferta.Add(Oferta);
@@ -203,6 +211,7 @@ namespace WATickets.Controllers
                     btm.Metodo = "Insercion de Oferta";
                     db.BitacoraMovimientos.Add(btm);
                     db.SaveChanges();
+                    t.Commit();
                 }
                 else
                 {
@@ -213,6 +222,7 @@ namespace WATickets.Controllers
             }
             catch (Exception ex)
             {
+                t.Rollback();
                 BitacoraErrores be = new BitacoraErrores();
                 be.Descripcion = ex.Message;
                 be.StrackTrace = ex.StackTrace;
@@ -230,6 +240,7 @@ namespace WATickets.Controllers
         [HttpPut]
         public HttpResponseMessage Put([FromBody] Ofertas oferta)
         {
+            var t = db.Database.BeginTransaction();
             try
             {
                 EncOferta Oferta = db.EncOferta.Where(a => a.id == oferta.id).FirstOrDefault();
@@ -291,6 +302,7 @@ namespace WATickets.Controllers
                     btm.Metodo = "Edicion de Oferta";
                     db.BitacoraMovimientos.Add(btm);
                     db.SaveChanges();
+                    t.Commit();
                 }
                 else
                 {
@@ -301,6 +313,7 @@ namespace WATickets.Controllers
             }
             catch (Exception ex)
             {
+                t.Rollback();
                 BitacoraErrores be = new BitacoraErrores();
                 be.Descripcion = ex.Message;
                 be.StrackTrace = ex.StackTrace;

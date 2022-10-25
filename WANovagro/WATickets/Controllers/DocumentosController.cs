@@ -30,7 +30,7 @@ namespace WATickets.Controllers
             try
             {
                 var time = DateTime.Now; // 01-01-0001
-                if(filtro.FechaFinal != time)
+                if (filtro.FechaFinal != time)
                 {
                     filtro.FechaInicial = filtro.FechaInicial.Date;
                     filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
@@ -54,6 +54,9 @@ namespace WATickets.Controllers
                     a.Moneda,
                     a.TipoDocumento,
                     a.BaseEntry,
+                    a.DocEntry,
+                    a.ProcesadaSAP,
+
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -82,9 +85,9 @@ namespace WATickets.Controllers
                 {
                     Documentos = Documentos.Where(a => a.TipoDocumento == filtro.CardCode).ToList();
                 }
-                
-                
-                if(filtro.Codigo3 > 0)
+
+
+                if (filtro.Codigo3 > 0)
                 {
                     Documentos = Documentos.Where(a => a.idCaja == filtro.Codigo3).ToList();
 
@@ -135,6 +138,8 @@ namespace WATickets.Controllers
                     a.Moneda,
                     a.TipoDocumento,
                     a.BaseEntry,
+                    a.DocEntry,
+                    a.ProcesadaSAP,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -163,6 +168,7 @@ namespace WATickets.Controllers
         [HttpPost]
         public HttpResponseMessage Post([FromBody] Documentos documento)
         {
+            var t = db.Database.BeginTransaction();
             try
             {
                 EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id).FirstOrDefault();
@@ -185,7 +191,8 @@ namespace WATickets.Controllers
                     Documento.Status = "0";
                     Documento.idCaja = documento.idCaja;
                     Documento.BaseEntry = documento.BaseEntry;
-
+                    Documento.DocEntry = "";
+                    Documento.ProcesadaSAP = false;
                     // 0 is open, 1 is closed
 
                     db.EncDocumento.Add(Documento);
@@ -211,16 +218,16 @@ namespace WATickets.Controllers
                         i++;
 
                         var prod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
-                        if(prod != null)
+                        if (prod != null)
                         {
-                           
+
                             db.Entry(prod).State = EntityState.Modified;
-                            if(Documento.TipoDocumento == "01" || Documento.TipoDocumento == "04")
+                            if (Documento.TipoDocumento == "01" || Documento.TipoDocumento == "04")
                             {
                                 prod.Stock -= item.Cantidad;
 
                             }
-                            else 
+                            else
                             {
                                 prod.Stock += item.Cantidad;
                             }
@@ -230,7 +237,7 @@ namespace WATickets.Controllers
                     }
                     var time = DateTime.Now.Date;
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
-                    
+
                     foreach (var item in documento.MetodosPagos)
                     {
                         MetodosPagos MetodosPagos = new MetodosPagos();
@@ -240,6 +247,7 @@ namespace WATickets.Controllers
                         MetodosPagos.NumCheque = item.NumCheque;
                         MetodosPagos.NumReferencia = item.NumReferencia;
                         MetodosPagos.Metodo = item.Metodo;
+                        MetodosPagos.idCuentaBancaria = item.idCuentaBancaria;
                         db.MetodosPagos.Add(MetodosPagos);
                         db.SaveChanges();
                         if (CierreCaja != null)
@@ -269,7 +277,7 @@ namespace WATickets.Controllers
 
                                             break;
                                         }
-                                    
+
                                     default:
                                         {
                                             CierreCaja.OtrosMediosColones += item.Monto;
@@ -329,6 +337,7 @@ namespace WATickets.Controllers
                     btm.Metodo = "Insercion de Documento";
                     db.BitacoraMovimientos.Add(btm);
                     db.SaveChanges();
+                    t.Commit();
                 }
                 else
                 {
@@ -339,6 +348,7 @@ namespace WATickets.Controllers
             }
             catch (Exception ex)
             {
+                t.Rollback();
                 BitacoraErrores be = new BitacoraErrores();
                 be.Descripcion = ex.Message;
                 be.StrackTrace = ex.StackTrace;
@@ -356,6 +366,7 @@ namespace WATickets.Controllers
         [HttpPut]
         public HttpResponseMessage Put([FromBody] Documentos documento)
         {
+            var t = db.Database.BeginTransaction();
             try
             {
                 EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id).FirstOrDefault();
@@ -375,7 +386,7 @@ namespace WATickets.Controllers
                     Documento.PorDescto = documento.PorDescto;
                     Documento.Moneda = documento.Moneda;
                     Documento.TipoDocumento = documento.TipoDocumento;
-              
+
                     // Documento.Status = documetno.Status;
 
 
@@ -538,6 +549,7 @@ namespace WATickets.Controllers
                         MetodosPagos.BIN = item.BIN;
                         MetodosPagos.NumCheque = item.NumCheque;
                         MetodosPagos.NumReferencia = item.NumReferencia;
+                        MetodosPagos.idCuentaBancaria = item.idCuentaBancaria;
                         MetodosPagos.Metodo = item.Metodo;
 
                         db.MetodosPagos.Add(MetodosPagos);
@@ -630,6 +642,7 @@ namespace WATickets.Controllers
                     btm.Metodo = "Edicion de Documento";
                     db.BitacoraMovimientos.Add(btm);
                     db.SaveChanges();
+                    t.Commit();
                 }
                 else
                 {
@@ -640,6 +653,7 @@ namespace WATickets.Controllers
             }
             catch (Exception ex)
             {
+                t.Rollback();
                 BitacoraErrores be = new BitacoraErrores();
                 be.Descripcion = ex.Message;
                 be.StrackTrace = ex.StackTrace;
