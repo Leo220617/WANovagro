@@ -53,6 +53,7 @@ namespace WATickets.Controllers
                     a.CodSuc,
                     a.Moneda,
                     a.TipoDocumento,
+                    a.BaseEntry,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -133,6 +134,7 @@ namespace WATickets.Controllers
                     a.CodSuc,
                     a.Moneda,
                     a.TipoDocumento,
+                    a.BaseEntry,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -182,6 +184,7 @@ namespace WATickets.Controllers
                     Documento.TipoDocumento = documento.TipoDocumento;
                     Documento.Status = "0";
                     Documento.idCaja = documento.idCaja;
+                    Documento.BaseEntry = documento.BaseEntry;
 
                     // 0 is open, 1 is closed
 
@@ -372,6 +375,7 @@ namespace WATickets.Controllers
                     Documento.PorDescto = documento.PorDescto;
                     Documento.Moneda = documento.Moneda;
                     Documento.TipoDocumento = documento.TipoDocumento;
+              
                     // Documento.Status = documetno.Status;
 
 

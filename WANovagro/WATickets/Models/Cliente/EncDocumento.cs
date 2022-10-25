@@ -25,5 +25,6 @@ namespace WATickets.Models.Cliente
         public string CodSuc { get; set; }
         public string Moneda { get; set; }
         public string TipoDocumento { get; set; }
+        public int BaseEntry { get; set; }
     }
 }
