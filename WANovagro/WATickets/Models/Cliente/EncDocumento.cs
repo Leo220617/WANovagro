@@ -13,6 +13,7 @@ namespace WATickets.Models.Cliente
         public int idCliente { get; set; }
         public int idUsuarioCreador { get; set; }
         public int idCaja { get; set; }
+        public int idCondPago { get; set; }
         public DateTime Fecha { get; set; }
         public DateTime FechaVencimiento { get; set; }
         public string Comentarios { get; set; }

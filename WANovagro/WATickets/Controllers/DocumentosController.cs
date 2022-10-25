@@ -56,6 +56,7 @@ namespace WATickets.Controllers
                     a.BaseEntry,
                     a.DocEntry,
                     a.ProcesadaSAP,
+                    a.idCondPago,
 
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
@@ -140,6 +141,7 @@ namespace WATickets.Controllers
                     a.BaseEntry,
                     a.DocEntry,
                     a.ProcesadaSAP,
+                    a.idCondPago,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -193,6 +195,7 @@ namespace WATickets.Controllers
                     Documento.BaseEntry = documento.BaseEntry;
                     Documento.DocEntry = "";
                     Documento.ProcesadaSAP = false;
+                    Documento.idCondPago = documento.idCondPago;
                     // 0 is open, 1 is closed
 
                     db.EncDocumento.Add(Documento);
@@ -235,100 +238,115 @@ namespace WATickets.Controllers
                         }
 
                     }
-                    var time = DateTime.Now.Date;
-                    var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
 
-                    foreach (var item in documento.MetodosPagos)
+                    if(Documento.TipoDocumento == "03")
                     {
-                        MetodosPagos MetodosPagos = new MetodosPagos();
-                        MetodosPagos.idEncabezado = Documento.id;
-                        MetodosPagos.Monto = item.Monto;
-                        MetodosPagos.BIN = item.BIN;
-                        MetodosPagos.NumCheque = item.NumCheque;
-                        MetodosPagos.NumReferencia = item.NumReferencia;
-                        MetodosPagos.Metodo = item.Metodo;
-                        MetodosPagos.idCuentaBancaria = item.idCuentaBancaria;
-                        db.MetodosPagos.Add(MetodosPagos);
-                        db.SaveChanges();
-                        if (CierreCaja != null)
+                        var NCS = db.EncDocumento.Where(a => a.BaseEntry == documento.BaseEntry && a.TipoDocumento == "03").Sum(a => a.TotalCompra);
+                        var DocumentoG = db.EncDocumento.Where(a => a.id == documento.BaseEntry).FirstOrDefault();
+                        if(NCS == DocumentoG.TotalCompra)
                         {
-                            db.Entry(CierreCaja).State = EntityState.Modified;
-                            if (Documento.Moneda == "CRC")
-                            {
-                                switch (item.Metodo)
-                                {
-                                    case "Efectivo":
-                                        {
-                                            CierreCaja.EfectivoColones += item.Monto;
-                                            CierreCaja.TotalVendidoColones += item.Monto;
-                                            break;
-                                        }
-                                    case "Tarjeta":
-                                        {
-                                            CierreCaja.TarjetasColones += item.Monto;
-                                            CierreCaja.TotalVendidoColones += item.Monto;
-
-                                            break;
-                                        }
-                                    case "Cheque":
-                                        {
-                                            CierreCaja.ChequesColones += item.Monto;
-                                            CierreCaja.TotalVendidoColones += item.Monto;
-
-                                            break;
-                                        }
-
-                                    default:
-                                        {
-                                            CierreCaja.OtrosMediosColones += item.Monto;
-                                            CierreCaja.TotalVendidoColones += item.Monto;
-
-                                            break;
-                                        }
-
-                                }
-
-                            }
-                            else
-                            {
-                                switch (item.Metodo)
-                                {
-                                    case "Efectivo":
-                                        {
-                                            CierreCaja.EfectivoFC += item.Monto;
-                                            CierreCaja.TotalVendidoFC += item.Monto;
-                                            break;
-                                        }
-                                    case "Tarjeta":
-                                        {
-                                            CierreCaja.TarjetasFC += item.Monto;
-                                            CierreCaja.TotalVendidoFC += item.Monto;
-
-                                            break;
-                                        }
-                                    case "Cheque":
-                                        {
-                                            CierreCaja.ChequesFC += item.Monto;
-                                            CierreCaja.TotalVendidoFC += item.Monto;
-
-                                            break;
-                                        }
-
-                                    default:
-                                        {
-                                            CierreCaja.OtrosMediosFC += item.Monto;
-                                            CierreCaja.TotalVendidoFC += item.Monto;
-
-                                            break;
-                                        }
-
-                                }
-                            }
+                            db.Entry(DocumentoG).State = EntityState.Modified;
+                            DocumentoG.Status = "1";
                             db.SaveChanges();
                         }
-
-
                     }
+                    var time = DateTime.Now.Date;
+                    var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
+                    if(documento.MetodosPagos != null)
+                    {
+                        foreach (var item in documento.MetodosPagos)
+                        {
+                            MetodosPagos MetodosPagos = new MetodosPagos();
+                            MetodosPagos.idEncabezado = Documento.id;
+                            MetodosPagos.Monto = item.Monto;
+                            MetodosPagos.BIN = item.BIN;
+                            MetodosPagos.NumCheque = item.NumCheque;
+                            MetodosPagos.NumReferencia = item.NumReferencia;
+                            MetodosPagos.Metodo = item.Metodo;
+                            MetodosPagos.idCuentaBancaria = item.idCuentaBancaria;
+                            db.MetodosPagos.Add(MetodosPagos);
+                            db.SaveChanges();
+                            if (CierreCaja != null)
+                            {
+                                db.Entry(CierreCaja).State = EntityState.Modified;
+                                if (Documento.Moneda == "CRC")
+                                {
+                                    switch (item.Metodo)
+                                    {
+                                        case "Efectivo":
+                                            {
+                                                CierreCaja.EfectivoColones += item.Monto;
+                                                CierreCaja.TotalVendidoColones += item.Monto;
+                                                break;
+                                            }
+                                        case "Tarjeta":
+                                            {
+                                                CierreCaja.TarjetasColones += item.Monto;
+                                                CierreCaja.TotalVendidoColones += item.Monto;
+
+                                                break;
+                                            }
+                                        case "Cheque":
+                                            {
+                                                CierreCaja.ChequesColones += item.Monto;
+                                                CierreCaja.TotalVendidoColones += item.Monto;
+
+                                                break;
+                                            }
+
+                                        default:
+                                            {
+                                                CierreCaja.OtrosMediosColones += item.Monto;
+                                                CierreCaja.TotalVendidoColones += item.Monto;
+
+                                                break;
+                                            }
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    switch (item.Metodo)
+                                    {
+                                        case "Efectivo":
+                                            {
+                                                CierreCaja.EfectivoFC += item.Monto;
+                                                CierreCaja.TotalVendidoFC += item.Monto;
+                                                break;
+                                            }
+                                        case "Tarjeta":
+                                            {
+                                                CierreCaja.TarjetasFC += item.Monto;
+                                                CierreCaja.TotalVendidoFC += item.Monto;
+
+                                                break;
+                                            }
+                                        case "Cheque":
+                                            {
+                                                CierreCaja.ChequesFC += item.Monto;
+                                                CierreCaja.TotalVendidoFC += item.Monto;
+
+                                                break;
+                                            }
+
+                                        default:
+                                            {
+                                                CierreCaja.OtrosMediosFC += item.Monto;
+                                                CierreCaja.TotalVendidoFC += item.Monto;
+
+                                                break;
+                                            }
+
+                                    }
+                                }
+                                db.SaveChanges();
+                            }
+
+
+                        }
+                    }
+                   
 
                     BitacoraMovimientos btm = new BitacoraMovimientos();
                     btm.idUsuario = documento.idUsuarioCreador;
@@ -540,99 +558,102 @@ namespace WATickets.Controllers
                         db.MetodosPagos.Remove(item);
                         db.SaveChanges();
                     }
-
-                    foreach (var item in documento.MetodosPagos)
+                    if(documento.MetodosPagos != null)
                     {
-                        MetodosPagos MetodosPagos = new MetodosPagos();
-                        MetodosPagos.idEncabezado = Documento.id;
-                        MetodosPagos.Monto = item.Monto;
-                        MetodosPagos.BIN = item.BIN;
-                        MetodosPagos.NumCheque = item.NumCheque;
-                        MetodosPagos.NumReferencia = item.NumReferencia;
-                        MetodosPagos.idCuentaBancaria = item.idCuentaBancaria;
-                        MetodosPagos.Metodo = item.Metodo;
-
-                        db.MetodosPagos.Add(MetodosPagos);
-                        db.SaveChanges();
-
-                        if (CierreCaja != null)
+                        foreach (var item in documento.MetodosPagos)
                         {
-                            db.Entry(CierreCaja).State = EntityState.Modified;
-                            if (Documento.Moneda == "CRC")
-                            {
-                                switch (item.Metodo)
-                                {
-                                    case "Efectivo":
-                                        {
-                                            CierreCaja.EfectivoColones += item.Monto;
-                                            CierreCaja.TotalVendidoColones += item.Monto;
-                                            break;
-                                        }
-                                    case "Tarjeta":
-                                        {
-                                            CierreCaja.TarjetasColones += item.Monto;
-                                            CierreCaja.TotalVendidoColones += item.Monto;
+                            MetodosPagos MetodosPagos = new MetodosPagos();
+                            MetodosPagos.idEncabezado = Documento.id;
+                            MetodosPagos.Monto = item.Monto;
+                            MetodosPagos.BIN = item.BIN;
+                            MetodosPagos.NumCheque = item.NumCheque;
+                            MetodosPagos.NumReferencia = item.NumReferencia;
+                            MetodosPagos.idCuentaBancaria = item.idCuentaBancaria;
+                            MetodosPagos.Metodo = item.Metodo;
 
-                                            break;
-                                        }
-                                    case "Cheque":
-                                        {
-                                            CierreCaja.ChequesColones += item.Monto;
-                                            CierreCaja.TotalVendidoColones += item.Monto;
-
-                                            break;
-                                        }
-
-                                    default:
-                                        {
-                                            CierreCaja.OtrosMediosColones += item.Monto;
-                                            CierreCaja.TotalVendidoColones += item.Monto;
-
-                                            break;
-                                        }
-
-                                }
-
-                            }
-                            else
-                            {
-                                switch (item.Metodo)
-                                {
-                                    case "Efectivo":
-                                        {
-                                            CierreCaja.EfectivoFC += item.Monto;
-                                            CierreCaja.TotalVendidoFC += item.Monto;
-                                            break;
-                                        }
-                                    case "Tarjeta":
-                                        {
-                                            CierreCaja.TarjetasFC += item.Monto;
-                                            CierreCaja.TotalVendidoFC += item.Monto;
-
-                                            break;
-                                        }
-                                    case "Cheque":
-                                        {
-                                            CierreCaja.ChequesFC += item.Monto;
-                                            CierreCaja.TotalVendidoFC += item.Monto;
-
-                                            break;
-                                        }
-
-                                    default:
-                                        {
-                                            CierreCaja.OtrosMediosFC += item.Monto;
-                                            CierreCaja.TotalVendidoFC += item.Monto;
-
-                                            break;
-                                        }
-
-                                }
-                            }
+                            db.MetodosPagos.Add(MetodosPagos);
                             db.SaveChanges();
-                        }
 
+                            if (CierreCaja != null)
+                            {
+                                db.Entry(CierreCaja).State = EntityState.Modified;
+                                if (Documento.Moneda == "CRC")
+                                {
+                                    switch (item.Metodo)
+                                    {
+                                        case "Efectivo":
+                                            {
+                                                CierreCaja.EfectivoColones += item.Monto;
+                                                CierreCaja.TotalVendidoColones += item.Monto;
+                                                break;
+                                            }
+                                        case "Tarjeta":
+                                            {
+                                                CierreCaja.TarjetasColones += item.Monto;
+                                                CierreCaja.TotalVendidoColones += item.Monto;
+
+                                                break;
+                                            }
+                                        case "Cheque":
+                                            {
+                                                CierreCaja.ChequesColones += item.Monto;
+                                                CierreCaja.TotalVendidoColones += item.Monto;
+
+                                                break;
+                                            }
+
+                                        default:
+                                            {
+                                                CierreCaja.OtrosMediosColones += item.Monto;
+                                                CierreCaja.TotalVendidoColones += item.Monto;
+
+                                                break;
+                                            }
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    switch (item.Metodo)
+                                    {
+                                        case "Efectivo":
+                                            {
+                                                CierreCaja.EfectivoFC += item.Monto;
+                                                CierreCaja.TotalVendidoFC += item.Monto;
+                                                break;
+                                            }
+                                        case "Tarjeta":
+                                            {
+                                                CierreCaja.TarjetasFC += item.Monto;
+                                                CierreCaja.TotalVendidoFC += item.Monto;
+
+                                                break;
+                                            }
+                                        case "Cheque":
+                                            {
+                                                CierreCaja.ChequesFC += item.Monto;
+                                                CierreCaja.TotalVendidoFC += item.Monto;
+
+                                                break;
+                                            }
+
+                                        default:
+                                            {
+                                                CierreCaja.OtrosMediosFC += item.Monto;
+                                                CierreCaja.TotalVendidoFC += item.Monto;
+
+                                                break;
+                                            }
+
+                                    }
+                                }
+                                db.SaveChanges();
+                            }
+
+                        }
                     }
+              
 
 
                     BitacoraMovimientos btm = new BitacoraMovimientos();
