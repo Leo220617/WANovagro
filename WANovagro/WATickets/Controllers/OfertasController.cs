@@ -74,6 +74,10 @@ namespace WATickets.Controllers
                     Ofertas = Ofertas.Where(a => a.Status == filtro.ItemCode).ToList();
                 }
 
+                if(!string.IsNullOrEmpty(filtro.Categoria))
+                {
+                    Ofertas = Ofertas.Where(a => a.Tipo == filtro.Categoria).ToList();
+                }
 
 
 
