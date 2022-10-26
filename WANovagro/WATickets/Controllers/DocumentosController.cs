@@ -239,11 +239,11 @@ namespace WATickets.Controllers
 
                     }
 
-                    if(Documento.TipoDocumento == "03")
+                    if (Documento.TipoDocumento == "03")
                     {
                         var NCS = db.EncDocumento.Where(a => a.BaseEntry == documento.BaseEntry && a.TipoDocumento == "03").Sum(a => a.TotalCompra);
                         var DocumentoG = db.EncDocumento.Where(a => a.id == documento.BaseEntry).FirstOrDefault();
-                        if(NCS == DocumentoG.TotalCompra)
+                        if (NCS >= DocumentoG.TotalCompra)
                         {
                             db.Entry(DocumentoG).State = EntityState.Modified;
                             DocumentoG.Status = "1";
@@ -252,7 +252,7 @@ namespace WATickets.Controllers
                     }
                     var time = DateTime.Now.Date;
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
-                    if(documento.MetodosPagos != null)
+                    if (documento.MetodosPagos != null)
                     {
                         foreach (var item in documento.MetodosPagos)
                         {
@@ -346,8 +346,8 @@ namespace WATickets.Controllers
 
                         }
                     }
-                   
 
+                    documento.id = Documento.id;
                     BitacoraMovimientos btm = new BitacoraMovimientos();
                     btm.idUsuario = documento.idUsuarioCreador;
                     btm.Descripcion = "Se crea un documento para el cliente con el id: " + documento.idCliente;
@@ -362,7 +362,7 @@ namespace WATickets.Controllers
                     throw new Exception("Ya existe un documento con este ID");
                 }
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK,documento);
             }
             catch (Exception ex)
             {
@@ -558,7 +558,7 @@ namespace WATickets.Controllers
                         db.MetodosPagos.Remove(item);
                         db.SaveChanges();
                     }
-                    if(documento.MetodosPagos != null)
+                    if (documento.MetodosPagos != null)
                     {
                         foreach (var item in documento.MetodosPagos)
                         {
@@ -653,7 +653,7 @@ namespace WATickets.Controllers
 
                         }
                     }
-              
+
 
 
                     BitacoraMovimientos btm = new BitacoraMovimientos();
