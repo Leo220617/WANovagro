@@ -14,5 +14,8 @@ namespace WATickets.Models.Cliente
 
        
         public string Nombre { get; set; }
+
+        public int Dias { get; set; }
+
     }
 }

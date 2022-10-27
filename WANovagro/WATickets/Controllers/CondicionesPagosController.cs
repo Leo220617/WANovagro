@@ -55,7 +55,7 @@ namespace WATickets.Controllers
                             CondicionPago = new CondicionesPagos();
                             CondicionPago.CodSAP = item["id"].ToString();
                             CondicionPago.Nombre = item["Condicion"].ToString();
-
+                            CondicionPago.Dias = Convert.ToInt32(item["Dias"]);
                             db.CondicionesPagos.Add(CondicionPago);
                             db.SaveChanges();
 
@@ -81,6 +81,7 @@ namespace WATickets.Controllers
 
 
                             CondicionPago.Nombre = item["Condicion"].ToString();
+                            CondicionPago.Dias = Convert.ToInt32(item["Dias"]);
                             db.SaveChanges();
                         }
                         catch (Exception ex1)
