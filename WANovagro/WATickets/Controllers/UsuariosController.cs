@@ -28,7 +28,10 @@ namespace WATickets.Controllers
                 {
                     Usuarios = Usuarios.Where(a => a.idRol == filtro.Codigo1).ToList();
                 }
-
+                if(filtro.novapos) // ! = negacion, == es para comparar
+                {
+                    Usuarios = Usuarios.Where(a => a.novapos == filtro.novapos).ToList();
+                }
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Usuarios);
             }
             catch (Exception ex)
@@ -87,6 +90,7 @@ namespace WATickets.Controllers
                     Usuario.NombreUsuario = usuarios.NombreUsuario;
                     Usuario.Clave = BCrypt.Net.BCrypt.HashPassword(usuarios.Clave);
                     Usuario.Activo = true;
+                    Usuario.novapos = usuarios.novapos;
                     Usuario.FecUltSup = DateTime.Now;
                     db.Usuarios.Add(Usuario);
                     db.SaveChanges();
@@ -142,6 +146,9 @@ namespace WATickets.Controllers
                     {
                         Usuarios.Clave = BCrypt.Net.BCrypt.HashPassword(usuarios.Clave);
                     }
+
+                    Usuarios.novapos = usuarios.novapos;
+
 
                     db.SaveChanges();
 

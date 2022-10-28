@@ -21,5 +21,6 @@ namespace WATickets.Models
         public bool Procesado { get; set; }
         public bool Externo { get; set; }
         public bool Activo { get; set; }
+        public bool novapos { get; set; }
     }
 }

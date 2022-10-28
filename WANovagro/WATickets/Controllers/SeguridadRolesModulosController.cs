@@ -75,7 +75,7 @@ namespace WATickets.Controllers
 
                     var Objeto = db.SeguridadRolesModulos.Where(a => a.CodRol == item.CodRol && a.CodModulo == item.CodModulo).FirstOrDefault();
 
-                    if (Objeto == null)
+                    if (Objeto == null && item.CodModulo != 0)
                     {
                         var Objetos = new SeguridadRolesModulos();
                         Objetos.CodRol = item.CodRol;

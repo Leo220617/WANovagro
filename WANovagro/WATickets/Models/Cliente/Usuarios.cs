@@ -26,6 +26,8 @@ namespace WATickets.Models.Cliente
         public DateTime FecUltSup { get; set; }
 
         public bool Activo { get; set; }
-       
+
+        public bool novapos { get; set; }
+
     }
 }
