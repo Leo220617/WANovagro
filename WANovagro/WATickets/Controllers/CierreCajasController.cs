@@ -116,6 +116,7 @@ namespace WATickets.Controllers
                     CierreCajas.TotalVendidoColones = cierreCajas.TotalVendidoColones;
                     CierreCajas.TotalRegistradoColones = cierreCajas.TotalRegistradoColones;
                     CierreCajas.TotalAperturaColones = cierreCajas.TotalAperturaColones;
+                    CierreCajas.TransferenciasColones = cierreCajas.TransferenciasColones;
 
                     CierreCajas.EfectivoFC = cierreCajas.EfectivoFC;
                     CierreCajas.ChequesFC = cierreCajas.ChequesFC;
@@ -124,6 +125,7 @@ namespace WATickets.Controllers
                     CierreCajas.TotalVendidoFC = cierreCajas.TotalVendidoFC;
                     CierreCajas.TotalRegistradoFC = cierreCajas.TotalRegistradoFC;
                     CierreCajas.TotalAperturaFC = cierreCajas.TotalAperturaFC;
+                    CierreCajas.TransferenciasDolares = cierreCajas.TransferenciasDolares;
                     CierreCajas.Activo = false;
                     CierreCajas.HoraCierre = DateTime.Now;
                     CierreCajas.TotalizadoMonedas = cierreCajas.TotalRegistradoColones + (cierreCajas.TotalRegistradoFC * TipoCambio.TipoCambio);

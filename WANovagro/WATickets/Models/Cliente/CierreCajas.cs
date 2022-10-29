@@ -69,6 +69,12 @@ namespace WATickets.Models.Cliente
         [Column(TypeName = "money")]
         public decimal TotalAperturaFC { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal TransferenciasColones { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal TransferenciasDolares { get; set; }
+
         public bool Activo { get; set; }
 
         public DateTime HoraCierre { get; set; }

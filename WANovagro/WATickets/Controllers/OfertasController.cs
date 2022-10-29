@@ -82,7 +82,10 @@ namespace WATickets.Controllers
                 {
                     Ofertas = Ofertas.Where(a => a.Tipo == filtro.Categoria).ToList();
                 }
-
+                if (filtro.Codigo3 > 0) // esto por ser integer
+                {
+                    Ofertas = Ofertas.Where(a => a.idCondPago == filtro.Codigo3).ToList();
+                }
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Ofertas);

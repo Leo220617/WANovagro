@@ -94,6 +94,11 @@ namespace WATickets.Controllers
 
                 }
 
+                if (filtro.Codigo4 > 0) // esto por ser integer
+                {
+                    Documentos = Documentos.Where(a => a.idCondPago == filtro.Codigo4).ToList();
+                }
+
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Documentos);
@@ -286,6 +291,13 @@ namespace WATickets.Controllers
 
                                                 break;
                                             }
+                                        case "Transferencia":
+                                            {
+                                                CierreCaja.TransferenciasColones += item.Monto;
+                                                CierreCaja.TotalVendidoColones += item.Monto;
+
+                                                break;
+                                            }
                                         case "Cheque":
                                             {
                                                 CierreCaja.ChequesColones += item.Monto;
@@ -318,6 +330,13 @@ namespace WATickets.Controllers
                                         case "Tarjeta":
                                             {
                                                 CierreCaja.TarjetasFC += item.Monto;
+                                                CierreCaja.TotalVendidoFC += item.Monto;
+
+                                                break;
+                                            }
+                                        case "Transferencia":
+                                            {
+                                                CierreCaja.TransferenciasDolares += item.Monto;
                                                 CierreCaja.TotalVendidoFC += item.Monto;
 
                                                 break;
