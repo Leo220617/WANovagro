@@ -26,6 +26,7 @@ namespace WATickets.Models.APIS
         public string Tipo { get; set; }
         public int idCondPago { get; set; }
         public string TipoDocumento { get; set; }
+        public int idVendedor { get; set; }
         public List<DetOferta> Detalle { get; set; }
     }
 }

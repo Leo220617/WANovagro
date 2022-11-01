@@ -57,6 +57,7 @@ namespace WATickets.Controllers
                     a.DocEntry,
                     a.ProcesadaSAP,
                     a.idCondPago,
+                    a.idVendedor,
 
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
@@ -147,6 +148,7 @@ namespace WATickets.Controllers
                     a.DocEntry,
                     a.ProcesadaSAP,
                     a.idCondPago,
+                    a.idVendedor,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -201,6 +203,7 @@ namespace WATickets.Controllers
                     Documento.DocEntry = "";
                     Documento.ProcesadaSAP = false;
                     Documento.idCondPago = documento.idCondPago;
+                    documento.idVendedor = documento.idVendedor;
                     // 0 is open, 1 is closed
 
                     db.EncDocumento.Add(Documento);
@@ -423,6 +426,7 @@ namespace WATickets.Controllers
                     Documento.PorDescto = documento.PorDescto;
                     Documento.Moneda = documento.Moneda;
                     Documento.TipoDocumento = documento.TipoDocumento;
+                    Documento.idVendedor = documento.idVendedor;
 
                     // Documento.Status = documetno.Status;
 

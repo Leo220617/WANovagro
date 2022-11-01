@@ -27,6 +27,8 @@
 
         public string SQLTipoCambio{ get; set; }
 
-      
+        public string SQLVendedores { get; set; }
+
+
     }
 }

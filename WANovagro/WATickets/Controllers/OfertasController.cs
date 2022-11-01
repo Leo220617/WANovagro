@@ -55,6 +55,7 @@ namespace WATickets.Controllers
                     a.ProcesadaSAP,
                     a.idCondPago,
                     a.TipoDocumento,
+                    a.idVendedor,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
@@ -133,6 +134,7 @@ namespace WATickets.Controllers
                     a.ProcesadaSAP,
                     a.idCondPago,
                     a.TipoDocumento,
+                    a.idVendedor,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => a.id == id).FirstOrDefault();
@@ -187,6 +189,7 @@ namespace WATickets.Controllers
                     Oferta.ProcesadaSAP = false;
                     // 0 is open, 1 is closed
                     Oferta.idCondPago = oferta.idCondPago;
+                    Oferta.idVendedor = oferta.idVendedor;
                     Oferta.TipoDocumento = oferta.TipoDocumento;
                     db.EncOferta.Add(Oferta);
                     db.SaveChanges();
@@ -266,6 +269,7 @@ namespace WATickets.Controllers
                     Oferta.TotalCompra = oferta.TotalCompra;
                     Oferta.PorDescto = oferta.PorDescto;
                     Oferta.idCondPago = oferta.idCondPago;
+                    Oferta.idVendedor = oferta.idVendedor;
                     Oferta.TipoDocumento = oferta.TipoDocumento;
 
                     //Oferta.CodSuc = oferta.CodSuc;

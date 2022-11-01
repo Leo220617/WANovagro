@@ -30,5 +30,6 @@ namespace WATickets.Models.Cliente
         public bool ProcesadaSAP { get; set; }
         public int idCondPago { get; set; }
         public string TipoDocumento { get; set; }
+        public int idVendedor { get; set; }
     }
 }
