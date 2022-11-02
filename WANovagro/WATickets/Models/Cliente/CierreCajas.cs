@@ -80,5 +80,43 @@ namespace WATickets.Models.Cliente
         public DateTime HoraCierre { get; set; }
 
         public decimal TotalizadoMonedas { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal EfectivoColonesC { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal ChequesColonesC { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal TarjetasColonesC { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal OtrosMediosColonesC { get; set; }
+
+     
+
+    
+
+        [Column(TypeName = "money")]
+        public decimal EfectivoFCC { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal ChequesFCC { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal TarjetasFCC { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal OtrosMediosFCC { get; set; }
+
+    
+
+
+
+        [Column(TypeName = "money")]
+        public decimal TransferenciasColonesC { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal TransferenciasDolaresC { get; set; }
     }
 }

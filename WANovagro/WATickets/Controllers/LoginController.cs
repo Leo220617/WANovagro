@@ -158,7 +158,24 @@ namespace WATickets.Controllers
                         CierreCaja.TotalRegistradoColones = 0;
                         CierreCaja.TotalRegistradoFC = 0;
                         CierreCaja.TotalAperturaColones = 0;
+                        CierreCaja.TransferenciasColones = 0;
+                        CierreCaja.TransferenciasDolares = 0;
                         CierreCaja.TotalAperturaFC = 0;
+
+
+                        CierreCaja.EfectivoColonesC = 0;
+                        CierreCaja.EfectivoFCC = 0;
+                        CierreCaja.ChequesColonesC = 0;
+                        CierreCaja.ChequesFCC = 0;
+                        CierreCaja.TarjetasColonesC = 0;
+                        CierreCaja.TarjetasFCC = 0;
+                        CierreCaja.OtrosMediosColonesC = 0;
+                        CierreCaja.OtrosMediosFCC = 0;
+                       
+                        
+                        CierreCaja.TransferenciasColonesC = 0;
+                        CierreCaja.TransferenciasDolaresC = 0;
+                       
                         CierreCaja.Activo = true;
                         CierreCaja.HoraCierre = DateTime.Now;
                         CierreCaja.TotalizadoMonedas = 0;

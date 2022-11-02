@@ -100,6 +100,11 @@ namespace WATickets.Controllers
                     Documentos = Documentos.Where(a => a.idCondPago == filtro.Codigo4).ToList();
                 }
 
+                if (filtro.Codigo5 > 0) // esto por ser integer
+                {
+                    Documentos = Documentos.Where(a => a.idVendedor == filtro.Codigo5).ToList();
+                }
+
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Documentos);
@@ -203,7 +208,7 @@ namespace WATickets.Controllers
                     Documento.DocEntry = "";
                     Documento.ProcesadaSAP = false;
                     Documento.idCondPago = documento.idCondPago;
-                    documento.idVendedor = documento.idVendedor;
+                    Documento.idVendedor = documento.idVendedor;
                     // 0 is open, 1 is closed
 
                     db.EncDocumento.Add(Documento);

@@ -6,7 +6,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>D:\Repositorios - DYD\WANovagro\WANovagro\WATickets\bin\Release\Publish</_PublishTargetUrl>
+    <_PublishTargetUrl>E:\Repositorios - DYD\WANovagro\WANovagro\WATickets\bin\Release\Publish</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="Areas/HelpPage/HelpPage.css">
@@ -433,10 +433,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/29/2022 23:51:37</publishTime>
     </File>
     <File Include="bin/WATickets.dll">
-      <publishTime>10/29/2022 11:39:20</publishTime>
+      <publishTime>11/02/2022 16:14:29</publishTime>
     </File>
     <File Include="bin/WATickets.pdb">
-      <publishTime>10/29/2022 11:39:20</publishTime>
+      <publishTime>11/02/2022 16:14:29</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>08/26/2022 09:15:26</publishTime>
@@ -532,7 +532,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/26/2022 09:15:18</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>10/26/2022 17:04:27</publishTime>
+      <publishTime>11/02/2022 16:14:32</publishTime>
     </File>
   </ItemGroup>
 </Project>
