@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using WATickets.Models;
 using WATickets.Models.Cliente;
 
 namespace WATickets.Controllers
@@ -118,12 +119,16 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
                 var Vendedores = db.Vendedores.ToList();
 
+                if (!string.IsNullOrEmpty(filtro.CardName))
+                {
+                    Vendedores = Vendedores.Where(a => a.CodSuc == filtro.CardName).ToList();
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Vendedores);
             }
@@ -136,6 +141,8 @@ namespace WATickets.Controllers
                 be.JSON = JsonConvert.SerializeObject(ex);
                 db.BitacoraErrores.Add(be);
                 db.SaveChanges();
+
+              
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
 

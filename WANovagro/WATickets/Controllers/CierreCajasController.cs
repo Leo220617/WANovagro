@@ -105,6 +105,7 @@ namespace WATickets.Controllers
                 if (CierreCajas != null)
                 {
                     var TipoCambio = db.TipoCambios.Where(a => a.Fecha == cierreCajas.FechaCaja && a.Moneda == "USD").FirstOrDefault();
+                   
                     db.Entry(CierreCajas).State = System.Data.Entity.EntityState.Modified;
                     
                     CierreCajas.FecUltAct = DateTime.Now;
@@ -115,7 +116,7 @@ namespace WATickets.Controllers
                     CierreCajas.OtrosMediosColones = cierreCajas.OtrosMediosColones;
                     CierreCajas.TotalVendidoColones = cierreCajas.TotalVendidoColones;
                     CierreCajas.TotalRegistradoColones = cierreCajas.TotalRegistradoColones;
-                    CierreCajas.TotalAperturaColones = cierreCajas.TotalAperturaColones;
+                    CierreCajas.TotalAperturaColones = db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault() == null ? 0 : db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault().MontoAperturaColones;
                     CierreCajas.TransferenciasColones = cierreCajas.TransferenciasColones;
 
                     CierreCajas.EfectivoFC = cierreCajas.EfectivoFC;
@@ -124,7 +125,7 @@ namespace WATickets.Controllers
                     CierreCajas.OtrosMediosFC = cierreCajas.OtrosMediosFC;
                     CierreCajas.TotalVendidoFC = cierreCajas.TotalVendidoFC;
                     CierreCajas.TotalRegistradoFC = cierreCajas.TotalRegistradoFC;
-                    CierreCajas.TotalAperturaFC = cierreCajas.TotalAperturaFC;
+                    CierreCajas.TotalAperturaFC = db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault() == null ? 0 : db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault().MontoAperturaDolares;
                     CierreCajas.TransferenciasDolares = cierreCajas.TransferenciasDolares;
 
 
@@ -148,6 +149,10 @@ namespace WATickets.Controllers
                     CierreCajas.HoraCierre = DateTime.Now;
                     CierreCajas.TotalizadoMonedas = cierreCajas.TotalRegistradoColones + (cierreCajas.TotalRegistradoFC * TipoCambio.TipoCambio);
                     db.SaveChanges();
+
+                   
+                    
+
 
                 }
                 else
