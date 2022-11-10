@@ -58,11 +58,11 @@ namespace WATickets.Controllers
 
                             if (Status == "Y")
                             {
-                                Vendedor.Activo = false;
+                                Vendedor.Activo = true;
                             }
                             else if (Status == "N")
                             {
-                                Vendedor.Activo = true;
+                                Vendedor.Activo = false;
                             }
 
 
@@ -88,8 +88,17 @@ namespace WATickets.Controllers
                         try
                         {
                             db.Entry(Vendedor).State = EntityState.Modified;
-
+                            string Status = item["Estado"].ToString();
                             Vendedor.Nombre = item["Nombre"].ToString();
+
+                            if (Status == "Y")
+                            {
+                                Vendedor.Activo = true;
+                            }
+                            else if (Status == "N")
+                            {
+                                Vendedor.Activo = false;
+                            }
 
                             db.SaveChanges();
                         }
@@ -238,7 +247,7 @@ namespace WATickets.Controllers
                     Vendedor.Nombre = vendedores.Nombre;
                     Vendedor.CodSAP = vendedores.CodSAP;
                     Vendedor.CodSuc = vendedores.CodSuc;
-                    Vendedor.Activo = true;
+                    Vendedor.Activo = Vendedor.Activo;
                     db.SaveChanges();
 
                 }
