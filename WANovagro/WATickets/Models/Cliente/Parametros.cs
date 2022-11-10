@@ -29,6 +29,9 @@
 
         public string SQLVendedores { get; set; }
 
+        public int SerieProforma { get; set; }
+
+        public int SerieOrden { get; set; }
 
     }
 }

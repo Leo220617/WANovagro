@@ -176,5 +176,56 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
+          [Route("api/CierreCajas/Eliminar")]
+        [HttpDelete]
+        public HttpResponseMessage Delete([FromUri] int idCaja, DateTime Fecha, int idUsuario)
+        {
+            try
+            {
+                CierreCajas CierreCajas = db.CierreCajas.Where(a => a.idCaja == idCaja && a.FechaCaja == Fecha && a.idUsuario == idUsuario).FirstOrDefault();
+
+               
+                if (CierreCajas != null)
+                {
+                    db.Entry(CierreCajas).State = EntityState.Modified;
+
+
+                    if (CierreCajas.Activo)
+                    {
+
+                        CierreCajas.Activo = false;
+
+                    }
+                    else
+                    {
+
+                        CierreCajas.Activo = true;
+                    }
+
+
+
+
+                    db.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("No existe un Cierre Cajas con este ID");
+                }
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }

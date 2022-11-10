@@ -18,5 +18,7 @@ namespace WATickets.Models.Cliente
 
         [StringLength(3)]
         public string CodSuc { get; set; }
+
+        public bool Activo { get; set; }
     }
 }

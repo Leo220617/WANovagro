@@ -49,10 +49,22 @@ namespace WATickets.Controllers
                     {
                         try
                         {
+                            string Status = item["Estado"].ToString();
                             Vendedor = new Vendedores();
                             Vendedor.CodSAP = item["id"].ToString();
                             Vendedor.Nombre = item["Nombre"].ToString();
+                          
                             Vendedor.CodSuc = "";
+
+                            if (Status == "Y")
+                            {
+                                Vendedor.Activo = false;
+                            }
+                            else if (Status == "N")
+                            {
+                                Vendedor.Activo = true;
+                            }
+
 
                             db.Vendedores.Add(Vendedor);
                             db.SaveChanges();
@@ -188,6 +200,7 @@ namespace WATickets.Controllers
                     Vendedor.CodSuc = vendedores.CodSuc;
                     Vendedor.Nombre = vendedores.Nombre;
                     Vendedor.CodSAP = vendedores.CodSAP;
+                    Vendedor.Activo = true;
                     db.Vendedores.Add(Vendedor);
                     db.SaveChanges();
 
@@ -225,6 +238,7 @@ namespace WATickets.Controllers
                     Vendedor.Nombre = vendedores.Nombre;
                     Vendedor.CodSAP = vendedores.CodSAP;
                     Vendedor.CodSuc = vendedores.CodSuc;
+                    Vendedor.Activo = true;
                     db.SaveChanges();
 
                 }

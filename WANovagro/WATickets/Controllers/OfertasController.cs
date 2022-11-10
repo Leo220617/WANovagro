@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SAPbobsCOM;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,10 +20,203 @@ namespace WATickets.Controllers
 {
     [Authorize]
 
-    public class OfertasController: ApiController
+    public class OfertasController : ApiController
     {
         ModelCliente db = new ModelCliente();
         G G = new G();
+
+
+        [Route("api/Ofertas/InsertarSAP")]
+        public HttpResponseMessage GetExtraeDatos([FromUri] int id) 
+        {
+            try
+            {
+                var Oferta = db.EncOferta.Where(a => a.id == id).FirstOrDefault();
+                var param = db.Parametros.FirstOrDefault();
+                if (Oferta.Tipo == "01")
+                {
+                    try
+                    {
+                        var ofertaSAP = (Documents)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oQuotations);
+
+                        //Encabezado
+
+                        ofertaSAP.DocObjectCode = BoObjectTypes.oQuotations;
+                        ofertaSAP.CardCode = db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault().Codigo;
+                        ofertaSAP.DocCurrency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                        ofertaSAP.DocDate = Oferta.Fecha;
+                        ofertaSAP.DocDueDate = Oferta.FechaVencimiento;
+                        ofertaSAP.DocType = BoDocumentTypes.dDocument_Items;
+                        ofertaSAP.NumAtCard = "Creado en NOVAPOS";
+                        ofertaSAP.Series = param.SerieProforma;
+                        ofertaSAP.Comments = Oferta.Comentarios;
+                        ofertaSAP.GroupNumber = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
+                        ofertaSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault().CodSAP);
+
+
+                        //Detalle
+                        int z = 0;
+                        var Detalle = db.DetOferta.Where(a => a.idEncabezado == id).ToList();
+                        foreach (var item in Detalle)
+                        {
+                            ofertaSAP.Lines.SetCurrentLine(z);
+
+                            ofertaSAP.Lines.Currency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                            ofertaSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
+                            ofertaSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                            ofertaSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
+                            var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
+                            ofertaSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                            ofertaSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
+
+
+                            ofertaSAP.Lines.UnitPrice = Convert.ToDouble(db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().PrecioUnitario.ToString());
+                            var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
+                            ofertaSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
+                            ofertaSAP.Lines.Add();
+                            z++;
+                        }
+
+
+                        var respuesta = ofertaSAP.Add();
+                        if (respuesta == 0)
+                        {
+                            Conexion.Desconectar();
+                            db.Entry(Oferta).State = EntityState.Modified;
+                            Oferta.ProcesadaSAP = true;
+                            db.SaveChanges();
+
+                        }
+                        else
+                        {
+                            var error = "hubo un error " + Conexion.Company.GetLastErrorDescription();
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = error;
+                            be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ofertaSAP);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+                            Conexion.Desconectar();
+
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        BitacoraErrores be = new BitacoraErrores();
+                        be.Descripcion = ex.Message;
+                        be.StrackTrace = ex.StackTrace;
+                        be.Fecha = DateTime.Now;
+                        be.JSON = JsonConvert.SerializeObject(ex);
+                        db.BitacoraErrores.Add(be);
+                        db.SaveChanges();
+
+                    }
+                }
+                else if (Oferta.Tipo == "02")
+                {
+                    try
+                    {
+                        var ofertaSAP = (Documents)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders);
+
+                        //Encabezado
+
+                        ofertaSAP.DocObjectCode = BoObjectTypes.oOrders;
+                        ofertaSAP.CardCode = db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault().Codigo;
+                        ofertaSAP.DocCurrency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                        ofertaSAP.DocDate = Oferta.Fecha;
+                        ofertaSAP.DocDueDate = Oferta.FechaVencimiento;
+                        ofertaSAP.DocType = BoDocumentTypes.dDocument_Items;
+                        ofertaSAP.NumAtCard = "Creado en NOVAPOS";
+                        ofertaSAP.Series = param.SerieOrden;
+                        ofertaSAP.Comments = Oferta.Comentarios;
+                        ofertaSAP.GroupNumber = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
+                       ofertaSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault().CodSAP);
+
+
+                        //Detalle
+                        int z = 0;
+                        var Detalle = db.DetOferta.Where(a => a.idEncabezado == id).ToList();
+                        foreach (var item in Detalle)
+                        {
+                            ofertaSAP.Lines.SetCurrentLine(z);
+
+                            ofertaSAP.Lines.Currency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                            ofertaSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
+                            ofertaSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                            ofertaSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
+                            var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
+                            ofertaSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                            ofertaSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
+
+
+                            ofertaSAP.Lines.UnitPrice = Convert.ToDouble(db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().PrecioUnitario.ToString());
+                            var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
+                            ofertaSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
+                            ofertaSAP.Lines.Add();
+                            z++;
+                        }
+
+
+                        var respuesta = ofertaSAP.Add();
+                        if (respuesta == 0)
+                        {
+                            Conexion.Desconectar();
+                            db.Entry(Oferta).State = EntityState.Modified;
+                            Oferta.ProcesadaSAP = true;
+                            db.SaveChanges();
+
+                        }
+                        else
+                        {
+                            var error = "hubo un error " + Conexion.Company.GetLastErrorDescription();
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = error;
+                            be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ofertaSAP);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+                            Conexion.Desconectar();
+
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        BitacoraErrores be = new BitacoraErrores();
+                        be.Descripcion = ex.Message;
+                        be.StrackTrace = ex.StackTrace;
+                        be.Fecha = DateTime.Now;
+                        be.JSON = JsonConvert.SerializeObject(ex);
+                        db.BitacoraErrores.Add(be);
+                        db.SaveChanges();
+
+                    }
+                }
+
+
+
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Procesado con exito");
+
+            }
+            catch (Exception ex)
+            {
+
+                ModelCliente db2 = new ModelCliente();
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db2.BitacoraErrores.Add(be);
+                db2.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
 
         public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
@@ -34,7 +228,8 @@ namespace WATickets.Controllers
                     filtro.FechaInicial = filtro.FechaInicial.Date;
                     filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
                 }
-                var Ofertas = db.EncOferta.Select(a => new {
+                var Ofertas = db.EncOferta.Select(a => new
+                {
                     a.id,
                     a.idCliente,
                     a.idUsuarioCreador,
@@ -60,7 +255,7 @@ namespace WATickets.Controllers
 
                 }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
 
-                if(!string.IsNullOrEmpty(filtro.Texto))
+                if (!string.IsNullOrEmpty(filtro.Texto))
                 {
                     Ofertas = Ofertas.Where(a => a.CodSuc == filtro.Texto).ToList();
                 }
@@ -79,7 +274,7 @@ namespace WATickets.Controllers
                     Ofertas = Ofertas.Where(a => a.Status == filtro.ItemCode).ToList();
                 }
 
-                if(!string.IsNullOrEmpty(filtro.Categoria))
+                if (!string.IsNullOrEmpty(filtro.Categoria))
                 {
                     Ofertas = Ofertas.Where(a => a.Tipo == filtro.Categoria).ToList();
                 }
@@ -108,7 +303,7 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
 
             }
- 
+
 
         }
 
@@ -117,7 +312,8 @@ namespace WATickets.Controllers
         {
             try
             {
-                var Oferta = db.EncOferta.Select(a => new {
+                var Oferta = db.EncOferta.Select(a => new
+                {
                     a.id,
                     a.idCliente,
                     a.idUsuarioCreador,
@@ -170,6 +366,7 @@ namespace WATickets.Controllers
 
             try
             {
+                Parametros param = db.Parametros.FirstOrDefault();
                 EncOferta Oferta = db.EncOferta.Where(a => a.id == oferta.id).FirstOrDefault();
                 if (Oferta == null)
                 {
@@ -199,7 +396,7 @@ namespace WATickets.Controllers
                     db.SaveChanges();
 
                     var i = 0;
-                    foreach(var item in oferta.Detalle)
+                    foreach (var item in oferta.Detalle)
                     {
                         DetOferta det = new DetOferta();
                         det.idEncabezado = Oferta.id;
@@ -227,6 +424,176 @@ namespace WATickets.Controllers
                     db.BitacoraMovimientos.Add(btm);
                     db.SaveChanges();
                     t.Commit();
+
+                    //Insercion e itento a SAP
+
+                    if (Oferta.Tipo == "01")
+                    {
+                        try
+                        {
+                            var ofertaSAP = (Documents)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oQuotations);
+
+                            //Encabezado
+
+                            ofertaSAP.DocObjectCode = BoObjectTypes.oQuotations;
+                            ofertaSAP.CardCode = db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault().Codigo;
+                            ofertaSAP.DocCurrency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                            ofertaSAP.DocDate = Oferta.Fecha;
+                            ofertaSAP.DocDueDate = Oferta.FechaVencimiento;
+                            ofertaSAP.DocType = BoDocumentTypes.dDocument_Items;
+                            ofertaSAP.NumAtCard = "Creado en NOVAPOS";
+                            ofertaSAP.Series = param.SerieProforma;
+                            ofertaSAP.Comments = Oferta.Comentarios;
+                            ofertaSAP.GroupNumber = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
+                            ofertaSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault().CodSAP);
+
+
+                            //Detalle
+                            int z = 0;
+                            foreach (var item in oferta.Detalle)
+                            {
+                                ofertaSAP.Lines.SetCurrentLine(z);
+
+                                ofertaSAP.Lines.Currency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                                ofertaSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
+                                ofertaSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                                ofertaSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
+                                var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
+                                ofertaSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                ofertaSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
+
+
+                                ofertaSAP.Lines.UnitPrice = Convert.ToDouble(db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().PrecioUnitario.ToString());
+                                var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
+                                ofertaSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
+                                ofertaSAP.Lines.Add();
+                                z++;
+                            }
+
+
+                            var respuesta = ofertaSAP.Add();
+                            if (respuesta == 0)
+                            {
+                                Conexion.Desconectar();
+                                db.Entry(Oferta).State = EntityState.Modified;
+                                Oferta.ProcesadaSAP = true;
+                                db.SaveChanges();
+
+                            }
+                            else
+                            {
+                                var error = "hubo un error " + Conexion.Company.GetLastErrorDescription();
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = error;
+                                be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(ofertaSAP);
+                                db.BitacoraErrores.Add(be);
+                                db.SaveChanges();
+                                Conexion.Desconectar();
+
+
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex.Message;
+                            be.StrackTrace = ex.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+
+                        }
+                    }
+                    else if (Oferta.Tipo == "02")
+                    {
+                        try
+                        {
+                            var ofertaSAP = (Documents)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders);
+
+                            //Encabezado
+
+                            ofertaSAP.DocObjectCode = BoObjectTypes.oOrders;
+                            ofertaSAP.CardCode = db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault().Codigo;
+                            ofertaSAP.DocCurrency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                            ofertaSAP.DocDate = Oferta.Fecha;
+                            ofertaSAP.DocDueDate = Oferta.FechaVencimiento;
+                            ofertaSAP.DocType = BoDocumentTypes.dDocument_Items;
+                            ofertaSAP.NumAtCard = "Creado en NOVAPOS";
+                            ofertaSAP.Series = param.SerieOrden;
+                            ofertaSAP.Comments = Oferta.Comentarios;
+                            ofertaSAP.GroupNumber = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
+                            ofertaSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault().CodSAP);
+
+
+                            //Detalle
+                            int z = 0;
+                            foreach (var item in oferta.Detalle)
+                            {
+                                ofertaSAP.Lines.SetCurrentLine(z);
+
+                                ofertaSAP.Lines.Currency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                                ofertaSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
+                                ofertaSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                                ofertaSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
+                                var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
+                                ofertaSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                ofertaSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
+
+
+                                ofertaSAP.Lines.UnitPrice = Convert.ToDouble(db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().PrecioUnitario.ToString());
+                                var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
+                                ofertaSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
+                                ofertaSAP.Lines.Add();
+                                z++;
+                            }
+
+
+                            var respuesta = ofertaSAP.Add();
+                            if (respuesta == 0)
+                            {
+                                Conexion.Desconectar();
+                                db.Entry(Oferta).State = EntityState.Modified;
+                                Oferta.ProcesadaSAP = true;
+                                db.SaveChanges();
+
+                            }
+                            else
+                            {
+                                var error = "hubo un error " + Conexion.Company.GetLastErrorDescription();
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = error;
+                                be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(ofertaSAP);
+                                db.BitacoraErrores.Add(be);
+                                db.SaveChanges();
+                                Conexion.Desconectar();
+
+
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex.Message;
+                            be.StrackTrace = ex.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+
+                        }
+                    }
+                             
+
+
+
+                    ///
+
+
                 }
                 else
                 {
@@ -285,7 +652,7 @@ namespace WATickets.Controllers
 
                     var Detalles = db.DetOferta.Where(a => a.idEncabezado == Oferta.id).ToList();
 
-                    foreach(var item in Detalles)
+                    foreach (var item in Detalles)
                     {
                         db.DetOferta.Remove(item);
                         db.SaveChanges();
@@ -315,7 +682,7 @@ namespace WATickets.Controllers
 
                     BitacoraMovimientos btm = new BitacoraMovimientos();
                     btm.idUsuario = oferta.idUsuarioCreador;
-                    btm.Descripcion = "Se edito la oferta: "+Oferta.id+" del cliente con el id: " + oferta.idCliente;
+                    btm.Descripcion = "Se edito la oferta: " + Oferta.id + " del cliente con el id: " + oferta.idCliente;
                     btm.Fecha = DateTime.Now;
                     btm.Metodo = "Edicion de Oferta";
                     db.BitacoraMovimientos.Add(btm);
