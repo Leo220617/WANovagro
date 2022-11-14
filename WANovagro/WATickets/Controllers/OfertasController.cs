@@ -26,7 +26,7 @@ namespace WATickets.Controllers
         G G = new G();
 
 
-        [Route("api/Ofertas/InsertarSAP")]
+        [Route("api/Ofertas/SincronizarSAP")]
         public HttpResponseMessage GetExtraeDatos([FromUri] int id) 
         {
             try
@@ -50,7 +50,7 @@ namespace WATickets.Controllers
                         ofertaSAP.NumAtCard = "Creado en NOVAPOS";
                         ofertaSAP.Series = param.SerieProforma;
                         ofertaSAP.Comments = Oferta.Comentarios;
-                        ofertaSAP.GroupNumber = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
+                        ofertaSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
                         ofertaSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault().CodSAP);
 
 
@@ -70,7 +70,7 @@ namespace WATickets.Controllers
                             ofertaSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
 
 
-                            ofertaSAP.Lines.UnitPrice = Convert.ToDouble(db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().PrecioUnitario.ToString());
+                            ofertaSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
                             var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                             ofertaSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
                             ofertaSAP.Lines.Add();
@@ -81,10 +81,11 @@ namespace WATickets.Controllers
                         var respuesta = ofertaSAP.Add();
                         if (respuesta == 0)
                         {
-                            Conexion.Desconectar();
                             db.Entry(Oferta).State = EntityState.Modified;
+                            Oferta.DocEntry = Conexion.Company.GetNewObjectKey().ToString();
                             Oferta.ProcesadaSAP = true;
                             db.SaveChanges();
+                            Conexion.Desconectar();
 
                         }
                         else
@@ -131,7 +132,7 @@ namespace WATickets.Controllers
                         ofertaSAP.NumAtCard = "Creado en NOVAPOS";
                         ofertaSAP.Series = param.SerieOrden;
                         ofertaSAP.Comments = Oferta.Comentarios;
-                        ofertaSAP.GroupNumber = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
+                        ofertaSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
                        ofertaSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault().CodSAP);
 
 
@@ -151,7 +152,7 @@ namespace WATickets.Controllers
                             ofertaSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
 
 
-                            ofertaSAP.Lines.UnitPrice = Convert.ToDouble(db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().PrecioUnitario.ToString());
+                            ofertaSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
                             var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                             ofertaSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
                             ofertaSAP.Lines.Add();
@@ -162,10 +163,12 @@ namespace WATickets.Controllers
                         var respuesta = ofertaSAP.Add();
                         if (respuesta == 0)
                         {
-                            Conexion.Desconectar();
                             db.Entry(Oferta).State = EntityState.Modified;
+                            Oferta.DocEntry = Conexion.Company.GetNewObjectKey().ToString();
+
                             Oferta.ProcesadaSAP = true;
                             db.SaveChanges();
+                            Conexion.Desconectar();
 
                         }
                         else
@@ -199,7 +202,7 @@ namespace WATickets.Controllers
 
 
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Procesado con exito");
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
 
             }
             catch (Exception ex)
@@ -287,6 +290,10 @@ namespace WATickets.Controllers
                     Ofertas = Ofertas.Where(a => a.idVendedor == filtro.Codigo4).ToList();
                 }
 
+                if (filtro.Procesado != null )
+                {
+                    Ofertas = Ofertas.Where(a => a.ProcesadaSAP == filtro.Procesado).ToList();
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Ofertas);
             }
@@ -444,7 +451,9 @@ namespace WATickets.Controllers
                             ofertaSAP.NumAtCard = "Creado en NOVAPOS";
                             ofertaSAP.Series = param.SerieProforma;
                             ofertaSAP.Comments = Oferta.Comentarios;
-                            ofertaSAP.GroupNumber = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
+                            ofertaSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
+
+
                             ofertaSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault().CodSAP);
 
 
@@ -463,7 +472,7 @@ namespace WATickets.Controllers
                                 ofertaSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
 
 
-                                ofertaSAP.Lines.UnitPrice = Convert.ToDouble(db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().PrecioUnitario.ToString());
+                                ofertaSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
                                 var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                                 ofertaSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
                                 ofertaSAP.Lines.Add();
@@ -474,10 +483,12 @@ namespace WATickets.Controllers
                             var respuesta = ofertaSAP.Add();
                             if (respuesta == 0)
                             {
-                                Conexion.Desconectar();
                                 db.Entry(Oferta).State = EntityState.Modified;
+                                Oferta.DocEntry = Conexion.Company.GetNewObjectKey().ToString();
+
                                 Oferta.ProcesadaSAP = true;
                                 db.SaveChanges();
+                                Conexion.Desconectar();
 
                             }
                             else
@@ -524,7 +535,7 @@ namespace WATickets.Controllers
                             ofertaSAP.NumAtCard = "Creado en NOVAPOS";
                             ofertaSAP.Series = param.SerieOrden;
                             ofertaSAP.Comments = Oferta.Comentarios;
-                            ofertaSAP.GroupNumber = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
+                            ofertaSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
                             ofertaSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Oferta.idVendedor).FirstOrDefault().CodSAP);
 
 
@@ -541,9 +552,8 @@ namespace WATickets.Controllers
                                 var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
                                 ofertaSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
                                 ofertaSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
-
-
-                                ofertaSAP.Lines.UnitPrice = Convert.ToDouble(db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().PrecioUnitario.ToString());
+ 
+                                ofertaSAP.Lines.UnitPrice =  Convert.ToDouble(item.PrecioUnitario);
                                 var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                                 ofertaSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
                                 ofertaSAP.Lines.Add();
@@ -554,10 +564,12 @@ namespace WATickets.Controllers
                             var respuesta = ofertaSAP.Add();
                             if (respuesta == 0)
                             {
-                                Conexion.Desconectar();
                                 db.Entry(Oferta).State = EntityState.Modified;
+                                Oferta.DocEntry = Conexion.Company.GetNewObjectKey().ToString();
+
                                 Oferta.ProcesadaSAP = true;
                                 db.SaveChanges();
+                                Conexion.Desconectar();
 
                             }
                             else
