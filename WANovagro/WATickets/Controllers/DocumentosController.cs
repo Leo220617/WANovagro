@@ -506,6 +506,7 @@ namespace WATickets.Controllers
                     {
                         try
                         {
+                            var Sucursal = db.Sucursales.Where(a => a.CodSuc == Documento.CodSuc).FirstOrDefault();
                             var documentoSAP = (Documents)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInvoices);
 
                             //Encabezado
@@ -517,9 +518,10 @@ namespace WATickets.Controllers
                             documentoSAP.DocDueDate = Documento.FechaVencimiento;
                             documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
                             documentoSAP.NumAtCard = "Creado en NOVAPOS";
-                            documentoSAP.Series = 4;  //param.SerieProforma; //Quemada
                             documentoSAP.Comments = Documento.Comentarios;
                             documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
+                            var CondPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Nombre;
+                            documentoSAP.Series = CondPago.ToLower().Contains("contado") ? Sucursal.SerieFECO : Sucursal.SerieFECR;  //4;  //param.SerieProforma; //Quemada
 
 
                             documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
@@ -544,6 +546,7 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
                                 var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                                 documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
+                       
                                 documentoSAP.Lines.Add();
                                 z++;
                             }
@@ -553,8 +556,7 @@ namespace WATickets.Controllers
                             if (respuesta == 0) //se creo exitorsamente 
                             {
                                 db.Entry(Documento).State = EntityState.Modified;
-                                Documento.DocEntry = Conexion.Company.GetNewObjectKey().ToString();
-                                Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
+                                Documento.DocEntry = Conexion.Company.GetNewObjectKey().ToString(); 
                                 Documento.ProcesadaSAP = true;
                                 db.SaveChanges();
 
@@ -570,7 +572,7 @@ namespace WATickets.Controllers
                                     pagoProcesado.VatDate = DateTime.Now;
                                     pagoProcesado.Remarks = "pago procesado por novapos";
                                     pagoProcesado.DocCurrency = Documento.Moneda;
-
+                                    pagoProcesado.HandWritten = BoYesNoEnum.tNO;
                                     //ligar la factura con el pago 
 
                                     pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
@@ -581,6 +583,9 @@ namespace WATickets.Controllers
 
                                     var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id).ToList();
 
+
+                                    var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == null  || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
+
                                     foreach(var item in MetodosPagos)
                                     {
                                         switch(item.Metodo)
@@ -588,7 +593,7 @@ namespace WATickets.Controllers
                                             case "Efectivo":
                                                 {
                                                     pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
-                                                    pagoProcesado.CashSum = Convert.ToDouble(item.Monto);
+                                                    pagoProcesado.CashSum = Convert.ToDouble(item.Monto + MontoOtros);
                                                     
                                                     break;
                                                 }
@@ -615,6 +620,20 @@ namespace WATickets.Controllers
                                                     pagoProcesado.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
                                                     pagoProcesado.TransferReference = item.NumReferencia;
                                                     pagoProcesado.TransferSum = Convert.ToDouble(item.Monto);
+
+                                                    break;
+                                                }
+                                            case "Cheque":
+                                                {
+                                                    pagoProcesado.Checks.SetCurrentLine(0);
+                                                    pagoProcesado.Checks.CheckAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
+                                                    pagoProcesado.Checks.DueDate = DateTime.Now; //Fecha en la que se mete el pago 
+                                                    pagoProcesado.Checks.CheckNumber =  Convert.ToInt32(item.NumReferencia);
+                                                    pagoProcesado.Checks.CheckSum = Convert.ToDouble(item.Monto);
+                                                    //pagoProcesado.Checks.CountryCode = "CR";
+                                                    //pagoProcesado.Checks.Trnsfrable = BoYesNoEnum.tYES;
+                                                    pagoProcesado.Checks.ManualCheck = BoYesNoEnum.tNO;
+
 
                                                     break;
                                                 }

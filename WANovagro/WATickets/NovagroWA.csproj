@@ -250,6 +250,7 @@
     <Compile Include="Controllers\CuentasBancariasController.cs" />
     <Compile Include="Controllers\DistritosController.cs" />
     <Compile Include="Controllers\DocumentosController.cs" />
+    <Compile Include="Controllers\DocumentosMasivosController.cs" />
     <Compile Include="Controllers\ExoneracionesController.cs" />
     <Compile Include="Controllers\G.cs" />
     <Compile Include="Controllers\GruposClientesController.cs" />
