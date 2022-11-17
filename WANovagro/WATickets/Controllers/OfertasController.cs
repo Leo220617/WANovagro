@@ -47,7 +47,7 @@ namespace WATickets.Controllers
                         ofertaSAP.DocDate = Oferta.Fecha;
                         ofertaSAP.DocDueDate = Oferta.FechaVencimiento;
                         ofertaSAP.DocType = BoDocumentTypes.dDocument_Items;
-                        ofertaSAP.NumAtCard = "Creado en NOVAPOS";
+                        ofertaSAP.NumAtCard = "APP PROF" + "" + Oferta.id;
                         ofertaSAP.Series = param.SerieProforma;
                         ofertaSAP.Comments = Oferta.Comentarios;
                         ofertaSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);
@@ -129,7 +129,7 @@ namespace WATickets.Controllers
                         ofertaSAP.DocDate = Oferta.Fecha;
                         ofertaSAP.DocDueDate = Oferta.FechaVencimiento;
                         ofertaSAP.DocType = BoDocumentTypes.dDocument_Items;
-                        ofertaSAP.NumAtCard = "Creado en NOVAPOS";
+                        ofertaSAP.NumAtCard = "APP ORV" + "" + Oferta.id;
                         ofertaSAP.Series = param.SerieOrden;
                         ofertaSAP.Comments = Oferta.Comentarios;
                         ofertaSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Oferta.idCondPago).FirstOrDefault().CodSAP);

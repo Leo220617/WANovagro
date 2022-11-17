@@ -47,7 +47,7 @@ namespace WATickets.Controllers
                         documentoSAP.DocDate = Documento.Fecha;
                         documentoSAP.DocDueDate = Documento.FechaVencimiento;
                         documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
-                        documentoSAP.NumAtCard = "Creado en NOVAPOS";
+                        documentoSAP.NumAtCard = "Creado en NOVAPOS" + " " + Documento.id;
                         documentoSAP.Series = param.SerieProforma;
                         documentoSAP.Comments = Documento.Comentarios;
                         documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
@@ -517,7 +517,7 @@ namespace WATickets.Controllers
                             documentoSAP.DocDate = Documento.Fecha;
                             documentoSAP.DocDueDate = Documento.FechaVencimiento;
                             documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
-                            documentoSAP.NumAtCard = "Creado en NOVAPOS";
+                            documentoSAP.NumAtCard = "APP FAC" + " " + Documento.id;
                             documentoSAP.Comments = Documento.Comentarios;
                             documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
                             var CondPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Nombre;
@@ -571,6 +571,7 @@ namespace WATickets.Controllers
                                     pagoProcesado.TaxDate = DateTime.Now;
                                     pagoProcesado.VatDate = DateTime.Now;
                                     pagoProcesado.Remarks = "pago procesado por novapos";
+                                    pagoProcesado.CounterReference = "APP FAC" + Documento.id;
                                     pagoProcesado.DocCurrency = Documento.Moneda;
                                     pagoProcesado.HandWritten = BoYesNoEnum.tNO;
                                     //ligar la factura con el pago 
