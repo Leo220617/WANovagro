@@ -32,6 +32,5 @@
         public int SerieProforma { get; set; }
 
         public int SerieOrden { get; set; }
-
     }
 }

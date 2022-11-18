@@ -380,9 +380,9 @@ namespace WATickets.Controllers
                 Parametros parametros = db.Parametros.FirstOrDefault();
                 var conexion = G.DevuelveCadena(db);
 
-                var code = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? db.Productos.FirstOrDefault() : db.Productos.Where(a => a.id == idBod).FirstOrDefault();
+                var code = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? db.Bodegas.FirstOrDefault() : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault();
                
-                var SQL = parametros.SQLProductos + " and t0.ItemCode = '" + code.Codigo + "' and t2.WhsCode = '" + db.Bodegas.Where(a => a.id == code.idBodega).FirstOrDefault().CodSAP + "' " ;
+                var SQL = parametros.SQLProductos + " and t2.WhsCode = '" + db.Bodegas.Where(a => a.id == code.id).FirstOrDefault().CodSAP + "' " ;
 
 
                 SqlConnection Cn = new SqlConnection(conexion);
