@@ -573,7 +573,7 @@ namespace WATickets.Controllers
                                     documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
                                     documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
                                     documentoSAP.Lines.BaseType = Convert.ToInt32(SAPbobsCOM.BoObjectTypes.oInvoices);
-                                    documentoSAP.Lines.BaseLine = z;
+                                    //documentoSAP.Lines.BaseLine = z;
 
                                     documentoSAP.Lines.Add();
                                     z++;
