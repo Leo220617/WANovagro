@@ -522,7 +522,8 @@ namespace WATickets.Controllers
                         {
                             try
                             {
-                                var DocumentoG = db.EncDocumento.Where(a => a.id == documento.BaseEntry).FirstOrDefault();
+                                var DocumentoG = db.EncDocumento.Where(a => a.id == Documento.BaseEntry).FirstOrDefault();
+                                var DetalleG = db.DetDocumento.Where(a => a.idEncabezado == DocumentoG.id).ToList();
                                 var Sucursal = db.Sucursales.Where(a => a.CodSuc == Documento.CodSuc).FirstOrDefault();
                                 var documentoSAP = (Documents)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oCreditNotes);
 
@@ -538,12 +539,12 @@ namespace WATickets.Controllers
                                 documentoSAP.NumAtCard = "APP FAC" + " " + Documento.id;
                                 documentoSAP.Comments = Documento.Comentarios;
 
-                                documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
+                               // documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
                                
                                 documentoSAP.Series =  Sucursal.SerieNC; //Quemada
 
-                                //documentoSAP.GroupNumber = -1;
-                                documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
+                                documentoSAP.GroupNumber = -1;
+                                //documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
 
 
                                 //Detalle
@@ -559,21 +560,21 @@ namespace WATickets.Controllers
 
                                     documentoSAP.Lines.SetCurrentLine(z);
 
-                                    documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
-                                    documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
-                                    documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
-                                    documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
-                                    var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
-                                    documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
-                                    documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
+                                    //documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
+                                    //documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
+                                    //documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                                    //documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
+                                    //var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
+                                    //documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                    //documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
 
 
-                                    documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
-                                    var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
-                                    documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
+                                    //documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
+                                    //var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
+                                    //documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
                                     documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
                                     documentoSAP.Lines.BaseType = Convert.ToInt32(SAPbobsCOM.BoObjectTypes.oInvoices);
-                                    //documentoSAP.Lines.BaseLine = z;
+                                    documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea ;
 
                                     documentoSAP.Lines.Add();
                                     z++;
@@ -602,7 +603,7 @@ namespace WATickets.Controllers
                                     be.Descripcion = error;
                                     be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
                                     be.Fecha = DateTime.Now;
-                                    be.JSON = JsonConvert.SerializeObject(documentoSAP);
+                                    be.JSON = JsonConvert.SerializeObject(DocumentoG);
                                     db.BitacoraErrores.Add(be);
                                     db.SaveChanges();
                                     Conexion.Desconectar();
