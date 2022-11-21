@@ -533,9 +533,9 @@ namespace WATickets.Controllers
                                 documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
                                 documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
                                 documentoSAP.DocDate = Documento.Fecha;
-                                documentoSAP.DocDueDate = Documento.FechaVencimiento;
+                                //documentoSAP.DocDueDate = Documento.FechaVencimiento;
 
-                                documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
+                                //documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
                                 documentoSAP.NumAtCard = "APP FAC" + " " + Documento.id;
                                 documentoSAP.Comments = Documento.Comentarios;
 
@@ -543,7 +543,7 @@ namespace WATickets.Controllers
                                
                                 documentoSAP.Series =  Sucursal.SerieNC; //Quemada
 
-                                documentoSAP.GroupNumber = -1;
+                                //documentoSAP.GroupNumber = -1;
                                 //documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
 
 
@@ -572,8 +572,9 @@ namespace WATickets.Controllers
                                     //documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
                                     //var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                                     //documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
-                                    documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
                                     documentoSAP.Lines.BaseType = Convert.ToInt32(SAPbobsCOM.BoObjectTypes.oInvoices);
+                                    documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
+                                    
                                     documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea ;
 
                                     documentoSAP.Lines.Add();
