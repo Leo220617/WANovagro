@@ -80,6 +80,7 @@ namespace WATickets.Controllers
                                     Producto.Stock = Convert.ToDecimal(item["StockReal"]);
                                     Producto.Moneda = item["Moneda"].ToString();
                                     Producto.Activo = true;
+                                    Producto.FechaActualizacion = DateTime.Now;
                                     Producto.ProcesadoSAP = true;
 
                                     db.Productos.Add(Producto);
@@ -121,6 +122,7 @@ namespace WATickets.Controllers
                                     Producto.Moneda = item["Moneda"].ToString();
 
                                     Producto.Activo = true;
+                                    Producto.FechaActualizacion = DateTime.Now;
                                     Producto.ProcesadoSAP = true;
 
                                     db.SaveChanges();

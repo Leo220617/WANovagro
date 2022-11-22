@@ -62,6 +62,8 @@ namespace WATickets.Models.Cliente
         public string CorreoPublicitario { get; set; }
 
         public int idGrupo { get; set; }
+
+        public DateTime FechaActualizacion { get; set; }
     }
        
 }

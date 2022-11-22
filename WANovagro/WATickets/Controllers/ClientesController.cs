@@ -108,7 +108,7 @@ namespace WATickets.Controllers
                                 Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
                             Cliente.ProcesadoSAP = true;
-
+                            Cliente.FechaActualizacion = DateTime.Now;
                             var idCond = item["idCondPago"].ToString();
                             Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault() == null ? db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado")).FirstOrDefault().id : db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault().id;
 
@@ -190,6 +190,7 @@ namespace WATickets.Controllers
                             Cliente.idGrupo = db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault() == null ? db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id : db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id;
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
+                            Cliente.FechaActualizacion = DateTime.Now;
                             Cliente.ProcesadoSAP = true;
                            
                             db.SaveChanges();
@@ -323,7 +324,9 @@ namespace WATickets.Controllers
 
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
+                            Cliente.FechaActualizacion = DateTime.Now;
                             Cliente.ProcesadoSAP = true;
+
 
                             var idCond = item["idCondPago"].ToString();
                             Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault() == null ? db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado")).FirstOrDefault().id : db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault().id;
@@ -406,6 +409,7 @@ namespace WATickets.Controllers
                             Cliente.idGrupo = db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault() == null ? db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id : db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id;
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
+                            Cliente.FechaActualizacion = DateTime.Now;
                             Cliente.ProcesadoSAP = true;
 
                             db.SaveChanges();

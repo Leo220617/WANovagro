@@ -258,6 +258,7 @@
     <Compile Include="Controllers\ImpuestosController.cs" />
     <Compile Include="Controllers\ListaPreciosController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\MetodosPagosController.cs" />
     <Compile Include="Controllers\OfertasController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="Controllers\RolesController.cs" />

@@ -29,6 +29,10 @@ namespace WATickets.Models.APIS
         public int idCaja { get; set; }
         public int BaseEntry { get; set; }
         public int idVendedor { get; set; }
+        public bool ProcesadaSAP { get; set; }
+        public string DocEntryPago { get; set; }
+        public string DocEntry { get; set; }
+        public bool PagoProcesadaSAP { get; set; }
         public List<MetodosPagos> MetodosPagos { get; set; }
         public List<DetDocumento> Detalle { get; set; }
     }
