@@ -110,23 +110,23 @@ namespace WATickets.Controllers
                     
                     CierreCajas.FecUltAct = DateTime.Now;
                   
-                    CierreCajas.EfectivoColones = cierreCajas.EfectivoColones;
-                    CierreCajas.ChequesColones = cierreCajas.ChequesColones;
-                    CierreCajas.TarjetasColones = cierreCajas.TarjetasColones;
-                    CierreCajas.OtrosMediosColones = cierreCajas.OtrosMediosColones;
-                    CierreCajas.TotalVendidoColones = cierreCajas.TotalVendidoColones;
+                    //CierreCajas.EfectivoColones = cierreCajas.EfectivoColones;
+                    //CierreCajas.ChequesColones = cierreCajas.ChequesColones;
+                    //CierreCajas.TarjetasColones = cierreCajas.TarjetasColones;
+                    //CierreCajas.OtrosMediosColones = cierreCajas.OtrosMediosColones;
+                    //CierreCajas.TotalVendidoColones = cierreCajas.TotalVendidoColones;
                     CierreCajas.TotalRegistradoColones = cierreCajas.TotalRegistradoColones;
                     CierreCajas.TotalAperturaColones = db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault() == null ? 0 : db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault().MontoAperturaColones;
-                    CierreCajas.TransferenciasColones = cierreCajas.TransferenciasColones;
+                    //CierreCajas.TransferenciasColones = cierreCajas.TransferenciasColones;
 
-                    CierreCajas.EfectivoFC = cierreCajas.EfectivoFC;
-                    CierreCajas.ChequesFC = cierreCajas.ChequesFC;
-                    CierreCajas.TarjetasFC = cierreCajas.TarjetasFC;
-                    CierreCajas.OtrosMediosFC = cierreCajas.OtrosMediosFC;
-                    CierreCajas.TotalVendidoFC = cierreCajas.TotalVendidoFC;
+                    //CierreCajas.EfectivoFC = cierreCajas.EfectivoFC;
+                    //CierreCajas.ChequesFC = cierreCajas.ChequesFC;
+                    //CierreCajas.TarjetasFC = cierreCajas.TarjetasFC;
+                    //CierreCajas.OtrosMediosFC = cierreCajas.OtrosMediosFC;
+                   // CierreCajas.TotalVendidoFC = cierreCajas.TotalVendidoFC;
                     CierreCajas.TotalRegistradoFC = cierreCajas.TotalRegistradoFC;
                     CierreCajas.TotalAperturaFC = db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault() == null ? 0 : db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault().MontoAperturaDolares;
-                    CierreCajas.TransferenciasDolares = cierreCajas.TransferenciasDolares;
+                   // CierreCajas.TransferenciasDolares = cierreCajas.TransferenciasDolares;
 
 
                     CierreCajas.EfectivoColonesC = cierreCajas.EfectivoColonesC;

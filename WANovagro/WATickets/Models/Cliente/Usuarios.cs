@@ -29,5 +29,7 @@ namespace WATickets.Models.Cliente
 
         public bool novapos { get; set; }
 
+        public int idVendedor { get; set; }
+
     }
 }

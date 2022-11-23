@@ -95,6 +95,7 @@ namespace WATickets.Controllers
                     Cuentas.Nombre = cuentas.Nombre;
                     Cuentas.CuentaSAP = cuentas.CuentaSAP;
                     Cuentas.Estado = true;
+                    Cuentas.Banco = cuentas.Banco;
                     db.CuentasBancarias.Add(Cuentas);
                     db.SaveChanges();
 
@@ -133,6 +134,7 @@ namespace WATickets.Controllers
                     Cuentas.CodSuc = cuentas.CodSuc;
                     Cuentas.Nombre = cuentas.Nombre;
                     Cuentas.CuentaSAP = cuentas.CuentaSAP;
+                    Cuentas.Banco = cuentas.Banco;
                     db.SaveChanges();
 
                 }

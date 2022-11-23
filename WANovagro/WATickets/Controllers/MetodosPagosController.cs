@@ -13,12 +13,28 @@ namespace WATickets.Controllers
     public class MetodosPagosController : ApiController
     {
         ModelCliente db = new ModelCliente();
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtros)
         {
             try
             {
+                var time = new DateTime();
                 var Pagos = db.MetodosPagos.ToList();
               
+                if(filtros.Codigo1 > 0 && filtros.FechaInicial != time ) // para buscar los pagos realizados en una caja
+                {
+                     
+                    var Documentos = db.EncDocumento.Where(a => a.idCaja != filtros.Codigo1 ).ToList();
+                    foreach(var item in Documentos)
+                    {
+                        Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList(); //tenemos todos los pagos pertenecientes a una caja
+                    }
+
+                    Documentos = db.EncDocumento.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha > filtros.FechaInicial)).ToList();
+                    foreach (var item in Documentos)
+                    {
+                        Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList();
+                    }
+                }
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Pagos);

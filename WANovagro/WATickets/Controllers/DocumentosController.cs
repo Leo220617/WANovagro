@@ -380,7 +380,7 @@ namespace WATickets.Controllers
             try
             {
 
-                var time = DateTime.Now; // 01-01-0001
+                var time = new DateTime() ; // 01-01-0001
                 if (filtro.FechaFinal != time)
                 {
                     filtro.FechaInicial = filtro.FechaInicial.Date;
@@ -637,11 +637,113 @@ namespace WATickets.Controllers
                       
                             db.SaveChanges();
 
+                            /// En caso de ser nota de credito se debe descontar los metodos de pago de la factura
+                            /// 
+                            var time2 = DateTime.Now.Date;
 
-                           
+                            var CierreCajaM = db.CierreCajas.Where(a => a.FechaCaja == time2 && a.idCaja == DocumentoG.idCaja && a.idUsuario == DocumentoG.idUsuarioCreador).FirstOrDefault();
+                            var MetodosPagosFactura = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry).ToList();
+                            foreach(var item in MetodosPagosFactura)
+                            {
+                                if (CierreCajaM != null)
+                                {
+                                    db.Entry(CierreCajaM).State = EntityState.Modified;
+                                    if (DocumentoG.Moneda == "CRC")
+                                    {
+                                        switch (item.Metodo)
+                                        {
+                                            case "Efectivo":
+                                                {
+                                                    CierreCajaM.EfectivoColones -= item.Monto;
+                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+                                                    break;
+                                                }
+                                            case "Tarjeta":
+                                                {
+                                                    CierreCajaM.TarjetasColones -= item.Monto;
+                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+
+                                                    break;
+                                                }
+                                            case "Transferencia":
+                                                {
+                                                    CierreCajaM.TransferenciasColones -= item.Monto;
+                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+
+                                                    break;
+                                                }
+                                            case "Cheque":
+                                                {
+                                                    CierreCajaM.ChequesColones -= item.Monto;
+                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+
+                                                    break;
+                                                }
+
+                                            default:
+                                                {
+                                                    CierreCajaM.OtrosMediosColones -= item.Monto;
+                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+
+                                                    break;
+                                                }
+
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        switch (item.Metodo)
+                                        {
+                                            case "Efectivo":
+                                                {
+                                                    CierreCajaM.EfectivoFC -= item.Monto;
+                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+                                                    break;
+                                                }
+                                            case "Tarjeta":
+                                                {
+                                                    CierreCajaM.TarjetasFC -= item.Monto;
+                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+
+                                                    break;
+                                                }
+                                            case "Transferencia":
+                                                {
+                                                    CierreCajaM.TransferenciasDolares -= item.Monto;
+                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+
+                                                    break;
+                                                }
+                                            case "Cheque":
+                                                {
+                                                    CierreCajaM.ChequesFC -= item.Monto;
+                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+
+                                                    break;
+                                                }
+
+                                            default:
+                                                {
+                                                    CierreCajaM.OtrosMediosFC -= item.Monto;
+                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+
+                                                    break;
+                                                }
+
+                                        }
+                                    }
+                                    db.SaveChanges();
+                                }
+                            }
+
+                            ///
+
 
 
                         }
+
+
                     }
                     var time = DateTime.Now.Date;
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
@@ -754,6 +856,9 @@ namespace WATickets.Controllers
                         }
                     }
 
+
+
+                   
                     documento.id = Documento.id;
                     BitacoraMovimientos btm = new BitacoraMovimientos();
                     btm.idUsuario = documento.idUsuarioCreador;

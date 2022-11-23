@@ -54,7 +54,7 @@ namespace WATickets.Controllers
                     de.CodigoVendedor = "";
                     de.token = token;
                     de.Seguridad = SeguridadModulos;
-
+                    
 
                     return Request.CreateResponse(HttpStatusCode.OK, de);
 
