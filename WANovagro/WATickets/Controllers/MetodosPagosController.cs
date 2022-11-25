@@ -23,13 +23,13 @@ namespace WATickets.Controllers
                 if(filtros.Codigo1 > 0 && filtros.FechaInicial != time ) // para buscar los pagos realizados en una caja
                 {
                      
-                    var Documentos = db.EncDocumento.Where(a => a.idCaja != filtros.Codigo1 ).ToList();
+                    var Documentos = db.EncDocumento.Where(a => a.idCaja != filtros.Codigo1 ).ToList(); //Todos los documentos hechos en otras cajas
                     foreach(var item in Documentos)
                     {
                         Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList(); //tenemos todos los pagos pertenecientes a una caja
                     }
-
-                    Documentos = db.EncDocumento.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha > filtros.FechaInicial)).ToList();
+                    filtros.FechaFinal = filtros.FechaInicial.AddDays(1);
+                    Documentos = db.EncDocumento.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha > filtros.FechaFinal)).ToList();
                     foreach (var item in Documentos)
                     {
                         Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList();

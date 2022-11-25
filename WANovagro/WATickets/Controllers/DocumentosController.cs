@@ -457,8 +457,13 @@ namespace WATickets.Controllers
                     Documentos = Documentos.Where(a => a.idVendedor == filtro.Codigo5).ToList();
                 }
 
+                if (filtro.Codigo6 > 0) // esto por ser integer
+                {
+                    Documentos = Documentos.Where(a => a.idCaja == filtro.Codigo6).ToList();
+                }
 
-                if (filtro.Procesado != null)
+
+                if (filtro.Procesado != null && filtro.Activo) //recordar poner el filtro.activo en novapp
                 {
                     Documentos = Documentos.Where(a => a.ProcesadaSAP == filtro.Procesado).ToList();
                 }
