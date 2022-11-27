@@ -33,6 +33,9 @@ namespace WATickets.Models.APIS
         public string DocEntryPago { get; set; }
         public string DocEntry { get; set; }
         public bool PagoProcesadaSAP { get; set; }
+
+        public string ClaveHacienda { get; set; }
+        public string ConsecutivoHacienda { get; set; }
         public List<MetodosPagos> MetodosPagos { get; set; }
         public List<DetDocumento> Detalle { get; set; }
     }

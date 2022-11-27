@@ -411,6 +411,8 @@ namespace WATickets.Controllers
                     a.idVendedor,
                     a.ProcesadaSAP,
                     a.PagoProcesadaSAP,
+                    a.ClaveHacienda,
+                    a.ConsecutivoHacienda,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -525,6 +527,8 @@ namespace WATickets.Controllers
                     a.ProcesadaSAP,
                     a.idCondPago,
                     a.idVendedor,
+                    a.ClaveHacienda,
+                    a.ConsecutivoHacienda,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -551,7 +555,7 @@ namespace WATickets.Controllers
 
         [Route("api/Documentos/Insertar")]
         [HttpPost]
-        public HttpResponseMessage Post([FromBody] Documentos documento)
+        public async Task<HttpResponseMessage> PostAsync([FromBody] Documentos documento)
         {
             var t = db.Database.BeginTransaction();
             try
@@ -581,6 +585,8 @@ namespace WATickets.Controllers
                     Documento.ProcesadaSAP = false;
                     Documento.idCondPago = documento.idCondPago;
                     Documento.idVendedor = documento.idVendedor;
+                    Documento.ClaveHacienda = "";
+                    Documento.ConsecutivoHacienda = "";
                     // 0 is open, 1 is closed
 
                     db.EncDocumento.Add(Documento);
@@ -874,6 +880,78 @@ namespace WATickets.Controllers
                     db.SaveChanges();
                     t.Commit();
 
+
+                    ////Mandar al api de facturacion
+                    ///
+
+                    var Parametros = db.Parametros.FirstOrDefault();
+                    HttpClient cliente = new HttpClient();
+
+                    try
+                    {
+
+                        var Url = Parametros.UrlFacturaElectronica.Replace("@DocNumR", Documento.id.ToString()).Replace("@ObjTypeR", (Documento.TipoDocumento != "03" ? "13" : "14") ).Replace("@SucursalR", "001");
+
+                        HttpResponseMessage response = await cliente.GetAsync(Url);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            response.Content.Headers.ContentType.MediaType = "application/json";
+                            var res = await response.Content.ReadAsAsync<RecibidoFacturacion>();
+
+                            db.Entry(Documento).State = EntityState.Modified;
+                            Documento.ClaveHacienda = res.ClaveHacienda;
+                            Documento.ConsecutivoHacienda = res.ConsecutivoHacienda;
+
+                            documento.ClaveHacienda = res.ClaveHacienda;
+                            documento.ConsecutivoHacienda = res.ConsecutivoHacienda;
+                            db.SaveChanges();
+
+
+                            try
+                            {
+                                HttpClient cliente2 = new HttpClient();
+
+                                var Url2 = Parametros.UrlConsultaFacturas.Replace("@ClaveR", Documento.ClaveHacienda.ToString()).Replace("@SucursalR", "001");
+
+                                HttpResponseMessage response2 = await cliente2.GetAsync(Url2);
+                                if (response2.IsSuccessStatusCode)
+                                {
+                                    response2.Content.Headers.ContentType.MediaType = "application/json";
+                                    var res2 = await response2.Content.ReadAsStringAsync();
+                                }
+
+                            }
+                            catch (Exception ex)
+                            {
+
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = ex.Message;
+                                be.StrackTrace = ex.StackTrace;
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(ex);
+                                db.BitacoraErrores.Add(be);
+                                db.SaveChanges();
+                            }
+
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        BitacoraErrores be = new BitacoraErrores();
+                        be.Descripcion = ex.Message;
+                        be.StrackTrace = ex.StackTrace;
+                        be.Fecha = DateTime.Now;
+                        be.JSON = JsonConvert.SerializeObject(ex);
+                        db.BitacoraErrores.Add(be);
+                        db.SaveChanges();
+                    }
+
+
+                    //Se termina el api de facturacion 
+
+
                     //Insercion e itento a SAP
                     //if (Documento.id != null)
                     //{
@@ -900,7 +978,7 @@ namespace WATickets.Controllers
                     //            documentoSAP.Comments = Documento.Comentarios;
 
                     //           // documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
-                               
+
                     //            documentoSAP.Series =  Sucursal.SerieNC; //Quemada
 
                     //            //documentoSAP.GroupNumber = -1;
@@ -912,7 +990,7 @@ namespace WATickets.Controllers
 
                     //            foreach (var item in documento.Detalle)
                     //            {
-                                    
+
 
 
 
@@ -934,7 +1012,7 @@ namespace WATickets.Controllers
                     //                documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
                     //                //documentoSAP.Lines.BaseType = Convert.ToInt32(SAPbobsCOM.BoObjectTypes.oInvoices);
                     //                //documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
-                                    
+
                     //                //documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea ;
 
                     //                documentoSAP.Lines.Add();
@@ -950,7 +1028,7 @@ namespace WATickets.Controllers
                     //                Documento.ProcesadaSAP = true;
                     //                db.SaveChanges();
 
-                                  
+
 
 
 
@@ -1190,7 +1268,7 @@ namespace WATickets.Controllers
                     //        }
                     //    }
 
-                       
+
                     //}
 
 
