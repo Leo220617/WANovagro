@@ -93,6 +93,7 @@ namespace WATickets.Controllers
                     Usuario.novapos = usuarios.novapos;
                     Usuario.FecUltSup = DateTime.Now;
                     Usuario.idVendedor = usuarios.idVendedor;
+                    Usuario.Descuento = usuarios.Descuento;
                     db.Usuarios.Add(Usuario);
                     db.SaveChanges();
 
@@ -149,6 +150,7 @@ namespace WATickets.Controllers
                     }
                     Usuarios.idVendedor = usuarios.idVendedor;
                     Usuarios.novapos = usuarios.novapos;
+                    Usuarios.Descuento = usuarios.Descuento;
 
 
                     db.SaveChanges();

@@ -31,5 +31,7 @@ namespace WATickets.Models.Cliente
 
         public int idVendedor { get; set; }
 
+        public decimal Descuento { get; set; }
+
     }
 }
