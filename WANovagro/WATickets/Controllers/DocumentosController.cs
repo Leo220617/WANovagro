@@ -890,7 +890,7 @@ namespace WATickets.Controllers
                     try
                     {
 
-                        var Url = Parametros.UrlFacturaElectronica.Replace("@DocNumR", Documento.id.ToString()).Replace("@ObjTypeR", (Documento.TipoDocumento != "03" ? "13" : "14") ).Replace("@SucursalR", "001");
+                        var Url = Parametros.UrlFacturaElectronica.Replace("@DocNumR", Documento.id.ToString()).Replace("@ObjTypeR", (Documento.TipoDocumento != "03" ? "13" : "14") ).Replace("@SucursalR", "099");
 
                         HttpResponseMessage response = await cliente.GetAsync(Url);
                         if (response.IsSuccessStatusCode)
@@ -911,7 +911,7 @@ namespace WATickets.Controllers
                             {
                                 HttpClient cliente2 = new HttpClient();
 
-                                var Url2 = Parametros.UrlConsultaFacturas.Replace("@ClaveR", Documento.ClaveHacienda.ToString()).Replace("@SucursalR", "001");
+                                var Url2 = Parametros.UrlConsultaFacturas.Replace("@ClaveR", Documento.ClaveHacienda.ToString()).Replace("@SucursalR", "099");
 
                                 HttpResponseMessage response2 = await cliente2.GetAsync(Url2);
                                 if (response2.IsSuccessStatusCode)
