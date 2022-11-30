@@ -465,7 +465,7 @@ namespace WATickets.Controllers
                 }
 
 
-                if (filtro.Procesado != null ) //recordar poner el filtro.activo en novapp
+                if (filtro.Procesado != null && filtro.Activo ) //recordar poner el filtro.activo en novapp
                 {
                     Documentos = Documentos.Where(a => a.ProcesadaSAP == filtro.Procesado).ToList();
                 }
