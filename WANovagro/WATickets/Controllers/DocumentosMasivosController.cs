@@ -609,5 +609,66 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
+
+
+        [Route("api/DocumentosMasivos/ConsultaHacienda")]
+        [HttpGet]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> GetConsultaHaciendaAsync()
+        {
+            try
+            {
+                Parametros param = db.Parametros.FirstOrDefault();
+                var FechaInicial = DateTime.Now.Date;
+                var FechaFinal = FechaInicial.AddDays(1);
+                var DocumentosSPP = db.EncDocumento.Where(a => a.Fecha >= FechaInicial && a.Fecha < FechaFinal).ToList();
+
+                foreach (var item2 in DocumentosSPP)
+                {
+                    try
+                    {
+                        HttpClient cliente2 = new HttpClient();
+
+                        var Url2 = param.UrlConsultaFacturas.Replace("@ClaveR", item2.ClaveHacienda.ToString()).Replace("@SucursalR", "099");
+
+                        HttpResponseMessage response2 = await cliente2.GetAsync(Url2);
+                        if (response2.IsSuccessStatusCode)
+                        {
+                            response2.Content.Headers.ContentType.MediaType = "application/json";
+                            var res2 = await response2.Content.ReadAsStringAsync();
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        BitacoraErrores be = new BitacoraErrores();
+                        be.Descripcion = ex.Message;
+                        be.StrackTrace = ex.StackTrace;
+                        be.Fecha = DateTime.Now;
+                        be.JSON = JsonConvert.SerializeObject(ex);
+                        db.BitacoraErrores.Add(be);
+                        db.SaveChanges();
+                    }
+
+                }
+
+
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }
