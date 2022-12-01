@@ -94,8 +94,8 @@ namespace WATickets.Controllers
                     return BoDataServerTypes.dst_MSSQL2014;
                 case "2016":
                     return BoDataServerTypes.dst_MSSQL2016;
-                case "2017":
-                    return BoDataServerTypes.dst_MSSQL2017;
+                //case "2017":
+                //    return BoDataServerTypes.dst_MSSQL2017;
                 case "HANA":
                     return BoDataServerTypes.dst_HANADB;
                 default:
