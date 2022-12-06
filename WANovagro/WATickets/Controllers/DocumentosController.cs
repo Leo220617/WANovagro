@@ -657,233 +657,440 @@ namespace WATickets.Controllers
 
                     if (Documento.TipoDocumento == "03")
                     {
-                        var NCS = db.EncDocumento.Where(a => a.BaseEntry == documento.BaseEntry && a.TipoDocumento == "03").Sum(a => a.TotalCompra);
+                        
                         var DocumentoG = db.EncDocumento.Where(a => a.id == documento.BaseEntry).FirstOrDefault();
-                        if (NCS >= DocumentoG.TotalCompra)
+                      
+                        // Si es NC debe rebajar de los cierres el monto
+                        var time2 = DocumentoG.Fecha.Date;
+                        var MontoDevuelto = db.EncDocumento.Where(a => a.BaseEntry == documento.BaseEntry && a.TipoDocumento == "03").Sum(a => a.TotalCompra) - documento.TotalCompra; //Este es el monto que ya se ha devuelto de dineros
+                        var MontosxMetodo = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry).GroupBy(a => a.Metodo).ToList(); // Cantidad de Dinero pagados por metodos de pago
+                        var CierreCajaM = db.CierreCajas.Where(a => a.FechaCaja == time2 && a.idCaja == DocumentoG.idCaja && a.idUsuario == DocumentoG.idUsuarioCreador).FirstOrDefault();
+
+                        decimal banderaDevuelto = 0;
+                        decimal montoadevolver = documento.TotalCompra;
+                        foreach(var item in MontosxMetodo)
                         {
-
-                            db.Entry(DocumentoG).State = EntityState.Modified;
-                            DocumentoG.Status = "1";
-                            db.SaveChanges();
-
-                            /// En caso de ser nota de credito se debe descontar los metodos de pago de la factura
-                            /// 
-                            var time2 = DocumentoG.Fecha.Date; //DateTime.Now.Date; Verifica la fecha de la factura para hacer la reversion
-
-                            var CierreCajaM = db.CierreCajas.Where(a => a.FechaCaja == time2 && a.idCaja == DocumentoG.idCaja && a.idUsuario == DocumentoG.idUsuarioCreador).FirstOrDefault();
-                            var MetodosPagosFactura = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry).ToList();
-                            foreach (var item in MetodosPagosFactura)
+                            if(CierreCajaM != null)
                             {
-                                if (CierreCajaM != null)
+                                if (banderaDevuelto < documento.TotalCompra) // Si ya le llegue al total que tengo que devolver
                                 {
-                                    db.Entry(CierreCajaM).State = EntityState.Modified;
-                                    if (DocumentoG.Moneda == "CRC")
+                                    
+                                    if(item.Sum(a => a.Monto) >= montoadevolver) // si lo que pagaron con un metodo es mayor o igual a lo que estoy rebajando
                                     {
-                                        switch (item.Metodo)
+                                        banderaDevuelto += montoadevolver;
+                                        db.Entry(CierreCajaM).State = EntityState.Modified;
+                                        switch (item.Key)
                                         {
                                             case "Efectivo":
                                                 {
-                                                    CierreCajaM.EfectivoColones -= item.Monto;
-                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+                                                    if(DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.EfectivoColones -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = - montoadevolver;
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.EfectivoFC -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -montoadevolver;
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                   
                                                     break;
                                                 }
                                             case "Tarjeta":
                                                 {
-                                                    CierreCajaM.TarjetasColones -= item.Monto;
-                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+                                                    if (DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.TarjetasColones -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -montoadevolver;
+                                                        MetodosPagos.BIN = item.FirstOrDefault().BIN;
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.TarjetasFC -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -montoadevolver;
+                                                        MetodosPagos.BIN = item.FirstOrDefault().BIN;
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                       
 
                                                     break;
                                                 }
                                             case "Transferencia":
                                                 {
-                                                    CierreCajaM.TransferenciasColones -= item.Monto;
-                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+                                                    if (DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.TransferenciasColones -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -montoadevolver;
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.TransferenciasDolares -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -montoadevolver;
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                  
 
                                                     break;
                                                 }
                                             case "Cheque":
                                                 {
-                                                    CierreCajaM.ChequesColones -= item.Monto;
-                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+                                                    if (DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.ChequesColones -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -montoadevolver;
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = item.FirstOrDefault().NumCheque;
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.ChequesFC -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -montoadevolver;
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = item.FirstOrDefault().NumCheque;
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                   
 
                                                     break;
                                                 }
 
                                             default:
                                                 {
-                                                    CierreCajaM.OtrosMediosColones -= item.Monto;
-                                                    CierreCajaM.TotalVendidoColones -= item.Monto;
+                                                    if (DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.OtrosMediosColones -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -montoadevolver;
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.OtrosMediosFC -= montoadevolver;
+                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -montoadevolver;
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                    
 
                                                     break;
                                                 }
-
                                         }
 
+                                        db.SaveChanges();
                                     }
                                     else
                                     {
-                                        switch (item.Metodo)
+                                        montoadevolver -= item.Sum(a => a.Monto);
+                                        banderaDevuelto += item.Sum(a => a.Monto);
+                                        db.Entry(CierreCajaM).State = EntityState.Modified;
+
+                                        switch (item.Key)
                                         {
                                             case "Efectivo":
                                                 {
-                                                    CierreCajaM.EfectivoFC -= item.Monto;
-                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+                                                    if (DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.EfectivoColones -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.EfectivoFC -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+
                                                     break;
                                                 }
                                             case "Tarjeta":
                                                 {
-                                                    CierreCajaM.TarjetasFC -= item.Monto;
-                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+                                                    if (DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.TarjetasColones -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = item.FirstOrDefault().BIN;
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.TarjetasFC -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = item.FirstOrDefault().BIN;
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+
 
                                                     break;
                                                 }
                                             case "Transferencia":
                                                 {
-                                                    CierreCajaM.TransferenciasDolares -= item.Monto;
-                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+                                                    if (DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.TransferenciasColones -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.TransferenciasDolares -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+
 
                                                     break;
                                                 }
                                             case "Cheque":
                                                 {
-                                                    CierreCajaM.ChequesFC -= item.Monto;
-                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+                                                    if (DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.ChequesColones -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = item.FirstOrDefault().NumCheque;
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.ChequesFC -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = item.FirstOrDefault().NumCheque;
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+
 
                                                     break;
                                                 }
 
                                             default:
                                                 {
-                                                    CierreCajaM.OtrosMediosFC -= item.Monto;
-                                                    CierreCajaM.TotalVendidoFC -= item.Monto;
+                                                    if (DocumentoG.Moneda == "CRC")
+                                                    {
+                                                        CierreCajaM.OtrosMediosColones -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        CierreCajaM.OtrosMediosFC -= item.Sum(a => a.Monto);
+                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
+
+                                                        MetodosPagos MetodosPagos = new MetodosPagos();
+                                                        MetodosPagos.idEncabezado = DocumentoG.id;
+                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
+                                                        MetodosPagos.BIN = "";
+                                                        MetodosPagos.NumCheque = "";
+                                                        MetodosPagos.NumReferencia = "";
+                                                        MetodosPagos.Metodo = item.Key;
+                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        db.MetodosPagos.Add(MetodosPagos);
+                                                        db.SaveChanges();
+                                                    }
+
 
                                                     break;
                                                 }
-
-                                        }
-                                    }
-                                    db.SaveChanges();
-                                }
-                            }
-
-                            ///
-
-
-
-                        }
-                        else // en caso de ser menor al monto de la factura
-                        {
-                            /// En caso de ser nota de credito se debe descontar los metodos de pago de la factura
-                            /// 
-                            var time2 = DocumentoG.Fecha.Date; //DateTime.Now.Date; Verifica la fecha de la factura para hacer la reversion
-
-                            var CierreCajaM = db.CierreCajas.Where(a => a.FechaCaja == time2 && a.idCaja == DocumentoG.idCaja && a.idUsuario == DocumentoG.idUsuarioCreador).FirstOrDefault();
-
-                            var MetodosPagosFactura = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry).ToList();
-
-                            decimal banderaDevuelto = 0;
-
-                            foreach (var item in MetodosPagosFactura)
-                            {
-                                if (CierreCajaM != null)
-                                {
-                                    if (banderaDevuelto < documento.TotalCompra)
-                                    {
-                                        banderaDevuelto += documento.TotalCompra;
-                                        db.Entry(CierreCajaM).State = EntityState.Modified;
-                                        if (DocumentoG.Moneda == "CRC")
-                                        {
-                                            switch (item.Metodo)
-                                            {
-                                                case "Efectivo":
-                                                    {
-                                                        CierreCajaM.EfectivoColones -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
-                                                        break;
-                                                    }
-                                                case "Tarjeta":
-                                                    {
-                                                        CierreCajaM.TarjetasColones -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
-
-                                                        break;
-                                                    }
-                                                case "Transferencia":
-                                                    {
-                                                        CierreCajaM.TransferenciasColones -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
-
-                                                        break;
-                                                    }
-                                                case "Cheque":
-                                                    {
-                                                        CierreCajaM.ChequesColones -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
-
-                                                        break;
-                                                    }
-
-                                                default:
-                                                    {
-                                                        CierreCajaM.OtrosMediosColones -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
-
-                                                        break;
-                                                    }
-
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            switch (item.Metodo)
-                                            {
-                                                case "Efectivo":
-                                                    {
-                                                        CierreCajaM.EfectivoFC -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
-                                                        break;
-                                                    }
-                                                case "Tarjeta":
-                                                    {
-                                                        CierreCajaM.TarjetasFC -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
-
-                                                        break;
-                                                    }
-                                                case "Transferencia":
-                                                    {
-                                                        CierreCajaM.TransferenciasDolares -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
-
-                                                        break;
-                                                    }
-                                                case "Cheque":
-                                                    {
-                                                        CierreCajaM.ChequesFC -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
-
-                                                        break;
-                                                    }
-
-                                                default:
-                                                    {
-                                                        CierreCajaM.OtrosMediosFC -= documento.TotalCompra;
-                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
-
-                                                        break;
-                                                    }
-
-                                            }
                                         }
                                         db.SaveChanges();
-                                    }
 
+                                    }
                                 }
                             }
-
                         }
 
+                        if((MontoDevuelto + documento.TotalCompra) >= DocumentoG.TotalCompra)
+                        {
+                            db.Entry(DocumentoG).State = EntityState.Modified;
+                            DocumentoG.Status = "1";
+                            db.SaveChanges();
+                        }
+
+                        //
 
                     }
                     var time = DateTime.Now.Date;
