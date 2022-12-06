@@ -637,20 +637,13 @@ namespace WATickets.Controllers
                         if (NCS >= DocumentoG.TotalCompra)
                         {
 
-
-
-                 
-
                             db.Entry(DocumentoG).State = EntityState.Modified;
-                            DocumentoG.Status = "1";
-
-
-                      
+                            DocumentoG.Status = "1";                            
                             db.SaveChanges();
 
                             /// En caso de ser nota de credito se debe descontar los metodos de pago de la factura
                             /// 
-                            var time2 = DateTime.Now.Date;
+                            var time2 = DocumentoG.Fecha.Date; //DateTime.Now.Date; Verifica la fecha de la factura para hacer la reversion
 
                             var CierreCajaM = db.CierreCajas.Where(a => a.FechaCaja == time2 && a.idCaja == DocumentoG.idCaja && a.idUsuario == DocumentoG.idUsuarioCreador).FirstOrDefault();
                             var MetodosPagosFactura = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry).ToList();
@@ -751,6 +744,118 @@ namespace WATickets.Controllers
                             ///
 
 
+
+                        }
+                        else // en caso de ser menor al monto de la factura
+                        {
+                            /// En caso de ser nota de credito se debe descontar los metodos de pago de la factura
+                            /// 
+                            var time2 = DocumentoG.Fecha.Date; //DateTime.Now.Date; Verifica la fecha de la factura para hacer la reversion
+
+                            var CierreCajaM = db.CierreCajas.Where(a => a.FechaCaja == time2 && a.idCaja == DocumentoG.idCaja && a.idUsuario == DocumentoG.idUsuarioCreador).FirstOrDefault();
+
+                            var MetodosPagosFactura = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry).ToList();
+
+                            decimal banderaDevuelto = 0;
+
+                            foreach (var item in MetodosPagosFactura)
+                            {
+                                if (CierreCajaM != null)
+                                {
+                                    if(banderaDevuelto < documento.TotalCompra)
+                                    {
+                                        banderaDevuelto += documento.TotalCompra;
+                                        db.Entry(CierreCajaM).State = EntityState.Modified;
+                                        if (DocumentoG.Moneda == "CRC")
+                                        {
+                                            switch (item.Metodo)
+                                            {
+                                                case "Efectivo":
+                                                    {
+                                                        CierreCajaM.EfectivoColones -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
+                                                        break;
+                                                    }
+                                                case "Tarjeta":
+                                                    {
+                                                        CierreCajaM.TarjetasColones -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
+
+                                                        break;
+                                                    }
+                                                case "Transferencia":
+                                                    {
+                                                        CierreCajaM.TransferenciasColones -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
+
+                                                        break;
+                                                    }
+                                                case "Cheque":
+                                                    {
+                                                        CierreCajaM.ChequesColones -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
+
+                                                        break;
+                                                    }
+
+                                                default:
+                                                    {
+                                                        CierreCajaM.OtrosMediosColones -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoColones -= documento.TotalCompra;
+
+                                                        break;
+                                                    }
+
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            switch (item.Metodo)
+                                            {
+                                                case "Efectivo":
+                                                    {
+                                                        CierreCajaM.EfectivoFC -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
+                                                        break;
+                                                    }
+                                                case "Tarjeta":
+                                                    {
+                                                        CierreCajaM.TarjetasFC -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
+
+                                                        break;
+                                                    }
+                                                case "Transferencia":
+                                                    {
+                                                        CierreCajaM.TransferenciasDolares -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
+
+                                                        break;
+                                                    }
+                                                case "Cheque":
+                                                    {
+                                                        CierreCajaM.ChequesFC -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
+
+                                                        break;
+                                                    }
+
+                                                default:
+                                                    {
+                                                        CierreCajaM.OtrosMediosFC -= documento.TotalCompra;
+                                                        CierreCajaM.TotalVendidoFC -= documento.TotalCompra;
+
+                                                        break;
+                                                    }
+
+                                            }
+                                        }
+                                        db.SaveChanges();
+                                    }
+
+                                }
+                            }
 
                         }
 
