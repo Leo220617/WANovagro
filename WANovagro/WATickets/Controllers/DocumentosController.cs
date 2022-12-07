@@ -222,7 +222,7 @@ namespace WATickets.Controllers
                                         var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                         pagoProcesado.DocType = BoRcptTypes.rCustomer;
                                         pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
-                                        pagoProcesado.DocDate = DateTime.Now;
+                                        pagoProcesado.DocDate = Documento.Fecha;
                                         pagoProcesado.DueDate = DateTime.Now;
                                         pagoProcesado.TaxDate = DateTime.Now;
                                         pagoProcesado.VatDate = DateTime.Now;
@@ -657,8 +657,12 @@ namespace WATickets.Controllers
 
                     if (Documento.TipoDocumento == "03")
                     {
-                        
+
                         var DocumentoG = db.EncDocumento.Where(a => a.id == documento.BaseEntry).FirstOrDefault();
+
+                        db.Entry(Documento).State = EntityState.Modified;
+                        Documento.idVendedor = DocumentoG.idVendedor;
+                        db.SaveChanges();
                       
                         // Si es NC debe rebajar de los cierres el monto
                         var time2 = DocumentoG.Fecha.Date;

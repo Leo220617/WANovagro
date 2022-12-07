@@ -113,7 +113,7 @@ namespace WATickets.Controllers
                                         var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                         pagoProcesado.DocType = BoRcptTypes.rCustomer;
                                         pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
-                                        pagoProcesado.DocDate = DateTime.Now;
+                                        pagoProcesado.DocDate = Documento.Fecha;
                                         pagoProcesado.DueDate = DateTime.Now;
                                         pagoProcesado.TaxDate = DateTime.Now;
                                         pagoProcesado.VatDate = DateTime.Now;
