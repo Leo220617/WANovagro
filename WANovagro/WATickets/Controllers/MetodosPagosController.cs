@@ -29,7 +29,7 @@ namespace WATickets.Controllers
                         Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList(); //tenemos todos los pagos pertenecientes a una caja
                     }
                     filtros.FechaFinal = filtros.FechaInicial.AddDays(1);
-                    Documentos = db.EncDocumento.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha > filtros.FechaFinal)).ToList();
+                    Documentos = db.EncDocumento.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha >= filtros.FechaFinal)).ToList();
                     foreach (var item in Documentos)
                     {
                         Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList();
