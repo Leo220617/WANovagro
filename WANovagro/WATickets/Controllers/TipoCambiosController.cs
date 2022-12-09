@@ -133,6 +133,7 @@ namespace WATickets.Controllers
             }
         }
 
+        [Route("api/TipoCambios/InsertarenSAP")]
         public async System.Threading.Tasks.Task<HttpResponseMessage> GetAsync()
         {
 
