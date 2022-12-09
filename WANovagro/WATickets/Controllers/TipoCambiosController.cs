@@ -7,11 +7,13 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WATickets.Models;
+using WATickets.Models.APIS;
 using WATickets.Models.Cliente;
 
 namespace WATickets.Controllers
@@ -130,7 +132,69 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
-          public HttpResponseMessage GetAll([FromUri] Filtros filtro)
+
+        public async System.Threading.Tasks.Task<HttpResponseMessage> GetAsync()
+        {
+
+            try
+            {
+                HttpClient clienteProd = new HttpClient();
+                clienteProd.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                string url = "https://tipodecambio.paginasweb.cr/api//" + DateTime.Now.Day + "/" + DateTime.Now.Month + "/" + DateTime.Now.Year;
+                try
+                {
+                    HttpResponseMessage response3 = await clienteProd.GetAsync(url);
+                    if (response3.IsSuccessStatusCode)
+                    {
+                        response3.Content.Headers.ContentType.MediaType = "application/json";
+                        var res = await response3.Content.ReadAsStringAsync();
+
+
+                        try
+                        {
+                            var respZoho = await response3.Content.ReadAsAsync<RespuestaTipoCambio>();
+
+                            var tp = (SAPbobsCOM.SBObob)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoBridge);
+
+                            tp.SetCurrencyRate("USD", DateTime.Now, Convert.ToDouble(respZoho.venta));
+
+                        }
+                        catch (Exception)
+                        {
+
+
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+
+
+                }
+
+
+
+
+                return Request.CreateResponse(HttpStatusCode.OK, "procesado con exito");
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+
+
+        }
+
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
