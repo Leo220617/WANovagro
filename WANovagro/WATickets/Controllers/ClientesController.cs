@@ -201,6 +201,15 @@ namespace WATickets.Controllers
                             Cliente.Activo = true;
                             Cliente.FechaActualizacion = DateTime.Now;
                             Cliente.ProcesadoSAP = true;
+                            string MAG = item["MAG"].ToString();
+                            if (MAG == "SI")
+                            {
+                                Cliente.MAG = true;
+                            }
+                            else if (MAG == "N0")
+                            {
+                                Cliente.MAG = false;
+                            }
 
                             db.SaveChanges();
                         }
@@ -748,11 +757,11 @@ namespace WATickets.Controllers
                                 client.UserFields.Fields.Item("U_LDT_Direccion").Value = clientes.Sennas;
 
                             
-                                if (Clientes.MAG = true)
+                                if (Clientes.MAG == true)
                                 {
                                     client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";
                                 }
-                                else if(Clientes.MAG = false)
+                                else if(Clientes.MAG == false)
                                 {
                                     client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
                                 }
@@ -871,11 +880,11 @@ namespace WATickets.Controllers
                         client.CardType = BoCardTypes.cCustomer;
 
                         //Campos de usuario
-                        if (cliente.MAG = true)
+                        if (cliente.MAG == true)
                         {
                             client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";
                         }
-                        else if (cliente.MAG = false)
+                        else if (cliente.MAG == false)
                         {
                             client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
                         }
@@ -1006,11 +1015,11 @@ namespace WATickets.Controllers
                     client.CardType = BoCardTypes.cCustomer;
 
                     //Campos de usuario
-                    if (cliente.MAG = true)
+                    if (cliente.MAG == true)
                     {
                         client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";
                     }
-                    else if (cliente.MAG = false)
+                    else if (cliente.MAG == false)
                     {
                         client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
                     }
