@@ -670,7 +670,7 @@ namespace WATickets.Controllers
                     Clientes.idGrupo = clientes.idGrupo;
                     //Clientes.ProcesadoSAP = clientes.ProcesadoSAP;
                     Clientes.CorreoPublicitario = clientes.CorreoPublicitario;
-                    Clientes.MAG = clientes.MAG; 
+                    //Clientes.MAG = clientes.MAG; 
                     db.SaveChanges();
 
 

@@ -50,5 +50,7 @@ namespace WATickets.Models.Cliente
         public bool ProcesadoSAP { get; set; }
 
         public DateTime FechaActualizacion { get; set; }
+
+        public bool MAG { get; set; }
     }
 }

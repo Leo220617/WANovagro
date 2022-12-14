@@ -346,7 +346,15 @@ namespace WATickets.Controllers
                             Producto.Activo = true;
                             Producto.FechaActualizacion = DateTime.Now;
                             Producto.ProcesadoSAP = true;
-
+                            var MAG = Convert.ToInt32(item["MAG"]);
+                            if (MAG == 1)
+                            {
+                                Producto.MAG = true;
+                            }
+                            else if (MAG == 0)
+                            {
+                                Producto.MAG = false;
+                            }
                             db.Productos.Add(Producto);
                             db.SaveChanges();
 
@@ -388,6 +396,15 @@ namespace WATickets.Controllers
                             Producto.Activo = true;
                             Producto.FechaActualizacion = DateTime.Now;
                             Producto.ProcesadoSAP = true;
+                            var MAG = Convert.ToInt32(item["MAG"]);
+                            if (MAG == 1)
+                            {
+                                Producto.MAG = true;
+                            }
+                            else if (MAG == 0)
+                            {
+                                Producto.MAG = false;
+                            }
 
                             db.SaveChanges();
                         }

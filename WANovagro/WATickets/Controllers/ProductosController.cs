@@ -82,6 +82,15 @@ namespace WATickets.Controllers
                                     Producto.Activo = true;
                                     Producto.FechaActualizacion = DateTime.Now;
                                     Producto.ProcesadoSAP = true;
+                                    var MAG = Convert.ToInt32(item["MAG"]);
+                                    if (MAG == 1)
+                                    {
+                                        Producto.MAG = true;
+                                    }
+                                    else if (MAG == 0)
+                                    {
+                                        Producto.MAG = false;
+                                    }
 
                                     db.Productos.Add(Producto);
                                     db.SaveChanges();
@@ -124,7 +133,15 @@ namespace WATickets.Controllers
                                     Producto.Activo = true;
                                     Producto.FechaActualizacion = DateTime.Now;
                                     Producto.ProcesadoSAP = true;
-
+                                    var MAG = Convert.ToInt32(item["MAG"]);
+                                    if (MAG == 1)
+                                    {
+                                        Producto.MAG = true;
+                                    }
+                                    else if (MAG == 0)
+                                    {
+                                        Producto.MAG = false;
+                                    }
                                     db.SaveChanges();
                                 }
                                 catch (Exception ex1)
@@ -270,6 +287,7 @@ namespace WATickets.Controllers
 
                     Producto.Activo = true;
                     Producto.ProcesadoSAP = false;
+                    Producto.MAG = false;
                     db.Productos.Add(Producto);
                     db.SaveChanges();
 
@@ -317,6 +335,7 @@ namespace WATickets.Controllers
                     Productos.Stock = productos.Stock;
                     Productos.Activo = productos.Activo;
                     Productos.Moneda = productos.Moneda;
+                    //Productos.MAG = productos.MAG;
                     db.SaveChanges();
 
                 }
@@ -425,7 +444,15 @@ namespace WATickets.Controllers
                             Producto.Moneda = item["Moneda"].ToString();
                             Producto.Activo = true;
                             Producto.ProcesadoSAP = true;
-
+                            var MAG = Convert.ToInt32(item["MAG"]);
+                            if (MAG == 1)
+                            {
+                                Producto.MAG = true;
+                            }
+                            else if (MAG == 0)
+                            {
+                                Producto.MAG = false;
+                            }
                             db.Productos.Add(Producto);
                             db.SaveChanges();
 
@@ -466,7 +493,15 @@ namespace WATickets.Controllers
 
                             Producto.Activo = true;
                             Producto.ProcesadoSAP = true;
-
+                            var MAG = Convert.ToInt32(item["MAG"]);
+                            if (MAG == 1)
+                            {
+                                Producto.MAG = true;
+                            }
+                            else if (MAG == 0)
+                            {
+                                Producto.MAG = false;
+                            }
                             db.SaveChanges();
                         }
                         catch (Exception ex1)
