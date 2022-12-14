@@ -1624,7 +1624,7 @@ namespace WATickets.Controllers
                 {
                     throw new Exception("Ya existe un documento con este ID");
                 }
-
+                documento.Fecha = Documento.Fecha;
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, documento);
             }
             catch (Exception ex)
