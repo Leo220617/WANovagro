@@ -64,6 +64,9 @@ namespace WATickets.Models.Cliente
         public int idGrupo { get; set; }
 
         public DateTime FechaActualizacion { get; set; }
+
+        public bool MAG { get; set; }
+
     }
        
 }

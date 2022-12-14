@@ -77,6 +77,15 @@ namespace WATickets.Controllers
                                         break;
                                     }
                             }
+                            string MAG = item["MAG"].ToString();
+                            if (MAG == "SI")
+                            {
+                                Cliente.MAG = true;
+                            }
+                            else if (MAG == "N0")
+                            {
+                                Cliente.MAG = false;
+                            }
 
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CodPais = "506";
@@ -275,7 +284,7 @@ namespace WATickets.Controllers
                             Cliente.Nombre = item["Nombre"].ToString();
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
 
-
+                            
                             switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
                             {
                                 case 9:
@@ -319,7 +328,15 @@ namespace WATickets.Controllers
                             }
 
                             Cliente.CorreoPublicitario = "";
-
+                            string MAG = item["MAG"].ToString();
+                            if (MAG == "SI")
+                            {
+                                Cliente.MAG = true;
+                            }
+                            else if (MAG == "N0")
+                            {
+                                Cliente.MAG = false;
+                            }
 
 
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
@@ -411,6 +428,15 @@ namespace WATickets.Controllers
                             Cliente.Activo = true;
                             Cliente.FechaActualizacion = DateTime.Now;
                             Cliente.ProcesadoSAP = true;
+                            string MAG = item["MAG"].ToString();
+                            if (MAG == "SI")
+                            {
+                                Cliente.MAG = true;
+                            }
+                            else if (MAG == "N0")
+                            {
+                                Cliente.MAG = false;
+                            }
 
                             db.SaveChanges();
                         }
@@ -583,6 +609,7 @@ namespace WATickets.Controllers
 
                         Cliente.CorreoPublicitario = clientes.CorreoPublicitario;
                         Cliente.FechaActualizacion = DateTime.Now;
+                        Cliente.MAG = false;
                         db.Clientes.Add(Cliente);
                         db.SaveChanges();
                     }
@@ -643,6 +670,7 @@ namespace WATickets.Controllers
                     Clientes.idGrupo = clientes.idGrupo;
                     //Clientes.ProcesadoSAP = clientes.ProcesadoSAP;
                     Clientes.CorreoPublicitario = clientes.CorreoPublicitario;
+                    Clientes.MAG = clientes.MAG; 
                     db.SaveChanges();
 
 
@@ -718,6 +746,16 @@ namespace WATickets.Controllers
                                 var barrio = Convert.ToInt32(clientes.Barrio);
                                 client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == clientes.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
                                 client.UserFields.Fields.Item("U_LDT_Direccion").Value = clientes.Sennas;
+
+                            
+                                if (Clientes.MAG = true)
+                                {
+                                    client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";
+                                }
+                                else if(Clientes.MAG = false)
+                                {
+                                    client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
+                                }
                                 var respuesta = client.Update();
 
                                 if (respuesta == 0)
@@ -833,6 +871,15 @@ namespace WATickets.Controllers
                         client.CardType = BoCardTypes.cCustomer;
 
                         //Campos de usuario
+                        if (cliente.MAG = true)
+                        {
+                            client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";
+                        }
+                        else if (cliente.MAG = false)
+                        {
+                            client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
+                        }
+
                         client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);
                         client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
                         client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
@@ -959,6 +1006,15 @@ namespace WATickets.Controllers
                     client.CardType = BoCardTypes.cCustomer;
 
                     //Campos de usuario
+                    if (cliente.MAG = true)
+                    {
+                        client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";
+                    }
+                    else if (cliente.MAG = false)
+                    {
+                        client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
+                    }
+
                     client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);
                     client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
                     client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
