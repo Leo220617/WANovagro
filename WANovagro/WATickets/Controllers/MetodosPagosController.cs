@@ -34,6 +34,8 @@ namespace WATickets.Controllers
                     {
                         Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList();
                     }
+
+                    Pagos = Pagos.Where(a => a.idEncabezado != 0).ToList();
                 }
 
 
