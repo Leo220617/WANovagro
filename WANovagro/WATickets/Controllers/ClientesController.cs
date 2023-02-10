@@ -82,7 +82,7 @@ namespace WATickets.Controllers
                             {
                                 Cliente.MAG = true;
                             }
-                            else if (MAG == "N0")
+                            else 
                             {
                                 Cliente.MAG = false;
                             }
@@ -206,7 +206,7 @@ namespace WATickets.Controllers
                             {
                                 Cliente.MAG = true;
                             }
-                            else if (MAG == "N0")
+                            else 
                             {
                                 Cliente.MAG = false;
                             }
@@ -342,7 +342,7 @@ namespace WATickets.Controllers
                             {
                                 Cliente.MAG = true;
                             }
-                            else if (MAG == "N0")
+                            else 
                             {
                                 Cliente.MAG = false;
                             }
@@ -442,7 +442,7 @@ namespace WATickets.Controllers
                             {
                                 Cliente.MAG = true;
                             }
-                            else if (MAG == "N0")
+                            else
                             {
                                 Cliente.MAG = false;
                             }
