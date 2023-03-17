@@ -75,14 +75,26 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
                                 documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
                                 var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
-                                documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
+                                var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
+                                if (ClienteMAG == true && ProductoMAG == true)
+                                {
+
+
+                                    documentoSAP.Lines.TaxCode = db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault() == null ? "IVA-1" : db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault().Codigo;
+
+                                }
+                                else
+                                {
+                                    documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EXONERA" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                }
                                 documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
 
 
                                 documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
                                 var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                                 documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
-                         
+
                                 documentoSAP.Lines.CostingCode = "Frrt";
                                 documentoSAP.Lines.CostingCode2 = "NOS";
                                 documentoSAP.Lines.CostingCode3 = "Ventas";
@@ -133,9 +145,9 @@ namespace WATickets.Controllers
 
                                         var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
 
-                                        pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault().CuentaSAP;
+                                        pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == Documento.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == Documento.Moneda).FirstOrDefault().CuentaSAP;
                                         pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
-                                        pagoProcesado.Series = 161;
+                                        pagoProcesado.Series = 154; //161;
 
                                         //foreach (var item in MetodosPagos)
                                         //{
@@ -333,7 +345,18 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
                                 documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
                                 var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
-                                documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
+                                var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
+                                if (ClienteMAG == true && ProductoMAG == true)
+                                {
+
+                                    documentoSAP.Lines.TaxCode = db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault() == null ? "IVA-1" : db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault().Codigo;
+
+                                }
+                                else
+                                {
+                                    documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EXONERA" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                }
                                 documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
 
 
@@ -441,7 +464,7 @@ namespace WATickets.Controllers
                             var Sucursal = db.Sucursales.Where(a => a.CodSuc == Documento.CodSuc).FirstOrDefault();
                             var documentoSAP = (Documents)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInvoices);
 
-                            
+
 
                             if (Documento.ProcesadaSAP == true && Documento.PagoProcesadaSAP == false) //se creo exitorsamente 
                             {
@@ -473,9 +496,9 @@ namespace WATickets.Controllers
 
                                     var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
 
-                                    pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault().CuentaSAP;
+                                    pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == Documento.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == Documento.Moneda).FirstOrDefault().CuentaSAP;
                                     pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
-                                    pagoProcesado.Series = 161;
+                                    pagoProcesado.Series = 154; //161;
 
                                     //foreach (var item in MetodosPagos)
                                     //{

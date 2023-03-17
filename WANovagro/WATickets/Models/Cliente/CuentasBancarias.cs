@@ -19,5 +19,9 @@ namespace WATickets.Models.Cliente
         public bool Estado { get; set; }
 
         public string Banco { get; set; }
+
+        public string Moneda { get; set; }
+
+        public string Tipo { get; set; }
     }
 }

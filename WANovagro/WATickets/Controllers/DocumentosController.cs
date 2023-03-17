@@ -87,7 +87,18 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
                                 documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
                                 var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
-                                documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
+                                var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
+                                if (ClienteMAG == true && ProductoMAG == true)
+                                {
+
+                                    documentoSAP.Lines.TaxCode = db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault() == null ? "IVA-1" : db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault().Codigo;
+
+                                }
+                                else
+                                {
+                                    documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EXONERA" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                }
                                 documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
 
 
@@ -163,7 +174,7 @@ namespace WATickets.Controllers
                             documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
                             documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
                             documentoSAP.DocDate = Documento.Fecha;
-                            documentoSAP.DocDueDate = Documento.FechaVencimiento;
+                            //documentoSAP.DocDueDate = Documento.FechaVencimiento;
                             documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
                             documentoSAP.NumAtCard = "APP FAC" + " " + Documento.id;
                             documentoSAP.Comments = Documento.Comentarios;
@@ -175,7 +186,7 @@ namespace WATickets.Controllers
                             documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item("U_LDT_NumeroGTI").Value = Documento.ConsecutivoHacienda;
                             documentoSAP.UserFields.Fields.Item("U_LDT_FiscalDoc").Value = Documento.ClaveHacienda;
-                            documentoSAP.UserFields.Fields.Item("U_DYD_Estado").Value = "A";
+                            //documentoSAP.UserFields.Fields.Item("U_DYD_Estado").Value = "A";
 
                             //Detalle
                             int z = 0;
@@ -185,11 +196,22 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.SetCurrentLine(z);
 
                                 documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
+                                documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
                                 documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
                                 documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
-                                documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
                                 var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
-                                documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EX" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
+                                var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
+                                if (ClienteMAG == true && ProductoMAG == true)
+                                {
+
+                                    documentoSAP.Lines.TaxCode = db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault() == null ? "IVA-1" : db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault().Codigo;
+
+                                }
+                                else
+                                {
+                                    documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EXONERA" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                }
                                 documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
 
 
@@ -243,11 +265,13 @@ namespace WATickets.Controllers
 
                                         var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
 
-                                        pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault().CuentaSAP;
-                                        pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
-                                        pagoProcesado.Series = 161;
+                                        pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == Documento.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == Documento.Moneda).FirstOrDefault().CuentaSAP;
 
-                                        //foreach (var item in MetodosPagos)
+                                        pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
+                                        pagoProcesado.Series = 154; //161;
+
+
+                                        //}  //foreach (var item in MetodosPagos)
                                         //{
                                         //    item.Metodo = "Efectivo";
                                         //    item.idCuentaBancaria = db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault() == null ? item.idCuentaBancaria : db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault().id;
@@ -305,28 +329,29 @@ namespace WATickets.Controllers
                                         //}
 
                                         var respuestaPago = pagoProcesado.Add();
-                                        if (respuestaPago == 0)
-                                        {
+                                            if (respuestaPago == 0)
+                                            {
 
-                                            db.Entry(Documento).State = EntityState.Modified;
-                                            Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
-                                            Documento.PagoProcesadaSAP = true;
-                                            db.SaveChanges();
+                                                db.Entry(Documento).State = EntityState.Modified;
+                                                Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
+                                                Documento.PagoProcesadaSAP = true;
+                                                db.SaveChanges();
+                                            }
+                                            else
+                                            {
+                                                var error = "hubo un error en el pago " + Conexion.Company.GetLastErrorDescription();
+                                                BitacoraErrores be = new BitacoraErrores();
+                                                be.Descripcion = error;
+                                                be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                                be.Fecha = DateTime.Now;
+                                                be.JSON = JsonConvert.SerializeObject(documentoSAP);
+                                                db.BitacoraErrores.Add(be);
+                                                db.SaveChanges();
+                                            }
+
+
                                         }
-                                        else
-                                        {
-                                            var error = "hubo un error en el pago " + Conexion.Company.GetLastErrorDescription();
-                                            BitacoraErrores be = new BitacoraErrores();
-                                            be.Descripcion = error;
-                                            be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
-                                            be.Fecha = DateTime.Now;
-                                            be.JSON = JsonConvert.SerializeObject(documentoSAP);
-                                            db.BitacoraErrores.Add(be);
-                                            db.SaveChanges();
-                                        }
-
-
-                                    }
+                                    
                                     catch (Exception ex)
                                     {
 
@@ -663,7 +688,7 @@ namespace WATickets.Controllers
                         db.Entry(Documento).State = EntityState.Modified;
                         Documento.idVendedor = DocumentoG.idVendedor;
                         db.SaveChanges();
-                      
+
                         // Si es NC debe rebajar de los cierres el monto
                         var time2 = DocumentoG.Fecha.Date;
                         var MontoDevuelto = db.EncDocumento.Where(a => a.BaseEntry == documento.BaseEntry && a.TipoDocumento == "03").Sum(a => a.TotalCompra) - documento.TotalCompra; //Este es el monto que ya se ha devuelto de dineros
@@ -672,14 +697,14 @@ namespace WATickets.Controllers
 
                         decimal banderaDevuelto = 0;
                         decimal montoadevolver = documento.TotalCompra;
-                        foreach(var item in MontosxMetodo)
+                        foreach (var item in MontosxMetodo)
                         {
-                            if(CierreCajaM != null)
+                            if (CierreCajaM != null)
                             {
                                 if (banderaDevuelto < documento.TotalCompra) // Si ya le llegue al total que tengo que devolver
                                 {
-                                    
-                                    if(item.Sum(a => a.Monto) >= montoadevolver) // si lo que pagaron con un metodo es mayor o igual a lo que estoy rebajando
+
+                                    if (item.Sum(a => a.Monto) >= montoadevolver) // si lo que pagaron con un metodo es mayor o igual a lo que estoy rebajando
                                     {
                                         banderaDevuelto += montoadevolver;
                                         db.Entry(CierreCajaM).State = EntityState.Modified;
@@ -687,19 +712,20 @@ namespace WATickets.Controllers
                                         {
                                             case "Efectivo":
                                                 {
-                                                    if(DocumentoG.Moneda == "CRC")
+                                                    if (DocumentoG.Moneda == "CRC")
                                                     {
                                                         CierreCajaM.EfectivoColones -= montoadevolver;
                                                         CierreCajaM.TotalVendidoColones -= montoadevolver;
 
                                                         MetodosPagos MetodosPagos = new MetodosPagos();
                                                         MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = - montoadevolver;
+                                                        MetodosPagos.Monto = -montoadevolver;
                                                         MetodosPagos.BIN = "";
                                                         MetodosPagos.NumCheque = "";
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
 
@@ -717,10 +743,11 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
-                                                   
+
                                                     break;
                                                 }
                                             case "Tarjeta":
@@ -738,6 +765,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
 
@@ -755,10 +783,11 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
-                                                       
+
 
                                                     break;
                                                 }
@@ -777,6 +806,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -793,10 +823,11 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
-                                                  
+
 
                                                     break;
                                                 }
@@ -815,6 +846,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -831,10 +863,11 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
-                                                   
+
 
                                                     break;
                                                 }
@@ -854,6 +887,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -870,10 +904,11 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
-                                                    
+
 
                                                     break;
                                                 }
@@ -904,6 +939,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -920,6 +956,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -941,6 +978,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -957,6 +995,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -979,6 +1018,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -995,6 +1035,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -1017,6 +1058,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -1033,6 +1075,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -1056,6 +1099,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -1072,6 +1116,7 @@ namespace WATickets.Controllers
                                                         MetodosPagos.NumReferencia = "";
                                                         MetodosPagos.Metodo = item.Key;
                                                         MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
+                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
                                                         db.MetodosPagos.Add(MetodosPagos);
                                                         db.SaveChanges();
                                                     }
@@ -1087,7 +1132,7 @@ namespace WATickets.Controllers
                             }
                         }
 
-                        if((MontoDevuelto + documento.TotalCompra) >= DocumentoG.TotalCompra)
+                        if ((MontoDevuelto + documento.TotalCompra) >= DocumentoG.TotalCompra)
                         {
                             db.Entry(DocumentoG).State = EntityState.Modified;
                             DocumentoG.Status = "1";
@@ -1111,12 +1156,13 @@ namespace WATickets.Controllers
                             MetodosPagos.NumReferencia = item.NumReferencia;
                             MetodosPagos.Metodo = item.Metodo;
                             MetodosPagos.idCuentaBancaria = item.idCuentaBancaria;
+                            MetodosPagos.Moneda = item.Moneda;
                             db.MetodosPagos.Add(MetodosPagos);
                             db.SaveChanges();
                             if (CierreCaja != null)
                             {
                                 db.Entry(CierreCaja).State = EntityState.Modified;
-                                if (Documento.Moneda == "CRC")
+                                if (MetodosPagos.Moneda == "CRC")
                                 {
                                     switch (item.Metodo)
                                     {
