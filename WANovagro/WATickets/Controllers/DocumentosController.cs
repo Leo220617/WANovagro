@@ -263,12 +263,46 @@ namespace WATickets.Controllers
                                         var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id).ToList();
 
 
-                                        var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
 
-                                        pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == Documento.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == Documento.Moneda).FirstOrDefault().CuentaSAP;
 
-                                        pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
-                                        pagoProcesado.Series = 154; //161;
+
+
+
+                                        foreach (var item in MetodosPagos)
+                                        {
+                                            switch (item.Moneda)
+                                            {
+                                                case "CRC":
+                                                    {
+
+                                                        var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().Moneda;
+                                                        var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id &&  a.Moneda == Cuenta &&a.Metodo.Contains("Otros")).Sum(a => a.Monto);
+
+                                                        pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
+                                                        pagoProcesado.Series = 154; //161;
+                                                        pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().CuentaSAP;
+                                                        break;
+                                                    }
+                                                case "USD":
+                                                    {
+                                                        var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().Moneda;
+                                                        var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id &&  a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
+                                                       
+                                                        pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Where(a => a.Moneda == Cuenta).Sum(a => a.Monto) + MontoOtros);
+                                                        pagoProcesado.Series = 154; //161;
+                                                        pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
+                                                        break;
+                                                    }
+
+                                            }
+                                        }
+                                         
+                                               
+                                        
+                                    
+
+
+
 
 
                                         //}  //foreach (var item in MetodosPagos)
@@ -329,29 +363,29 @@ namespace WATickets.Controllers
                                         //}
 
                                         var respuestaPago = pagoProcesado.Add();
-                                            if (respuestaPago == 0)
-                                            {
+                                        if (respuestaPago == 0)
+                                        {
 
-                                                db.Entry(Documento).State = EntityState.Modified;
-                                                Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
-                                                Documento.PagoProcesadaSAP = true;
-                                                db.SaveChanges();
-                                            }
-                                            else
-                                            {
-                                                var error = "hubo un error en el pago " + Conexion.Company.GetLastErrorDescription();
-                                                BitacoraErrores be = new BitacoraErrores();
-                                                be.Descripcion = error;
-                                                be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
-                                                be.Fecha = DateTime.Now;
-                                                be.JSON = JsonConvert.SerializeObject(documentoSAP);
-                                                db.BitacoraErrores.Add(be);
-                                                db.SaveChanges();
-                                            }
-
-
+                                            db.Entry(Documento).State = EntityState.Modified;
+                                            Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
+                                            Documento.PagoProcesadaSAP = true;
+                                            db.SaveChanges();
                                         }
-                                    
+                                        else
+                                        {
+                                            var error = "hubo un error en el pago " + Conexion.Company.GetLastErrorDescription();
+                                            BitacoraErrores be = new BitacoraErrores();
+                                            be.Descripcion = error;
+                                            be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                            be.Fecha = DateTime.Now;
+                                            be.JSON = JsonConvert.SerializeObject(documentoSAP);
+                                            db.BitacoraErrores.Add(be);
+                                            db.SaveChanges();
+                                        }
+
+
+                                    }
+
                                     catch (Exception ex)
                                     {
 
