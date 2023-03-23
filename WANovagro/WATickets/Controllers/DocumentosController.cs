@@ -276,7 +276,7 @@ namespace WATickets.Controllers
                                                     {
 
                                                         var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().Moneda;
-                                                        var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id &&  a.Moneda == Cuenta &&a.Metodo.Contains("Otros")).Sum(a => a.Monto);
+                                                        var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
 
                                                         pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
                                                         pagoProcesado.Series = 154; //161;
@@ -286,8 +286,8 @@ namespace WATickets.Controllers
                                                 case "USD":
                                                     {
                                                         var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().Moneda;
-                                                        var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id &&  a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
-                                                       
+                                                        var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
+
                                                         pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Where(a => a.Moneda == Cuenta).Sum(a => a.Monto) + MontoOtros);
                                                         pagoProcesado.Series = 154; //161;
                                                         pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
@@ -296,10 +296,10 @@ namespace WATickets.Controllers
 
                                             }
                                         }
-                                         
-                                               
-                                        
-                                    
+
+
+
+
 
 
 
@@ -728,6 +728,35 @@ namespace WATickets.Controllers
                         var MontoDevuelto = db.EncDocumento.Where(a => a.BaseEntry == documento.BaseEntry && a.TipoDocumento == "03").Sum(a => a.TotalCompra) - documento.TotalCompra; //Este es el monto que ya se ha devuelto de dineros
                         var MontosxMetodo = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry).GroupBy(a => a.Metodo).ToList(); // Cantidad de Dinero pagados por metodos de pago
                         var CierreCajaM = db.CierreCajas.Where(a => a.FechaCaja == time2 && a.idCaja == DocumentoG.idCaja && a.idUsuario == DocumentoG.idUsuarioCreador).FirstOrDefault();
+
+                        var ii = 0;
+                        foreach (var item in MontosxMetodo)
+                        {
+                            var zz = 0;
+                            foreach (var item2 in item)
+                            {
+                                if (item2.Moneda != Documento.Moneda)
+                                {
+                                    if (item2.Moneda != "CRC")
+                                    {
+                                        //lo tengo en dolares y lo ocupo en colones
+                                        var Fecha = db.EncDocumento.Where(a => a.id == item2.idEncabezado).FirstOrDefault().Fecha.Date;
+                                        var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                        var Monto = MontosxMetodo[ii].Where(a => a.Metodo == item2.Metodo && a.Monto == item2.Monto).FirstOrDefault();
+                                        MontosxMetodo[ii].Where(a => a.Metodo == item2.Metodo && a.Monto == item2.Monto).FirstOrDefault().Monto = Convert.ToDecimal(Monto.Monto * TipoCambio.TipoCambio);
+                                    }
+                                    else
+                                    {
+                                        //lo tengo en colones y lo ocupo en dolares
+                                        var Fecha = db.EncDocumento.Where(a => a.id == item2.idEncabezado).FirstOrDefault().Fecha.Date;
+                                        var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                        var Monto = MontosxMetodo[ii].Where(a => a.Metodo == item2.Metodo && a.Monto == item2.Monto).FirstOrDefault();
+                                        MontosxMetodo[ii].Where(a => a.Metodo == item2.Metodo && a.Monto == item2.Monto).FirstOrDefault().Monto = Convert.ToDecimal(Monto.Monto / TipoCambio.TipoCambio);
+                                    }
+                                }
+                            }
+                            ii++;
+                        }
 
                         decimal banderaDevuelto = 0;
                         decimal montoadevolver = documento.TotalCompra;
