@@ -729,34 +729,6 @@ namespace WATickets.Controllers
                         var MontosxMetodo = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry).GroupBy(a => a.Metodo).ToList(); // Cantidad de Dinero pagados por metodos de pago
                         var CierreCajaM = db.CierreCajas.Where(a => a.FechaCaja == time2 && a.idCaja == DocumentoG.idCaja && a.idUsuario == DocumentoG.idUsuarioCreador).FirstOrDefault();
 
-                        var ii = 0;
-                        foreach (var item in MontosxMetodo)
-                        {
-                            var zz = 0;
-                            foreach (var item2 in item)
-                            {
-                                if (item2.Moneda != Documento.Moneda)
-                                {
-                                    if (item2.Moneda != "CRC")
-                                    {
-                                        //lo tengo en dolares y lo ocupo en colones
-                                        var Fecha = db.EncDocumento.Where(a => a.id == item2.idEncabezado).FirstOrDefault().Fecha.Date;
-                                        var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
-                                        var Monto = MontosxMetodo[ii].Where(a => a.Metodo == item2.Metodo && a.Monto == item2.Monto).FirstOrDefault();
-                                        MontosxMetodo[ii].Where(a => a.Metodo == item2.Metodo && a.Monto == item2.Monto).FirstOrDefault().Monto = Convert.ToDecimal(Monto.Monto * TipoCambio.TipoCambio);
-                                    }
-                                    else
-                                    {
-                                        //lo tengo en colones y lo ocupo en dolares
-                                        var Fecha = db.EncDocumento.Where(a => a.id == item2.idEncabezado).FirstOrDefault().Fecha.Date;
-                                        var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
-                                        var Monto = MontosxMetodo[ii].Where(a => a.Metodo == item2.Metodo && a.Monto == item2.Monto).FirstOrDefault();
-                                        MontosxMetodo[ii].Where(a => a.Metodo == item2.Metodo && a.Monto == item2.Monto).FirstOrDefault().Monto = Convert.ToDecimal(Monto.Monto / TipoCambio.TipoCambio);
-                                    }
-                                }
-                            }
-                            ii++;
-                        }
 
                         decimal banderaDevuelto = 0;
                         decimal montoadevolver = documento.TotalCompra;
@@ -766,429 +738,565 @@ namespace WATickets.Controllers
                             {
                                 if (banderaDevuelto < documento.TotalCompra) // Si ya le llegue al total que tengo que devolver
                                 {
+                                    var Fecha = DocumentoG.Fecha.Date;
+                                    var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                    var PagadoMismaMoneda = item.Where(a => a.Moneda == documento.Moneda).Sum(a => a.Monto);
+                                    var PagadoOtraMoneda = item.Where(a => a.Moneda != documento.Moneda).Sum(a => a.Monto);
+                                    var PagadoMismaMonedaConvertido = documento.Moneda != "CRC" ? PagadoOtraMoneda / TipoCambio.TipoCambio : PagadoOtraMoneda * TipoCambio.TipoCambio;
 
-                                    if (item.Sum(a => a.Monto) >= montoadevolver) // si lo que pagaron con un metodo es mayor o igual a lo que estoy rebajando
+
+                                    if ((Math.Round(PagadoMismaMoneda + PagadoMismaMonedaConvertido)) >= montoadevolver) // si lo que pagaron con un metodo de la misma moneda es mayor o igual a lo que estoy rebajando
                                     {
-                                        banderaDevuelto += montoadevolver;
-                                        db.Entry(CierreCajaM).State = EntityState.Modified;
-                                        switch (item.Key)
+                                        var montoadevolver2 = montoadevolver;
+
+                                        foreach (var item2 in item)
                                         {
-                                            case "Efectivo":
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
+                                            db.Entry(CierreCajaM).State = EntityState.Modified;
+                                            switch (item2.Metodo)
+                                            {
+                                                case "Efectivo":
                                                     {
-                                                        CierreCajaM.EfectivoColones -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+                                                            CierreCajaM.EfectivoColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto; //Si la moneda del documento es dolares y estoy metiendo colones, lo convierto a colones el monto a devolver
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
 
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.EfectivoFC -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+                                                        break;
                                                     }
-                                                    else
+                                                case "Tarjeta":
                                                     {
-                                                        CierreCajaM.EfectivoFC -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            CierreCajaM.TarjetasColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = item.FirstOrDefault().BIN;
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = item2.NumReferencia;
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
+
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.TarjetasFC -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = item.FirstOrDefault().BIN;
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = item2.NumReferencia;
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+
+                                                        break;
                                                     }
-
-                                                    break;
-                                                }
-                                            case "Tarjeta":
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
+                                                case "Transferencia":
                                                     {
-                                                        CierreCajaM.TarjetasColones -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = item.FirstOrDefault().BIN;
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            CierreCajaM.TransferenciasColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto;
 
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto - (Math.Round(banderaDevuelto * TipoCambio.TipoCambio))) : (item2.Monto - (banderaDevuelto))));
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.TransferenciasDolares -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto - (Math.Round(banderaDevuelto / TipoCambio.TipoCambio))) : (item2.Monto - (banderaDevuelto))));
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+
+                                                        break;
                                                     }
-                                                    else
+                                                case "Cheque":
                                                     {
-                                                        CierreCajaM.TarjetasFC -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = item.FirstOrDefault().BIN;
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            CierreCajaM.ChequesColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = item2.NumCheque;
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.ChequesFC -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto - (Math.Round(banderaDevuelto / TipoCambio.TipoCambio))) : (item2.Monto - (banderaDevuelto))));
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = item2.NumCheque;
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+
+                                                        break;
                                                     }
 
-
-                                                    break;
-                                                }
-                                            case "Transferencia":
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
+                                                default:
                                                     {
-                                                        CierreCajaM.TransferenciasColones -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            CierreCajaM.OtrosMediosColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.OtrosMediosFC -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+
+                                                        break;
                                                     }
-                                                    else
-                                                    {
-                                                        CierreCajaM.TransferenciasDolares -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
+                                            }
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-
-
-                                                    break;
-                                                }
-                                            case "Cheque":
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
-                                                    {
-                                                        CierreCajaM.ChequesColones -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
-
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = item.FirstOrDefault().NumCheque;
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-                                                    else
-                                                    {
-                                                        CierreCajaM.ChequesFC -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
-
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = item.FirstOrDefault().NumCheque;
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-
-
-                                                    break;
-                                                }
-
-                                            default:
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
-                                                    {
-                                                        CierreCajaM.OtrosMediosColones -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoColones -= montoadevolver;
-
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-                                                    else
-                                                    {
-                                                        CierreCajaM.OtrosMediosFC -= montoadevolver;
-                                                        CierreCajaM.TotalVendidoFC -= montoadevolver;
-
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -montoadevolver;
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-
-
-                                                    break;
-                                                }
+                                            db.SaveChanges();
                                         }
+                                        banderaDevuelto += montoadevolver;
 
-                                        db.SaveChanges();
+
                                     }
                                     else
                                     {
-                                        montoadevolver -= item.Sum(a => a.Monto);
-                                        banderaDevuelto += item.Sum(a => a.Monto);
-                                        db.Entry(CierreCajaM).State = EntityState.Modified;
+                                       
 
-                                        switch (item.Key)
+                                        var montoadevolver2 = montoadevolver;
+
+                                        foreach (var item2 in item)
                                         {
-                                            case "Efectivo":
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
+                                            db.Entry(CierreCajaM).State = EntityState.Modified;
+                                            switch (item2.Metodo)
+                                            {
+                                                case "Efectivo":
                                                     {
-                                                        CierreCajaM.EfectivoColones -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+                                                            CierreCajaM.EfectivoColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto; //Si la moneda del documento es dolares y estoy metiendo colones, lo convierto a colones el monto a devolver
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.EfectivoFC -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+                                                        break;
                                                     }
-                                                    else
+                                                case "Tarjeta":
                                                     {
-                                                        CierreCajaM.EfectivoFC -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            CierreCajaM.TarjetasColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = item.FirstOrDefault().BIN;
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = item2.NumReferencia;
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
+
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.TarjetasFC -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = item.FirstOrDefault().BIN;
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = item2.NumReferencia;
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+
+                                                        break;
                                                     }
-
-                                                    break;
-                                                }
-                                            case "Tarjeta":
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
+                                                case "Transferencia":
                                                     {
-                                                        CierreCajaM.TarjetasColones -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = item.FirstOrDefault().BIN;
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            CierreCajaM.TransferenciasColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto - (Math.Round(banderaDevuelto * TipoCambio.TipoCambio))) : (item2.Monto - (banderaDevuelto))));
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.TransferenciasDolares -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto - (Math.Round(banderaDevuelto / TipoCambio.TipoCambio))) : (item2.Monto - (banderaDevuelto))));
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+
+                                                        break;
                                                     }
-                                                    else
+                                                case "Cheque":
                                                     {
-                                                        CierreCajaM.TarjetasFC -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = item.FirstOrDefault().BIN;
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = item.FirstOrDefault().NumReferencia;
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            CierreCajaM.ChequesColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = item2.NumCheque;
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.ChequesFC -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto - (Math.Round(banderaDevuelto / TipoCambio.TipoCambio))) : (item2.Monto - (banderaDevuelto))));
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = item2.NumCheque;
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+
+                                                        break;
                                                     }
 
-
-                                                    break;
-                                                }
-                                            case "Transferencia":
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
+                                                default:
                                                     {
-                                                        CierreCajaM.TransferenciasColones -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
+                                                        if (item2.Moneda == "CRC")
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 * TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
 
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
+                                                            CierreCajaM.OtrosMediosColones -= devuelto;
+                                                            CierreCajaM.TotalVendidoColones -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var montoadevolverC = Math.Round(montoadevolver2 / TipoCambio.TipoCambio);
+                                                            var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
+
+                                                            CierreCajaM.OtrosMediosFC -= devuelto;
+                                                            CierreCajaM.TotalVendidoFC -= devuelto;
+
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos.idEncabezado = DocumentoG.id;
+                                                            MetodosPagos.Monto = -devuelto;
+                                                            MetodosPagos.BIN = "";
+                                                            MetodosPagos.NumCheque = "";
+                                                            MetodosPagos.NumReferencia = "";
+                                                            MetodosPagos.Metodo = item2.Metodo;
+                                                            MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
+                                                            MetodosPagos.Moneda = item2.Moneda;
+                                                            db.MetodosPagos.Add(MetodosPagos);
+                                                            db.SaveChanges();
+                                                            montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
+
+
+                                                        }
+
+
+                                                        break;
                                                     }
-                                                    else
-                                                    {
-                                                        CierreCajaM.TransferenciasDolares -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
-
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-
-
-                                                    break;
-                                                }
-                                            case "Cheque":
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
-                                                    {
-                                                        CierreCajaM.ChequesColones -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
-
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = item.FirstOrDefault().NumCheque;
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-                                                    else
-                                                    {
-                                                        CierreCajaM.ChequesFC -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
-
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = item.FirstOrDefault().NumCheque;
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-
-
-                                                    break;
-                                                }
-
-                                            default:
-                                                {
-                                                    if (DocumentoG.Moneda == "CRC")
-                                                    {
-                                                        CierreCajaM.OtrosMediosColones -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoColones -= item.Sum(a => a.Monto);
-
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-                                                    else
-                                                    {
-                                                        CierreCajaM.OtrosMediosFC -= item.Sum(a => a.Monto);
-                                                        CierreCajaM.TotalVendidoFC -= item.Sum(a => a.Monto);
-
-                                                        MetodosPagos MetodosPagos = new MetodosPagos();
-                                                        MetodosPagos.idEncabezado = DocumentoG.id;
-                                                        MetodosPagos.Monto = -item.Sum(a => a.Monto);
-                                                        MetodosPagos.BIN = "";
-                                                        MetodosPagos.NumCheque = "";
-                                                        MetodosPagos.NumReferencia = "";
-                                                        MetodosPagos.Metodo = item.Key;
-                                                        MetodosPagos.idCuentaBancaria = item.FirstOrDefault().idCuentaBancaria;
-                                                        MetodosPagos.Moneda = item.FirstOrDefault().Moneda;
-                                                        db.MetodosPagos.Add(MetodosPagos);
-                                                        db.SaveChanges();
-                                                    }
-
-
-                                                    break;
-                                                }
+                                            }
+                                            db.SaveChanges();
                                         }
-                                        db.SaveChanges();
+                                        montoadevolver -= Math.Round(PagadoMismaMoneda + PagadoMismaMonedaConvertido); //item.Sum(a => a.Monto);
+                                        banderaDevuelto += Math.Round(PagadoMismaMoneda + PagadoMismaMonedaConvertido);//item.Sum(a => a.Monto);
+
 
                                     }
                                 }
