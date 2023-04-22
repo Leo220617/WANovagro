@@ -36,5 +36,9 @@
         public string UrlFacturaElectronica { get; set; }
 
         public string UrlConsultaFacturas { get; set; }
+
+        public string SQLDocumentoCredito { get; set; }
+
+        public string SQLDetDocumentoCredito { get; set; }
     }
 }

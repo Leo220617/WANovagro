@@ -65,7 +65,7 @@
     <Reference Include="Interop.SAPbobsCOM, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>C:\Users\steve\OneDrive\Escritorio\Interop Novagro Produccion\Interop.SAPbobsCOM.dll</HintPath>
+      <HintPath>C:\Users\steve\OneDrive\Escritorio\Interop Pruebas Novagro\Interop.SAPbobsCOM.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.3\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -250,6 +250,7 @@
     <Compile Include="Controllers\CuentasBancariasController.cs" />
     <Compile Include="Controllers\DistritosController.cs" />
     <Compile Include="Controllers\DocumentosController.cs" />
+    <Compile Include="Controllers\DocumentosCreditoController.cs" />
     <Compile Include="Controllers\DocumentosMasivosController.cs" />
     <Compile Include="Controllers\ExoneracionesController.cs" />
     <Compile Include="Controllers\G.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MetodosPagosController.cs" />
     <Compile Include="Controllers\OfertasController.cs" />
+    <Compile Include="Controllers\PagosController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SeguridadModulosController.cs" />
@@ -275,9 +277,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\APIS\Documentos.cs" />
+    <Compile Include="Models\APIS\DocumentosCredito.cs" />
     <Compile Include="Models\APIS\ExoneracionesViewModel.cs" />
     <Compile Include="Models\APIS\ExoneracionesX.cs" />
     <Compile Include="Models\APIS\Ofertas.cs" />
+    <Compile Include="Models\APIS\Pagos.cs" />
     <Compile Include="Models\APIS\RecibidoFacturacion.cs" />
     <Compile Include="Models\APIS\RespuestaTipoCambio.cs" />
     <Compile Include="Models\APIS\SucursalesViewModel.cs" />
@@ -295,12 +299,17 @@
     <Compile Include="Models\Cliente\CorreoEnvio.cs" />
     <Compile Include="Models\Cliente\CuentasBancarias.cs" />
     <Compile Include="Models\Cliente\DetDocumento.cs" />
+    <Compile Include="Models\Cliente\DetDocumentoCredito.cs" />
     <Compile Include="Models\Cliente\DetExoneraciones.cs" />
     <Compile Include="Models\Cliente\DetOferta.cs" />
+    <Compile Include="Models\Cliente\DetPagos.cs" />
     <Compile Include="Models\Cliente\Distritos.cs" />
     <Compile Include="Models\Cliente\EncDocumento.cs" />
+    <Compile Include="Models\Cliente\EncDocumentoCredito.cs" />
     <Compile Include="Models\Cliente\EncOferta.cs" />
+    <Compile Include="Models\Cliente\EncPagos.cs" />
     <Compile Include="Models\Cliente\Exoneraciones.cs" />
+    <Compile Include="Models\Cliente\FECXDia.cs" />
     <Compile Include="Models\Cliente\GruposClientes.cs" />
     <Compile Include="Models\Cliente\Impuestos.cs" />
     <Compile Include="Models\Cliente\ListaPrecios.cs" />

@@ -46,6 +46,12 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<MetodosPagos> MetodosPagos { get; set; }
         public virtual DbSet<CuentasBancarias> CuentasBancarias { get; set; }
         public virtual DbSet<Vendedores> Vendedores { get; set; }
+        public virtual DbSet<EncDocumentoCredito> EncDocumentoCredito { get; set; }
+        public virtual DbSet<DetDocumentoCredito> DetDocumentoCredito { get; set; }
+        public virtual DbSet<EncPagos> EncPagos { get; set; }
+        public virtual DbSet<DetPagos> DetPagos { get; set; }
+        public virtual DbSet<FECXDia> FECXDia { get; set; }
+
 
 
 

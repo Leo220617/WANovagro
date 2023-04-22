@@ -347,7 +347,7 @@ namespace WATickets.Controllers
                                 Cliente.MAG = false;
                             }
 
-
+                            Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
                             Cliente.FechaActualizacion = DateTime.Now;
@@ -434,6 +434,7 @@ namespace WATickets.Controllers
                             var idGrupo = item["idGrupo"].ToString();
                             Cliente.idGrupo = db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault() == null ? db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id : db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id;
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
+                            Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
                             Cliente.Activo = true;
                             Cliente.FechaActualizacion = DateTime.Now;
                             Cliente.ProcesadoSAP = true;
@@ -615,7 +616,7 @@ namespace WATickets.Controllers
                         Cliente.Saldo = 0;
                         Cliente.Activo = true;
                         Cliente.ProcesadoSAP = false;
-
+                        Cliente.LimiteCredito = 0;
                         Cliente.CorreoPublicitario = clientes.CorreoPublicitario;
                         Cliente.FechaActualizacion = DateTime.Now;
                         Cliente.MAG = false;
@@ -675,7 +676,7 @@ namespace WATickets.Controllers
                     Clientes.Barrio = clientes.Barrio;
                     Clientes.Sennas = clientes.Sennas;
                     Clientes.Saldo = clientes.Saldo;
-
+                    Clientes.LimiteCredito = clientes.LimiteCredito;
                     Clientes.idGrupo = clientes.idGrupo;
                     //Clientes.ProcesadoSAP = clientes.ProcesadoSAP;
                     Clientes.CorreoPublicitario = clientes.CorreoPublicitario;
@@ -755,6 +756,7 @@ namespace WATickets.Controllers
                                 var barrio = Convert.ToInt32(clientes.Barrio);
                                 client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == clientes.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
                                 client.UserFields.Fields.Item("U_LDT_Direccion").Value = clientes.Sennas;
+                                client.CreditLimit = Convert.ToDouble(clientes.LimiteCredito);
 
                             
                                 if (Clientes.MAG == true)
@@ -878,6 +880,7 @@ namespace WATickets.Controllers
                         client.Currency = "##";
                         client.Phone1 = cliente.Telefono;
                         client.CardType = BoCardTypes.cCustomer;
+                        client.CreditLimit = Convert.ToDouble(cliente.LimiteCredito);
 
                         //Campos de usuario
                         if (cliente.MAG == true)
@@ -1013,7 +1016,7 @@ namespace WATickets.Controllers
                     client.Currency = "##";
                     client.Phone1 = cliente.Telefono;
                     client.CardType = BoCardTypes.cCustomer;
-
+                    client.CreditLimit = Convert.ToDouble(cliente.LimiteCredito);
                     //Campos de usuario
                     if (cliente.MAG == true)
                     {
