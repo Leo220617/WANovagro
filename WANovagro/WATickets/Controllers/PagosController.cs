@@ -152,20 +152,41 @@ namespace WATickets.Controllers
                         det.idEncabezado = Pago.id;
                         det.idEncDocumentoCredito = item.idEncDocumentoCredito;
                         det.NumLinea = i;
-                       
                         det.Total = item.Total;
-                   
-                     
                         db.DetPagos.Add(det);
                         db.SaveChanges();
                         i++;
+                        var Factura = db.EncDocumentoCredito.Where(a => a.id == det.idEncDocumentoCredito).FirstOrDefault();
+                        if(Factura == null)
+                        {
+                            throw new Exception("Factura " + det.idEncDocumentoCredito + " no se encuentra en las bases de datos");
+                        }
+                        db.Entry(Factura).State = EntityState.Modified;
+                        Factura.Saldo -= det.Total;
+                        if(Factura.Saldo <= 0)
+                        {
+                            Factura.Status = "C";
+                        }
+                        db.SaveChanges();
+
+
                     }
 
+                    var Cliente = db.Clientes.Where(a => a.id == pago.idCliente).FirstOrDefault();
+                    if (Cliente == null)
+                    {
+                        throw new Exception("Cliente " + pago.id + " no se encuentra en las bases de datos");
 
-                
+                    }
+                    var Fecha = DateTime.Now.Date;
+                    var TP = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                    db.Entry(Cliente).State = EntityState.Modified;
+                    Cliente.Saldo -= pago.Moneda == "USD" ?  (pago.TotalPagado * TP.TipoCambio) : pago.TotalPagado;
+                    db.SaveChanges();
+
                     t.Commit();
 
-                  
+                  //Generar parte de SAP
 
 
                 }
@@ -210,11 +231,7 @@ namespace WATickets.Controllers
                     Pago.Comentarios = pagos.Comentarios;
                     Pago.Referencia = pagos.Referencia;
                     Pago.TotalPagado = pagos.TotalPagado;
-                    Pago.Moneda = pagos.Moneda;
-
-                 
-
-
+                    Pago.Moneda = pagos.Moneda; 
                     db.SaveChanges();
 
                     var Detalles = db.DetPagos.Where(a => a.idEncabezado == Pago.id).ToList();
