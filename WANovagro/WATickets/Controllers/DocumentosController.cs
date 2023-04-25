@@ -686,6 +686,11 @@ namespace WATickets.Controllers
                     Documentos = Documentos.Where(a => a.ProcesadaSAP == filtro.Procesado).ToList();
                 }
 
+                if(filtro.BaseEntry > 0)
+                {
+                    Documentos = Documentos.Where(a => a.BaseEntry == filtro.BaseEntry).ToList();
+                }
+
                 //if (filtro.PagoProcesado != null)
                 //{
                 //    Documentos = Documentos.Where(a => a.PagoProcesadaSAP == filtro.PagoProcesado).ToList();

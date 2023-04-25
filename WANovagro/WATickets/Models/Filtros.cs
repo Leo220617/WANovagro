@@ -16,6 +16,7 @@ namespace WATickets.Models
         public int Codigo4 { get; set; }
         public int Codigo5 { get; set; }
         public int Codigo6 { get; set; }
+        public int BaseEntry { get; set; }
         public string ListPrice { get; set; }
         public string ItemCode { get; set; }
         public string Categoria { get; set; }
