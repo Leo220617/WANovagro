@@ -98,9 +98,9 @@ namespace WATickets.Controllers
                                 var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                                 documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
 
-                                documentoSAP.Lines.CostingCode = "Frrt";
-                                documentoSAP.Lines.CostingCode2 = "NOS";
-                                documentoSAP.Lines.CostingCode3 = "Ventas";
+                                documentoSAP.Lines.CostingCode = param.CostingCode;
+                                documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                documentoSAP.Lines.CostingCode3 = param.CostingCode3;
                                 //documentoSAP.Lines.CostingCode4 = "";
                                 //documentoSAP.Lines.CostingCode5 = "";
 
@@ -172,7 +172,7 @@ namespace WATickets.Controllers
                                                 var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().CuentaSAP;
 
                                                 pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoColones);
-                                                pagoProcesado.Series = 161; //154; 
+                                                pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
                                                 pagoProcesado.CashAccount = Cuenta;
 
                                                 var respuestaPago = pagoProcesado.Add();
@@ -244,7 +244,7 @@ namespace WATickets.Controllers
 
                                                 var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
 
-                                                pagoProcesado.Series = 161; //154;
+                                                pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
                                                 pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoDolares);
                                                 pagoProcesado.CashAccount = Cuenta;
                                                 var respuestaPago = pagoProcesado.Add();
@@ -503,9 +503,9 @@ namespace WATickets.Controllers
                                 //documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
 
                                 //documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea ;
-                                documentoSAP.Lines.CostingCode = "Frrt";
-                                documentoSAP.Lines.CostingCode2 = "NOS";
-                                documentoSAP.Lines.CostingCode3 = "Ventas";
+                                documentoSAP.Lines.CostingCode = param.CostingCode;
+                                documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                documentoSAP.Lines.CostingCode3 = param.CostingCode3;
                                 documentoSAP.Lines.Add();
                                 z++;
                             }
@@ -670,7 +670,7 @@ namespace WATickets.Controllers
                                             var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().CuentaSAP;
 
                                             pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoColones);
-                                            pagoProcesado.Series =  161; //154;
+                                            pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
                                             pagoProcesado.CashAccount = Cuenta;
 
                                             var respuestaPago = pagoProcesado.Add();
@@ -742,7 +742,7 @@ namespace WATickets.Controllers
 
                                             var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
 
-                                            pagoProcesado.Series = 161; //154;
+                                            pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
                                             pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoDolares);
                                             pagoProcesado.CashAccount = Cuenta;
                                             var respuestaPago = pagoProcesado.Add();
@@ -935,7 +935,7 @@ namespace WATickets.Controllers
                 Parametros param = db.Parametros.FirstOrDefault();
                 var FechaInicial = DateTime.Now.Date;
                 var FechaFinal = FechaInicial.AddDays(1);
-                var DocumentosSPP = db.EncDocumento.Where(a => a.Fecha >= FechaInicial && a.Fecha < FechaFinal).ToList();
+                var DocumentosSPP = db.EncDocumento.Where(a => a.Fecha >= FechaInicial && a.Fecha < FechaFinal && a.ClaveHacienda == null).ToList();
 
                 foreach (var item2 in DocumentosSPP)
                 {

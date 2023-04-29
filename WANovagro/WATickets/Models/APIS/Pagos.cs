@@ -18,6 +18,8 @@ namespace WATickets.Models.APIS
         public string Referencia { get; set; }
         public decimal TotalPagado { get; set; }
         public string Moneda { get; set; }
+        public bool ProcesadaSAP { get; set; }
+        public string DocEntryPago { get; set; }
         public List<DetPagos> Detalle { get; set; }
     }
 }

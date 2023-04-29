@@ -40,5 +40,11 @@
         public string SQLDocumentoCredito { get; set; }
 
         public string SQLDetDocumentoCredito { get; set; }
+
+        public string CostingCode { get; set; }
+
+        public string CostingCode2 { get; set; }
+
+        public string CostingCode3 { get; set; }
     }
 }

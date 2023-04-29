@@ -49,5 +49,6 @@ namespace WATickets.Models.APIS
         public int SerieFECR { get; set; }
 
         public int SerieNC { get; set; }
+        public int SeriePago { get; set; }
     }
 }
