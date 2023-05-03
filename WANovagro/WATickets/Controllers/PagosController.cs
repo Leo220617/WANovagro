@@ -237,11 +237,11 @@ namespace WATickets.Controllers
                                     if (Pago.Moneda != "CRC")
                                     {
 
-                                        pagoSAP.Invoices.AppliedFC = Convert.ToDouble(Pago.TotalPagado);
+                                        pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Total);
                                     }
                                     else
                                     {
-                                        pagoSAP.Invoices.SumApplied = Convert.ToDouble(Pago.TotalPagado);
+                                        pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Total);
 
                                     }
                                 }
@@ -250,7 +250,8 @@ namespace WATickets.Controllers
                                     throw new Exception("Esta factura no existe");
                                 }
 
-
+                                pagoSAP.Invoices.Add();
+                                z++;
                             }
 
                             var respuestaPago = pagoSAP.Add();
@@ -428,11 +429,11 @@ namespace WATickets.Controllers
                             if (Pago.Moneda != "CRC")
                             {
 
-                                pagoSAP.Invoices.AppliedFC = Convert.ToDouble(Pago.TotalPagado);
+                                pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Total);
                             }
                             else
                             {
-                                pagoSAP.Invoices.SumApplied = Convert.ToDouble(Pago.TotalPagado);
+                                pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Total);
 
                             }
                         }
@@ -440,7 +441,8 @@ namespace WATickets.Controllers
                         {
                             throw new Exception("Esta factura no existe");
                         }
-
+                        pagoSAP.Invoices.Add();
+                        z++;
 
                     }
 
@@ -543,18 +545,22 @@ namespace WATickets.Controllers
                                 if (Pago.Moneda != "CRC")
                                 {
 
-                                    pagoSAP.Invoices.AppliedFC = Convert.ToDouble(Pago.TotalPagado);
+                                    pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Total);
                                 }
                                 else
                                 {
-                                    pagoSAP.Invoices.SumApplied = Convert.ToDouble(Pago.TotalPagado);
+                                    pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Total);
 
                                 }
+
                             }
+                          
                             else
                             {
                                 throw new Exception("Esta factura no existe");
                             }
+                            pagoSAP.Invoices.Add();
+                            z++;
 
 
                         }
@@ -587,6 +593,7 @@ namespace WATickets.Controllers
                     {
                         throw new Exception("Ya existe un Pago con este ID");
                     }
+                  
 
                 }
 

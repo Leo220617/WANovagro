@@ -192,14 +192,14 @@ namespace WATickets.Controllers
                 Da.Fill(Ds, "Encabezado");
 
 
-                var Creditos = db.EncDocumentoCredito.ToList();
+//                var Creditos = db.EncDocumentoCredito.ToList();
 
 
                 foreach (DataRow item in Ds.Tables["Encabezado"].Rows)
                 {
-                    var DocEntry = item["DocEntry"];
+                    var DocEntry = item["DocEntry"].ToString();
 
-                    var EncCredito = Creditos.Where(a => a.DocEntry == DocEntry).FirstOrDefault();
+                    var EncCredito = db.EncDocumentoCredito.Where(a => a.DocEntry == DocEntry).FirstOrDefault();
                     if (EncCredito == null)
                     {
                         var t = db.Database.BeginTransaction();
