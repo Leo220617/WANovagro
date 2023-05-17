@@ -21,6 +21,7 @@ namespace WATickets.Models.Cliente
         public string Moneda { get; set; }
         public bool ProcesadaSAP { get; set; }
         public string DocEntryPago { get; set; }
+        public decimal TotalInteres { get; set; }
 
     }
  

@@ -91,7 +91,7 @@ namespace WATickets.Controllers
                                     {
                                         Producto.MAG = false;
                                     }
-
+                                    Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
                                     db.Productos.Add(Producto);
                                     db.SaveChanges();
 
@@ -142,6 +142,8 @@ namespace WATickets.Controllers
                                     {
                                         Producto.MAG = false;
                                     }
+                                    Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
+
                                     db.SaveChanges();
                                 }
                                 catch (Exception ex1)
@@ -236,6 +238,8 @@ namespace WATickets.Controllers
                             {
                                 Producto.MAG = false;
                             }
+                            Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
+
                             db.SaveChanges();
 
                         }
@@ -544,6 +548,8 @@ namespace WATickets.Controllers
                             {
                                 Producto.MAG = false;
                             }
+                            Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
+
                             db.Productos.Add(Producto);
                             db.SaveChanges();
 
@@ -593,6 +599,8 @@ namespace WATickets.Controllers
                             {
                                 Producto.MAG = false;
                             }
+                            Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
+
                             db.SaveChanges();
                         }
                         catch (Exception ex1)

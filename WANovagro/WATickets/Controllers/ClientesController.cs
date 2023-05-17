@@ -1017,7 +1017,8 @@ namespace WATickets.Controllers
                     client.Phone1 = cliente.Telefono;
                     client.CardType = BoCardTypes.cCustomer;
                     client.CreditLimit = Convert.ToDouble(cliente.LimiteCredito);
-                    //Campos de usuario
+                   
+                        //Campos de usuario
                     if (cliente.MAG == true)
                     {
                         client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";

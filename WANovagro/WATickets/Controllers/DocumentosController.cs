@@ -189,7 +189,7 @@ namespace WATickets.Controllers
                             documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item("U_LDT_NumeroGTI").Value = Documento.ConsecutivoHacienda;
                             documentoSAP.UserFields.Fields.Item("U_LDT_FiscalDoc").Value = Documento.ClaveHacienda;
-                            documentoSAP.UserFields.Fields.Item("U_DYD_Estado").Value = "A";
+                            //documentoSAP.UserFields.Fields.Item("U_DYD_Estado").Value = "A";
 
                             //Detalle
                             int z = 0;

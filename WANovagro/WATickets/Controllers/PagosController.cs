@@ -107,6 +107,7 @@ namespace WATickets.Controllers
                     a.Moneda,
                     a.DocEntryPago,
                     a.ProcesadaSAP,
+                    a.TotalInteres,
 
                     Detalle = db.DetPagos.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -152,6 +153,7 @@ namespace WATickets.Controllers
                     Pago.Comentarios = pago.Comentarios;
                     Pago.Referencia = pago.Referencia;
                     Pago.TotalPagado = pago.TotalPagado;
+                    Pago.TotalInteres = pago.TotalInteres;
                     Pago.Moneda = pago.Moneda;
 
                     db.EncPagos.Add(Pago);
@@ -165,6 +167,7 @@ namespace WATickets.Controllers
                         det.idEncDocumentoCredito = item.idEncDocumentoCredito;
                         det.NumLinea = i;
                         det.Total = item.Total;
+                        det.Interes = item.Interes;
                         db.DetPagos.Add(det);
                         db.SaveChanges();
                         i++;
@@ -332,6 +335,7 @@ namespace WATickets.Controllers
                     Pago.Comentarios = pagos.Comentarios;
                     Pago.Referencia = pagos.Referencia;
                     Pago.TotalPagado = pagos.TotalPagado;
+                    Pago.TotalInteres = pagos.TotalInteres;
                     Pago.Moneda = pagos.Moneda;
                     db.SaveChanges();
 
@@ -352,6 +356,7 @@ namespace WATickets.Controllers
                         det.idEncDocumentoCredito = item.idEncDocumentoCredito;
                         det.NumLinea = i;
                         det.Total = item.Total;
+                        det.Interes = item.Interes;
                         db.DetPagos.Add(det);
                         db.SaveChanges();
                         i++;

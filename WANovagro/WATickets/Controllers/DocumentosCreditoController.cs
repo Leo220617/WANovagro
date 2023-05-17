@@ -76,7 +76,11 @@ namespace WATickets.Controllers
                     Creditos = Creditos.Where(a => a.idCliente == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
                 }
 
-
+                if (filtro.Codigo2 > 0) // esto por ser integer
+                {
+                    var Fecha = DateTime.Now;
+                    Creditos = Creditos.Where(a => a.idCliente == filtro.Codigo2 && a.FechaVencimiento < Fecha && a.Saldo > 0).ToList(); // filtramos por lo que traiga el codigo1 
+                }
                 if (!string.IsNullOrEmpty(filtro.ItemCode)) // esto por ser string
                 {
                     Creditos = Creditos.Where(a => a.Status == filtro.ItemCode).ToList();
@@ -417,5 +421,60 @@ namespace WATickets.Controllers
             }
 
         }
+
+        [Route("api/DocumentosCredito/ConsultarByClient")]
+        public HttpResponseMessage GetClient([FromUri] int idCliente)
+        {
+            try
+            {
+                var Fecha = DateTime.Now;
+                var Credito = db.EncDocumentoCredito.Select(a => new
+                {
+                    a.id,
+                    a.idCliente,
+                    a.idCondPago,
+                    a.idVendedor,
+                    a.CodSuc,
+                    a.Fecha,
+                    a.FechaVencimiento,
+                    a.TipoDocumento,
+                    a.Comentarios,
+                    a.Moneda,
+                    a.Subtotal,
+                    a.TotalImpuestos,
+                    a.TotalDescuento,
+                    a.TotalCompra,
+                    a.PorDescto,
+                    a.Status,
+                    a.DocEntry,
+                    a.DocNum,
+                    a.ClaveHacienda,
+                    a.ConsecutivoHacienda,
+                    a.Saldo,
+
+                    Detalle = db.DetDocumentoCredito.Where(b => b.idEncabezado == a.id).ToList()
+
+                }).Where(a => a.idCliente == idCliente && a.FechaVencimiento < Fecha && a.Saldo > 0).ToList();
+
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Credito);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+
+            }
+
+        }
+
+
     }
 }

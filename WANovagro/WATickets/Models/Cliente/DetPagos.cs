@@ -14,6 +14,7 @@ namespace WATickets.Models.Cliente
         public int idEncDocumentoCredito { get; set; }
         public int NumLinea { get; set; }
         public decimal Total { get; set; }
+        public decimal Interes { get; set; }
     
     }
 }

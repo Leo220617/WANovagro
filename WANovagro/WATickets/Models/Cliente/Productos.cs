@@ -52,5 +52,6 @@ namespace WATickets.Models.Cliente
         public DateTime FechaActualizacion { get; set; }
 
         public bool MAG { get; set; }
+        public bool Editable { get; set; }
     }
 }
