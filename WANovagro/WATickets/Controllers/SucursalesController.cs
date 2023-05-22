@@ -23,12 +23,17 @@ namespace WATickets.Controllers
         ModelCliente db = new ModelCliente();
         G G = new G();
 
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll(Filtros filtro)
         {
             try
             {
                 var Sucursales = db.Sucursales.ToList();
 
+                if (!string.IsNullOrEmpty(filtro.Texto))
+                {
+                    // and = &&, or = ||
+                    Sucursales = Sucursales.Where(a => a.CodSuc.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Sucursales);
             }
@@ -100,6 +105,7 @@ namespace WATickets.Controllers
                     Sucursal.SerieFECR = sucursales.SerieFECR;
                     Sucursal.SerieNC = sucursales.SerieNC;
                     Sucursal.SeriePago = sucursales.SeriePago;
+                    Sucursal.idListaPrecios = sucursales.idListaPrecios;
                     db.Sucursales.Add(Sucursal);
                     db.SaveChanges();
 
@@ -151,6 +157,7 @@ namespace WATickets.Controllers
                     Sucursal.SerieFECR = sucursales.SerieFECR;
                     Sucursal.SerieNC = sucursales.SerieNC;
                     Sucursal.SeriePago = sucursales.SeriePago;
+                    Sucursal.idListaPrecios = sucursales.idListaPrecios;
                     db.SaveChanges();
 
                 }
