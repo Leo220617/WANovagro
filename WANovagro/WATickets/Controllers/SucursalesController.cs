@@ -29,11 +29,7 @@ namespace WATickets.Controllers
             {
                 var Sucursales = db.Sucursales.ToList();
 
-                if (!string.IsNullOrEmpty(filtro.Texto))
-                {
-                    // and = &&, or = ||
-                    Sucursales = Sucursales.Where(a => a.CodSuc.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
-                }
+          
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Sucursales);
             }
@@ -52,6 +48,8 @@ namespace WATickets.Controllers
             }
 
         }
+
+   
         [Route("api/Sucursales/Consultar")]
         public HttpResponseMessage GetOne([FromUri] string id)
         {

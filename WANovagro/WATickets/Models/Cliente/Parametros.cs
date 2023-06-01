@@ -46,5 +46,7 @@
         public string CostingCode2 { get; set; }
 
         public string CostingCode3 { get; set; }
+
+        public string SQLCuentasBancarias { get; set; }
     }
 }
