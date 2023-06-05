@@ -18,6 +18,7 @@ namespace WATickets.Models.Cliente
         public string CuentaInicial { get; set; }
         public string CuentaFinal { get; set; }
         public decimal Saldo { get; set; }
+        public decimal SaldoDisponibleAnterior { get; set; }
         public string Comentarios { get; set; }
         public bool ProcesadoSAP { get; set; }
         public string DocEntry { get; set; }

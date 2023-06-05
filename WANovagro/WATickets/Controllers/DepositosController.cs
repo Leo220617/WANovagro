@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
@@ -43,9 +44,10 @@ namespace WATickets.Controllers
                     a.ProcesadoSAP,
                     a.DocEntry,
                     a.Moneda,
-                  
+                    a.SaldoDisponibleAnterior,
 
-                  
+
+
 
                 }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
 
@@ -119,6 +121,7 @@ namespace WATickets.Controllers
         {
             try
             {
+                Parametros param = db.Parametros.FirstOrDefault();
                 Depositos Deposito = db.Depositos.Where(a => a.id == depositos.id).FirstOrDefault();
                 if (Deposito == null)
                 {
@@ -126,17 +129,26 @@ namespace WATickets.Controllers
                     Deposito.id = depositos.id;
                     Deposito.CodSuc = depositos.CodSuc;
                     Deposito.Moneda = depositos.Moneda;
-                    Deposito.Series = depositos.Series; //Crear campo en Parametros
+                    Deposito.Series = param.SerieDeposito; //Crear campo en Parametros
                     Deposito.Fecha = depositos.Fecha;
                     Deposito.Banco = depositos.Banco;
                     Deposito.Referencia = depositos.Referencia;
+                    if (Deposito.Referencia == null)
+                    {
+                        Deposito.Referencia = "";
+                    }
                     Deposito.CuentaInicial = depositos.CuentaInicial;
                     Deposito.CuentaFinal = depositos.CuentaFinal;
                     Deposito.Saldo = depositos.Saldo;
                     Deposito.Comentarios = depositos.Comentarios;
+                    if (Deposito.Comentarios == null)
+                    {
+                        Deposito.Comentarios = "";
+                    }
                     Deposito.ProcesadoSAP = false;
                     Deposito.idUsuarioCreador = depositos.idUsuarioCreador;
                     Deposito.idCaja = depositos.idCaja;
+                    Deposito.SaldoDisponibleAnterior = depositos.SaldoDisponibleAnterior;
                     //Deposito.DocEntry = depositos.DocEntry;
                     db.Depositos.Add(Deposito);
                     db.SaveChanges();
@@ -162,5 +174,82 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
-    }
+        [Route("api/Depositos/SincronizarSAP")]
+        public HttpResponseMessage GetExtraeDatos([FromUri] int id)
+        {
+            try
+            {
+                Parametros param = db.Parametros.FirstOrDefault();
+                var Deposito = db.Depositos.Where(a => a.id == id).FirstOrDefault();
+                if (Deposito != null)
+                {
+                    if (!Deposito.ProcesadoSAP)
+                    {
+                        SAPbobsCOM.CompanyService oService = Conexion.Company.GetCompanyService();
+                        SAPbobsCOM.DepositsService dpService = (SAPbobsCOM.DepositsService)oService.GetBusinessService(SAPbobsCOM.ServiceTypes.DepositsService);
+                        SAPbobsCOM.Deposit depositoSAP = (SAPbobsCOM.Deposit)dpService.GetDataInterface(SAPbobsCOM.DepositsServiceDataInterfaces.dsDeposit);
+
+
+                        depositoSAP.DepositType = SAPbobsCOM.BoDepositTypeEnum.dtCash;
+                        depositoSAP.DepositAccountType = SAPbobsCOM.BoDepositAccountTypeEnum.datBankAccount;
+                        depositoSAP.DepositAccount = Deposito.CuentaFinal;
+                        depositoSAP.DepositDate = Deposito.Fecha;
+                        depositoSAP.DepositCurrency = Deposito.Moneda;
+                        depositoSAP.Series = param.SerieDeposito;
+                        depositoSAP.BankAccountNum = Deposito.CuentaFinal;
+                        depositoSAP.AllocationAccount = Deposito.CuentaInicial;
+                        depositoSAP.Bank = Deposito.Banco;
+                        depositoSAP.BankReference = Deposito.Referencia;
+                        depositoSAP.TotalLC = Convert.ToDouble(Deposito.Saldo);
+                        depositoSAP.JournalRemarks = Deposito.Comentarios;
+                        depositoSAP.BankBranch = Deposito.CodSuc;
+
+                        var respuesta = dpService.AddDeposit(depositoSAP);
+                        if (respuesta.DepositNumber != 0)
+                        {
+                            db.Entry(Deposito).State = EntityState.Modified;
+                            Deposito.DocEntry = respuesta.DepositNumber.ToString();
+                            Deposito.ProcesadoSAP = true;
+                            db.SaveChanges();
+
+                        }
+                        else
+                        {
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Fecha = DateTime.Now;
+                            be.Descripcion = respuesta.DepositNumber.ToString();
+                            be.JSON = JsonConvert.SerializeObject(respuesta);
+                            be.StrackTrace = Conexion.Company.GetLastErrorDescription();
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+                        }
+
+                        Conexion.Desconectar();
+                    }
+                    else
+                    {
+                        throw new Exception("Este deposito ya fue procesado");
+                    }
+
+                    
+                }
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Deposito);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+                return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest, ex);
+
+            }
+        }
+
+     
+        }
 }
