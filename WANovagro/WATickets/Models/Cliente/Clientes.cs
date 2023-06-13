@@ -67,6 +67,8 @@ namespace WATickets.Models.Cliente
 
         public bool MAG { get; set; }
 
+        public bool INT { get; set; }
+
         public decimal LimiteCredito { get; set; }
 
     }

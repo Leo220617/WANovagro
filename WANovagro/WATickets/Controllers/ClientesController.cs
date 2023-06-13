@@ -87,6 +87,16 @@ namespace WATickets.Controllers
                                 Cliente.MAG = false;
                             }
 
+                            string INT = item["INT"].ToString();
+                            if (INT == "SI")
+                            {
+                                Cliente.INT = true;
+                            }
+                            else
+                            {
+                                Cliente.INT = false;
+                            }
+
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
@@ -210,7 +220,15 @@ namespace WATickets.Controllers
                             {
                                 Cliente.MAG = false;
                             }
-
+                            string INT = item["INT"].ToString();
+                            if (INT == "SI")
+                            {
+                                Cliente.INT = true;
+                            }
+                            else
+                            {
+                                Cliente.INT = false;
+                            }
                             db.SaveChanges();
                         }
                         catch (Exception ex1)
@@ -347,6 +365,16 @@ namespace WATickets.Controllers
                                 Cliente.MAG = false;
                             }
 
+                            string INT = item["INT"].ToString();
+                            if (INT == "SI")
+                            {
+                                Cliente.INT = true;
+                            }
+                            else
+                            {
+                                Cliente.INT = false;
+                            }
+
                             Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.Activo = true;
@@ -446,6 +474,16 @@ namespace WATickets.Controllers
                             else
                             {
                                 Cliente.MAG = false;
+                            }
+
+                            string INT = item["INT"].ToString();
+                            if (INT == "SI")
+                            {
+                                Cliente.INT = true;
+                            }
+                            else
+                            {
+                                Cliente.INT = false;
                             }
 
                             db.SaveChanges();
@@ -620,6 +658,7 @@ namespace WATickets.Controllers
                         Cliente.CorreoPublicitario = clientes.CorreoPublicitario;
                         Cliente.FechaActualizacion = DateTime.Now;
                         Cliente.MAG = false;
+                        Cliente.INT = false;
                         db.Clientes.Add(Cliente);
                         db.SaveChanges();
                     }
@@ -767,6 +806,15 @@ namespace WATickets.Controllers
                                 {
                                     client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
                                 }
+
+                                if (Clientes.INT == true)
+                                {
+                                    client.UserFields.Fields.Item("U_DYD_INT").Value = "SI";
+                                }
+                                else if (Clientes.INT == false)
+                                {
+                                    client.UserFields.Fields.Item("U_DYD_INT").Value = "NO";
+                                }
                                 var respuesta = client.Update();
 
                                 if (respuesta == 0)
@@ -892,6 +940,14 @@ namespace WATickets.Controllers
                             client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
                         }
 
+                        if (cliente.INT == true)
+                        {
+                            client.UserFields.Fields.Item("U_DYD_INT").Value = "SI";
+                        }
+                        else if (cliente.INT == false)
+                        {
+                            client.UserFields.Fields.Item("U_DYD_INT").Value = "NO";
+                        }
                         client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);
                         client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
                         client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
@@ -1026,6 +1082,15 @@ namespace WATickets.Controllers
                     else if (cliente.MAG == false)
                     {
                         client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
+                    }
+
+                    if (cliente.INT == true)
+                    {
+                        client.UserFields.Fields.Item("U_DYD_INT").Value = "SI";
+                    }
+                    else if (cliente.INT == false)
+                    {
+                        client.UserFields.Fields.Item("U_DYD_INT").Value = "NO";
                     }
 
                     client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);

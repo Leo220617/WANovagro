@@ -41,7 +41,9 @@ namespace WATickets.Controllers
                     a.TotalPagado,
                     a.Moneda,
                     a.DocEntryPago,
+                    a.DocEntryInt,
                     a.ProcesadaSAP,
+                    a.IntProcesadaSAP,
 
                     Detalle = db.DetPagos.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -107,7 +109,10 @@ namespace WATickets.Controllers
                     a.Moneda,
                     a.DocEntryPago,
                     a.ProcesadaSAP,
+                    a.DocEntryInt, 
+                    a.IntProcesadaSAP,
                     a.TotalInteres,
+                    a.TotalCapital,
 
                     Detalle = db.DetPagos.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -154,6 +159,7 @@ namespace WATickets.Controllers
                     Pago.Referencia = pago.Referencia;
                     Pago.TotalPagado = pago.TotalPagado;
                     Pago.TotalInteres = pago.TotalInteres;
+                    Pago.TotalCapital = pago.TotalCapital;
                     Pago.Moneda = pago.Moneda;
 
                     db.EncPagos.Add(Pago);
@@ -168,6 +174,7 @@ namespace WATickets.Controllers
                         det.NumLinea = i;
                         det.Total = item.Total;
                         det.Interes = item.Interes;
+                        det.Capital = item.Capital;
                         db.DetPagos.Add(det);
                         db.SaveChanges();
                         i++;
@@ -177,7 +184,7 @@ namespace WATickets.Controllers
                             throw new Exception("Factura " + det.idEncDocumentoCredito + " no se encuentra en las bases de datos");
                         }
                         db.Entry(Factura).State = EntityState.Modified;
-                        Factura.Saldo -= det.Total;
+                        Factura.Saldo -= det.Capital;
                         if (Factura.Saldo <= 0)
                         {
                             Factura.Status = "C";
@@ -196,7 +203,7 @@ namespace WATickets.Controllers
                     var Fecha = DateTime.Now.Date;
                     var TP = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
                     db.Entry(Cliente).State = EntityState.Modified;
-                    Cliente.Saldo -= pago.Moneda == "USD" ? (pago.TotalPagado * TP.TipoCambio) : pago.TotalPagado;
+                    Cliente.Saldo -= pago.Moneda == "USD" ? (pago.TotalCapital * TP.TipoCambio) : pago.TotalCapital;
                     db.SaveChanges();
 
                     t.Commit();
@@ -223,7 +230,7 @@ namespace WATickets.Controllers
                             pagoSAP.CounterReference = "APP ABONO" + Pago.id;
                             var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
 
-                            pagoSAP.CashSum = Convert.ToDouble(Pago.TotalPagado);
+                            pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
                             pagoSAP.Series = Sucursal.SeriePago; //154; 161;
                             pagoSAP.CashAccount = Cuenta;
 
@@ -240,11 +247,11 @@ namespace WATickets.Controllers
                                     if (Pago.Moneda != "CRC")
                                     {
 
-                                        pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Total);
+                                        pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
                                     }
                                     else
                                     {
-                                        pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Total);
+                                        pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
 
                                     }
                                 }
@@ -277,9 +284,65 @@ namespace WATickets.Controllers
                                 db.SaveChanges();
                             }
 
+                            if (Pago.IntProcesadaSAP != true)
+                            {
+                                try
+                                {
+                                    var ClienteI = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault();
+                                    var interesSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oVendorPayments);
+                                    interesSAP.CounterReference = "APP INTÉRES" + Pago.id;
+                                    interesSAP.DocDate = DateTime.Now;
+                                    interesSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
+                                    interesSAP.CardCode = ClienteI.Codigo;
+                                    interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
+                                    var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
+                                    interesSAP.CashAccount = CuentaI;
+                                    interesSAP.Remarks = "Interés procesado por NOVAPOS";
+                                    interesSAP.DocCurrency = Pago.Moneda;
+                                    interesSAP.Series = 20; //Crear en parametros
 
+
+                                    var respuestaInteres = interesSAP.Add();
+                                    if (respuestaInteres == 0)
+                                    {
+                                        db.Entry(Pago).State = EntityState.Modified;
+                                        Pago.DocEntryInt = Conexion.Company.GetNewObjectKey().ToString();
+                                        Pago.IntProcesadaSAP = true;
+                                        db.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        var error = "hubo un error en el interes " + Conexion.Company.GetLastErrorDescription();
+                                        BitacoraErrores be = new BitacoraErrores();
+                                        be.Descripcion = error;
+                                        be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                        be.Fecha = DateTime.Now;
+                                        be.JSON = JsonConvert.SerializeObject(interesSAP);
+                                        db.BitacoraErrores.Add(be);
+                                        db.SaveChanges();
+                                    }
+
+                                }
+                                catch (Exception ex)
+                                {
+
+
+                                    BitacoraErrores be = new BitacoraErrores();
+                                    be.Descripcion = ex.Message;
+                                    be.StrackTrace = ex.StackTrace;
+                                    be.Fecha = DateTime.Now;
+                                    be.JSON = JsonConvert.SerializeObject(ex);
+                                    db.BitacoraErrores.Add(be);
+                                    db.SaveChanges();
+
+                                    return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+                                }
+
+
+                            }
 
                         }
+
                     }
                     catch (Exception ex)
                     {
@@ -299,7 +362,18 @@ namespace WATickets.Controllers
                     throw new Exception("Ya existe un Pago con este ID");
                 }
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                try
+                {
+                    pago.id = Pago.id;
+                    
+                }
+                catch (Exception)
+                {
+
+                     
+                }
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, pago);
             }
             catch (Exception ex)
             {
@@ -336,6 +410,7 @@ namespace WATickets.Controllers
                     Pago.Referencia = pagos.Referencia;
                     Pago.TotalPagado = pagos.TotalPagado;
                     Pago.TotalInteres = pagos.TotalInteres;
+                    Pago.TotalCapital = pagos.TotalCapital;
                     Pago.Moneda = pagos.Moneda;
                     db.SaveChanges();
 
@@ -357,6 +432,7 @@ namespace WATickets.Controllers
                         det.NumLinea = i;
                         det.Total = item.Total;
                         det.Interes = item.Interes;
+                        det.Capital = item.Capital;
                         db.DetPagos.Add(det);
                         db.SaveChanges();
                         i++;
@@ -417,7 +493,7 @@ namespace WATickets.Controllers
                     pagoSAP.CounterReference = "APP ABONO" + Pago.id;
                     var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
 
-                    pagoSAP.CashSum = Convert.ToDouble(Pago.TotalPagado);
+                    pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
                     pagoSAP.Series = Sucursal.SeriePago; //154; 161;
                     pagoSAP.CashAccount = Cuenta;
 
@@ -434,11 +510,11 @@ namespace WATickets.Controllers
                             if (Pago.Moneda != "CRC")
                             {
 
-                                pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Total);
+                                pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
                             }
                             else
                             {
-                                pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Total);
+                                pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
 
                             }
                         }
@@ -474,6 +550,63 @@ namespace WATickets.Controllers
 
 
                 }
+                if (Pago.IntProcesadaSAP != true)
+                {
+                    try
+                    {
+                        var Cliente = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault();
+                        var interesSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oVendorPayments);
+                        interesSAP.CounterReference = "APP INTÉRES" + Pago.id;
+                        interesSAP.DocDate = DateTime.Now;
+                        interesSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
+                        interesSAP.CardCode = Cliente.Codigo;
+                        interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
+                        var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
+                        interesSAP.CashAccount = Cuenta;
+                        interesSAP.Remarks = "Interés procesado por NOVAPOS";
+                        interesSAP.DocCurrency = Pago.Moneda;
+                        interesSAP.Series = 20; //Crear en parametros
+
+
+                        var respuestaInteres = interesSAP.Add();
+                        if (respuestaInteres == 0)
+                        {
+                            db.Entry(Pago).State = EntityState.Modified;
+                            Pago.DocEntryInt = Conexion.Company.GetNewObjectKey().ToString();
+                            Pago.IntProcesadaSAP = true;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            var error = "hubo un error en el interes " + Conexion.Company.GetLastErrorDescription();
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = error;
+                            be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(interesSAP);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                        BitacoraErrores be = new BitacoraErrores();
+                        be.Descripcion = ex.Message;
+                        be.StrackTrace = ex.StackTrace;
+                        be.Fecha = DateTime.Now;
+                        be.JSON = JsonConvert.SerializeObject(ex);
+                        db.BitacoraErrores.Add(be);
+                        db.SaveChanges();
+
+                        return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+                    }
+
+
+                }
+
 
                 else
                 {
@@ -533,7 +666,7 @@ namespace WATickets.Controllers
                         pagoSAP.CounterReference = "APP ABONO" + Pago.id;
                         var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
 
-                        pagoSAP.CashSum = Convert.ToDouble(Pago.TotalPagado);
+                        pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
                         pagoSAP.Series = Sucursal.SeriePago; //154; 161;
                         pagoSAP.CashAccount = Cuenta;
 
@@ -550,11 +683,11 @@ namespace WATickets.Controllers
                                 if (Pago.Moneda != "CRC")
                                 {
 
-                                    pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Total);
+                                    pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
                                 }
                                 else
                                 {
-                                    pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Total);
+                                    pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
 
                                 }
 
@@ -591,6 +724,63 @@ namespace WATickets.Controllers
                         }
 
 
+
+                    }
+
+                    if(Pago.IntProcesadaSAP != true)
+                    {
+                        try
+                        {
+                            var Cliente = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault();
+                            var interesSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oVendorPayments);
+                            interesSAP.CounterReference = "APP INTÉRES" + Pago.id;
+                            interesSAP.DocDate = DateTime.Now;
+                            interesSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
+                            interesSAP.CardCode = Cliente.Codigo;
+                            interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
+                            var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
+                            interesSAP.CashAccount = Cuenta;
+                            interesSAP.Remarks = "Interés procesado por NOVAPOS";
+                            interesSAP.DocCurrency = Pago.Moneda;
+                            interesSAP.Series = 20; //Crear en parametros
+
+
+                            var respuestaInteres= interesSAP.Add();
+                            if (respuestaInteres == 0)
+                            {
+                                db.Entry(Pago).State = EntityState.Modified;
+                                Pago.DocEntryInt = Conexion.Company.GetNewObjectKey().ToString();
+                                Pago.IntProcesadaSAP = true;
+                                db.SaveChanges();
+                            }
+                            else
+                            {
+                                var error = "hubo un error en el interes " + Conexion.Company.GetLastErrorDescription();
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = error;
+                                be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(interesSAP);
+                                db.BitacoraErrores.Add(be);
+                                db.SaveChanges();
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+
+
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex.Message;
+                            be.StrackTrace = ex.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+
+                            return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+                        }
+                  
 
                     }
 
