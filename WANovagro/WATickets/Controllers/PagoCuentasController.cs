@@ -170,6 +170,9 @@ namespace WATickets.Controllers
 
                     MetodosPagos.idCuentaBancaria = Cuenta;
                     MetodosPagos.Moneda = PagoCuenta.Moneda;
+                    MetodosPagos.idCaja = PagoCuenta.idCaja;
+                    MetodosPagos.idCajero = PagoCuenta.idUsuarioCreador;
+                    MetodosPagos.Fecha = DateTime.Now.Date;
                     db.MetodosPagos.Add(MetodosPagos);
                     db.SaveChanges();
                     var time = DateTime.Now.Date;

@@ -906,6 +906,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -928,6 +931,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -956,6 +962,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -980,6 +989,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -1009,6 +1021,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -1032,6 +1047,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -1061,6 +1079,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -1084,6 +1105,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -1114,6 +1138,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -1137,6 +1164,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -1184,6 +1214,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -1206,6 +1239,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -1234,6 +1270,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -1258,6 +1297,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -1287,6 +1329,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -1310,6 +1355,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -1339,6 +1387,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -1362,6 +1413,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -1392,6 +1446,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto / TipoCambio.TipoCambio) : devuelto;
@@ -1415,6 +1472,9 @@ namespace WATickets.Controllers
                                                             MetodosPagos.Metodo = item2.Metodo;
                                                             MetodosPagos.idCuentaBancaria = item2.idCuentaBancaria;
                                                             MetodosPagos.Moneda = item2.Moneda;
+                                                            MetodosPagos.idCaja = Documento.idCaja;
+                                                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                                                            MetodosPagos.Fecha = DateTime.Now.Date;
                                                             db.MetodosPagos.Add(MetodosPagos);
                                                             db.SaveChanges();
                                                             montoadevolver2 -= documento.Moneda != item2.Moneda ? Math.Round(devuelto * TipoCambio.TipoCambio) : devuelto;
@@ -1462,6 +1522,9 @@ namespace WATickets.Controllers
                             MetodosPagos.Metodo = item.Metodo;
                             MetodosPagos.idCuentaBancaria = item.idCuentaBancaria;
                             MetodosPagos.Moneda = item.Moneda;
+                            MetodosPagos.idCaja = Documento.idCaja;
+                            MetodosPagos.idCajero = Documento.idUsuarioCreador;
+                            MetodosPagos.Fecha = DateTime.Now.Date;
                             db.MetodosPagos.Add(MetodosPagos);
                             db.SaveChanges();
                             if (CierreCaja != null)

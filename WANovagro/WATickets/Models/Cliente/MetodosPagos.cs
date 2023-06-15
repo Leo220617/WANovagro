@@ -16,6 +16,9 @@ namespace WATickets.Models.Cliente
         public string NumCheque { get; set; }
         public string Metodo { get; set; }
         public string Moneda { get; set; }
+        public int idCaja { get; set; }
+        public int idCajero { get; set; }
+        public DateTime Fecha { get; set; }
 
     }
 }

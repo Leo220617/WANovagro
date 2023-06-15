@@ -20,34 +20,22 @@ namespace WATickets.Controllers
                 var time = new DateTime();
                 var Pagos = db.MetodosPagos.ToList();
               
-                if(filtros.Codigo1 > 0 && filtros.FechaInicial != time ) // para buscar los pagos realizados en una caja
+                if(filtros.Codigo1 > 0 && filtros.FechaInicial != time && filtros.Codigo2 > 0) // para buscar los pagos realizados en una caja
                 {
-                     
-                    var Documentos = db.EncDocumento.Where(a => a.idCaja != filtros.Codigo1 ).ToList(); //Todos los documentos hechos en otras cajas
-                    foreach(var item in Documentos)
-                    {
-                        Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList(); //tenemos todos los pagos pertenecientes a una caja
-                    }
-                    filtros.FechaFinal = filtros.FechaInicial.AddDays(1);
-                    Documentos = db.EncDocumento.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha >= filtros.FechaFinal)).ToList();
-                    foreach (var item in Documentos)
-                    {
-                        Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList();
-                    }
 
-                    //var PagosCuentas = db.PagoCuentas.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha >= filtros.FechaFinal)).ToList();
-                    //foreach (var item in PagosCuentas)
+                    //var Documentos = db.EncDocumento.Where(a => a.idCaja != filtros.Codigo1 ).ToList(); //Todos los documentos hechos en otras cajas
+                    //foreach(var item in Documentos)
                     //{
-                    //    var itemId = item.id.ToString();
-                    //    Pagos = Pagos.Where(a => a.BIN != itemId).ToList();
+                    //    Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList(); //tenemos todos los pagos pertenecientes a una caja
+                    //}
+                    //filtros.FechaFinal = filtros.FechaInicial.AddDays(1);
+                    //Documentos = db.EncDocumento.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha >= filtros.FechaFinal)).ToList();
+                    //foreach (var item in Documentos)
+                    //{
+                    //    Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList();
                     //}
 
-                    //var Abonos = db.EncPagos.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha >= filtros.FechaFinal)).ToList();
-                    //foreach (var item in Abonos)
-                    //{
-                    //    var itemId = item.id.ToString();
-                    //    Pagos = Pagos.Where(a => a.NumReferencia != itemId).ToList();
-                    //}
+                    Pagos = Pagos.Where(a => a.idCaja == filtros.Codigo1 && a.idCajero == filtros.Codigo2 && a.Fecha == filtros.FechaInicial).ToList();
                     //Pagos = Pagos.Where(a => a.idEncabezado != 0 ).ToList();
                 }
 
