@@ -91,7 +91,7 @@ namespace WATickets.Controllers
                                     {
                                         Producto.MAG = false;
                                     }
-                                    Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
+                                    Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
                                     db.Productos.Add(Producto);
                                     db.SaveChanges();
 
@@ -142,7 +142,7 @@ namespace WATickets.Controllers
                                     {
                                         Producto.MAG = false;
                                     }
-                                    Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
+                                    Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
 
                                     db.SaveChanges();
                                 }
@@ -238,7 +238,7 @@ namespace WATickets.Controllers
                             {
                                 Producto.MAG = false;
                             }
-                            Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
+                            Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
 
                             db.SaveChanges();
 
@@ -548,7 +548,7 @@ namespace WATickets.Controllers
                             {
                                 Producto.MAG = false;
                             }
-                            Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
+                            Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
 
                             db.Productos.Add(Producto);
                             db.SaveChanges();
@@ -599,7 +599,7 @@ namespace WATickets.Controllers
                             {
                                 Producto.MAG = false;
                             }
-                            Producto.Editable = Convert.ToBoolean(item["Editable"].ToString());
+                            Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
 
                             db.SaveChanges();
                         }

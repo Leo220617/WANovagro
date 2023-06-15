@@ -51,7 +51,7 @@ namespace WATickets.Controllers
 
                 }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
 
-                if (!string.IsNullOrEmpty(filtro.Texto))
+                if (!string.IsNullOrEmpty(filtro.Texto) && filtro.Texto != "0")
                 {
                     Pagos = Pagos.Where(a => a.CodSuc == filtro.Texto).ToList();
                 }
