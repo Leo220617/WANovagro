@@ -1451,7 +1451,7 @@ namespace WATickets.Controllers
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
                     if (documento.MetodosPagos != null)
                     {
-                        foreach (var item in documento.MetodosPagos)
+                        foreach (var item in documento.MetodosPagos.Where(a => a.Metodo != "Pago a Cuenta"))
                         {
                             MetodosPagos MetodosPagos = new MetodosPagos();
                             MetodosPagos.idEncabezado = Documento.id;
@@ -1557,6 +1557,21 @@ namespace WATickets.Controllers
 
 
                         }
+
+
+
+                        foreach (var item in documento.MetodosPagos.Where(a => a.Metodo == "Pago a Cuenta"))
+                        {
+                            var Cliente = db.Clientes.Where(a => a.id == documento.idCliente).FirstOrDefault();
+                            if(Cliente != null)
+                            {
+                                db.Entry(Cliente).State = EntityState.Modified;
+                                Cliente.Saldo += item.Monto;
+                                db.SaveChanges();
+
+                            }
+                        }
+
                     }
 
 

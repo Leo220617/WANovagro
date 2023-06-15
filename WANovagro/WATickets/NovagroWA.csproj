@@ -264,6 +264,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MetodosPagosController.cs" />
     <Compile Include="Controllers\OfertasController.cs" />
+    <Compile Include="Controllers\PagoCuentasController.cs" />
     <Compile Include="Controllers\PagosController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
@@ -319,6 +320,7 @@
     <Compile Include="Models\Cliente\ListaPrecios.cs" />
     <Compile Include="Models\Cliente\MetodosPagos.cs" />
     <Compile Include="Models\Cliente\ModelCliente.cs" />
+    <Compile Include="Models\Cliente\PagoCuentas.cs" />
     <Compile Include="Models\Cliente\Parametros.cs" />
     <Compile Include="Models\Cliente\Productos.cs" />
     <Compile Include="Models\Cliente\Roles.cs" />

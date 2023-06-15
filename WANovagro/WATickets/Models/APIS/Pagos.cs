@@ -24,6 +24,8 @@ namespace WATickets.Models.APIS
         public string DocEntryInt { get; set; }
         public decimal TotalInteres { get; set; }
         public decimal TotalCapital { get; set; }
+        public int idCaja { get; set; }
+        public int idUsuarioCreador { get; set; }
         public List<DetPagos> Detalle { get; set; }
     }
 }

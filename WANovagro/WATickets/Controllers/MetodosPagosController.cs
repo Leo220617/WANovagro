@@ -35,7 +35,20 @@ namespace WATickets.Controllers
                         Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList();
                     }
 
-                    Pagos = Pagos.Where(a => a.idEncabezado != 0).ToList();
+                    //var PagosCuentas = db.PagoCuentas.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha >= filtros.FechaFinal)).ToList();
+                    //foreach (var item in PagosCuentas)
+                    //{
+                    //    var itemId = item.id.ToString();
+                    //    Pagos = Pagos.Where(a => a.BIN != itemId).ToList();
+                    //}
+
+                    //var Abonos = db.EncPagos.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha >= filtros.FechaFinal)).ToList();
+                    //foreach (var item in Abonos)
+                    //{
+                    //    var itemId = item.id.ToString();
+                    //    Pagos = Pagos.Where(a => a.NumReferencia != itemId).ToList();
+                    //}
+                    //Pagos = Pagos.Where(a => a.idEncabezado != 0 ).ToList();
                 }
 
 

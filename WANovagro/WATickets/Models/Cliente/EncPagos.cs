@@ -25,6 +25,8 @@ namespace WATickets.Models.Cliente
         public string DocEntryInt { get; set; }
         public decimal TotalInteres { get; set; }
         public decimal TotalCapital { get; set; }
+        public int idCaja { get; set; }
+        public int idUsuarioCreador { get; set; }
 
     }
  
