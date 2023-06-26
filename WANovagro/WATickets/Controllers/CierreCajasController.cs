@@ -45,6 +45,9 @@ namespace WATickets.Controllers
                     Cierre = Cierre.Where(a => a.Activo == filtro.Activo).ToList();
                 }
 
+           
+             
+
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Cierre);
             }
             catch (Exception ex)
@@ -65,7 +68,7 @@ namespace WATickets.Controllers
         [Route("api/CierreCajas/Consultar")]
         public HttpResponseMessage GetOne([FromUri] int id, DateTime Fecha, int idUsuario)
         {
-            
+
             try
             {
                 var time = new DateTime(); //01-01-0001
@@ -105,11 +108,11 @@ namespace WATickets.Controllers
                 if (CierreCajas != null)
                 {
                     var TipoCambio = db.TipoCambios.Where(a => a.Fecha == cierreCajas.FechaCaja && a.Moneda == "USD").FirstOrDefault();
-                   
+
                     db.Entry(CierreCajas).State = System.Data.Entity.EntityState.Modified;
-                    
+
                     CierreCajas.FecUltAct = DateTime.Now;
-                  
+
                     //CierreCajas.EfectivoColones = cierreCajas.EfectivoColones;
                     //CierreCajas.ChequesColones = cierreCajas.ChequesColones;
                     //CierreCajas.TarjetasColones = cierreCajas.TarjetasColones;
@@ -123,26 +126,26 @@ namespace WATickets.Controllers
                     //CierreCajas.ChequesFC = cierreCajas.ChequesFC;
                     //CierreCajas.TarjetasFC = cierreCajas.TarjetasFC;
                     //CierreCajas.OtrosMediosFC = cierreCajas.OtrosMediosFC;
-                   // CierreCajas.TotalVendidoFC = cierreCajas.TotalVendidoFC;
+                    // CierreCajas.TotalVendidoFC = cierreCajas.TotalVendidoFC;
                     CierreCajas.TotalRegistradoFC = cierreCajas.TotalRegistradoFC;
                     CierreCajas.TotalAperturaFC = db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault() == null ? 0 : db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault().MontoAperturaDolares;
-                   // CierreCajas.TransferenciasDolares = cierreCajas.TransferenciasDolares;
+                    // CierreCajas.TransferenciasDolares = cierreCajas.TransferenciasDolares;
 
 
                     CierreCajas.EfectivoColonesC = cierreCajas.EfectivoColonesC;
                     CierreCajas.ChequesColonesC = cierreCajas.ChequesColonesC;
                     CierreCajas.TarjetasColonesC = cierreCajas.TarjetasColonesC;
                     CierreCajas.OtrosMediosColonesC = cierreCajas.OtrosMediosColonesC;
-            
-                   
+
+
                     CierreCajas.TransferenciasColonesC = cierreCajas.TransferenciasColonesC;
 
                     CierreCajas.EfectivoFCC = cierreCajas.EfectivoFCC;
                     CierreCajas.ChequesFCC = cierreCajas.ChequesFCC;
                     CierreCajas.TarjetasFCC = cierreCajas.TarjetasFCC;
                     CierreCajas.OtrosMediosFCC = cierreCajas.OtrosMediosFCC;
-                 
-                    
+
+
                     CierreCajas.TransferenciasDolaresC = cierreCajas.TransferenciasDolaresC;
 
                     CierreCajas.Activo = false;
@@ -150,8 +153,8 @@ namespace WATickets.Controllers
                     CierreCajas.TotalizadoMonedas = cierreCajas.TotalRegistradoColones + (cierreCajas.TotalRegistradoFC * TipoCambio.TipoCambio);
                     db.SaveChanges();
 
-                   
-                    
+
+
 
 
                 }
@@ -176,7 +179,7 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
-          [Route("api/CierreCajas/Eliminar")]
+        [Route("api/CierreCajas/Eliminar")]
         [HttpDelete]
         public HttpResponseMessage Delete([FromUri] int idCaja, DateTime Fecha, int idUsuario)
         {
@@ -184,7 +187,7 @@ namespace WATickets.Controllers
             {
                 CierreCajas CierreCajas = db.CierreCajas.Where(a => a.idCaja == idCaja && a.FechaCaja == Fecha && a.idUsuario == idUsuario).FirstOrDefault();
 
-               
+
                 if (CierreCajas != null)
                 {
                     db.Entry(CierreCajas).State = EntityState.Modified;
