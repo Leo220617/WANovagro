@@ -220,9 +220,10 @@ namespace WATickets.Controllers
 
                             var idCondPago = item["CondPago"].ToString();
                             EncCredito.idCondPago = db.CondicionesPagos.Where(a => a.CodSAP == idCondPago).FirstOrDefault() == null ? 0 : db.CondicionesPagos.Where(a => a.CodSAP == idCondPago).FirstOrDefault().id;
-
+                            var Condicion = db.CondicionesPagos.Where(a => a.CodSAP == idCondPago).FirstOrDefault() == null ? new CondicionesPagos() : db.CondicionesPagos.Where(a => a.CodSAP == idCondPago).FirstOrDefault();
+                            var Dias = Condicion.Dias;
                             EncCredito.Fecha = Convert.ToDateTime(item["Fecha"]);
-                            EncCredito.FechaVencimiento = Convert.ToDateTime(item["FechaVencimiento"]);
+                            EncCredito.FechaVencimiento = EncCredito.Fecha.AddDays(Dias); //Convert.ToDateTime(item["FechaVencimiento"]);
 
                             EncCredito.Comentarios = item["Comentarios"].ToString();
                             EncCredito.TotalImpuestos = Convert.ToDecimal(item["Impuestos"]);
@@ -319,9 +320,11 @@ namespace WATickets.Controllers
 
                             var idCondPago = item["CondPago"].ToString();
                             EncCredito.idCondPago = db.CondicionesPagos.Where(a => a.CodSAP == idCondPago).FirstOrDefault() == null ? 0 : db.CondicionesPagos.Where(a => a.CodSAP == idCondPago).FirstOrDefault().id;
-
+                            var Condicion = db.CondicionesPagos.Where(a => a.CodSAP == idCondPago).FirstOrDefault() == null ? new CondicionesPagos() : db.CondicionesPagos.Where(a => a.CodSAP == idCondPago).FirstOrDefault();
+                            var Dias = Condicion.Dias;
                             EncCredito.Fecha = Convert.ToDateTime(item["Fecha"]);
-                            EncCredito.FechaVencimiento = Convert.ToDateTime(item["FechaVencimiento"]);
+                            EncCredito.FechaVencimiento = EncCredito.Fecha.AddDays(Dias); //Convert.ToDateTime(item["FechaVencimiento"]);
+                           
 
                             EncCredito.Comentarios = item["Comentarios"].ToString();
                             EncCredito.TotalImpuestos = Convert.ToDecimal(item["Impuestos"]);

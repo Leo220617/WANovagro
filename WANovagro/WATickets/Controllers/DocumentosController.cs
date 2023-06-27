@@ -176,8 +176,10 @@ namespace WATickets.Controllers
                             documentoSAP.DocObjectCode = BoObjectTypes.oInvoices;
                             documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
                             documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
+                            var Dias = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? 0 : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Dias;
+                          
                             documentoSAP.DocDate = Documento.Fecha;
-                            //documentoSAP.DocDueDate = Documento.FechaVencimiento;
+                            documentoSAP.DocDueDate = Documento.Fecha.AddDays(Dias);
                             documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
                             documentoSAP.NumAtCard = "APP FAC" + " " + Documento.id;
                             documentoSAP.Comments = Documento.Comentarios;
@@ -688,6 +690,13 @@ namespace WATickets.Controllers
                     Documentos = Documentos.Where(a => a.BaseEntry == filtro.BaseEntry).ToList();
                 }
 
+                if (!string.IsNullOrEmpty(filtro.CardCode))
+                {
+                    Documentos = Documentos.Where(a => a.TipoDocumento == filtro.CardCode).ToList();
+                }
+
+
+
                 //if (filtro.PagoProcesado != null)
                 //{
                 //    Documentos = Documentos.Where(a => a.PagoProcesadaSAP == filtro.PagoProcesado).ToList();
@@ -786,7 +795,7 @@ namespace WATickets.Controllers
                     Documento.idCliente = documento.idCliente;
                     Documento.idUsuarioCreador = documento.idUsuarioCreador;
                     Documento.Fecha = DateTime.Now;
-                    Documento.FechaVencimiento = DateTime.Now;//documento.FechaVencimiento;
+                    Documento.FechaVencimiento = documento.FechaVencimiento;
                     Documento.Comentarios = documento.Comentarios;
                     Documento.Subtotal = documento.Subtotal;
                     Documento.TotalImpuestos = documento.TotalImpuestos;

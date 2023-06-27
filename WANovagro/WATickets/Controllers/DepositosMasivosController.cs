@@ -22,10 +22,12 @@ namespace WATickets.Controllers
             {
                 Parametros param = db.Parametros.FirstOrDefault();
                 var DepositoSP = db.Depositos.Where(a => a.ProcesadoSAP == false).ToList();
+               
 
                 foreach (var item2 in DepositoSP)
                 {
                     Depositos Deposito = db.Depositos.Where(a => a.id == item2.id).FirstOrDefault();
+                    var Sucursal = db.Sucursales.Where(a => a.CodSuc == Deposito.CodSuc).FirstOrDefault();
                     if (!Deposito.ProcesadoSAP)
                     {
                         SAPbobsCOM.CompanyService oService = Conexion.Company.GetCompanyService();
@@ -38,7 +40,7 @@ namespace WATickets.Controllers
                         depositoSAP.DepositAccount = Deposito.CuentaFinal;
                         depositoSAP.DepositDate = Deposito.Fecha;
                         depositoSAP.DepositCurrency = Deposito.Moneda;
-                        depositoSAP.Series = param.SerieDeposito;
+                        depositoSAP.Series = Sucursal.SerieDeposito;
                         depositoSAP.BankAccountNum = Deposito.CuentaFinal;
                         depositoSAP.AllocationAccount = Deposito.CuentaInicial;
                         depositoSAP.Bank = Deposito.Banco;

@@ -48,7 +48,8 @@ namespace WATickets.Controllers
                             documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
                             documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
                             documentoSAP.DocDate = Documento.Fecha;
-                            documentoSAP.DocDueDate = Documento.FechaVencimiento;
+                            var Dias = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? 0 : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Dias;
+                            documentoSAP.DocDueDate = Documento.Fecha.AddDays(Dias);
                             documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
                             documentoSAP.NumAtCard = "APP FAC: " + " " + Documento.id;
                             documentoSAP.Comments = Documento.Comentarios;

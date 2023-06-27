@@ -49,6 +49,8 @@ namespace WATickets.Models.Cliente
         public int SerieFECR { get; set; }
         public int SerieNC { get; set; }
         public int SeriePago { get; set; }
+
+        public int SerieDeposito { get; set; }
         public int idListaPrecios { get; set; }
     }
 }

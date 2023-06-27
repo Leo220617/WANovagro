@@ -49,6 +49,5 @@
 
         public string SQLCuentasBancarias { get; set; }
 
-        public int SerieDeposito { get; set; }
     }
 }

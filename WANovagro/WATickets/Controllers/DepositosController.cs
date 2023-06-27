@@ -121,6 +121,7 @@ namespace WATickets.Controllers
         {
             try
             {
+                
                 Parametros param = db.Parametros.FirstOrDefault();
                 Depositos Deposito = db.Depositos.Where(a => a.id == depositos.id).FirstOrDefault();
                 if (Deposito == null)
@@ -129,7 +130,8 @@ namespace WATickets.Controllers
                     Deposito.id = depositos.id;
                     Deposito.CodSuc = depositos.CodSuc;
                     Deposito.Moneda = depositos.Moneda;
-                    Deposito.Series = param.SerieDeposito; //Crear campo en Parametros
+                    var Sucursal = db.Sucursales.Where(a => a.CodSuc == depositos.CodSuc).FirstOrDefault();
+                    Deposito.Series = Sucursal.SerieDeposito; //Crear campo en Parametros
                     Deposito.Fecha = depositos.Fecha;
                     Deposito.Banco = depositos.Banco;
                     Deposito.Referencia = depositos.Referencia;
@@ -180,7 +182,9 @@ namespace WATickets.Controllers
             try
             {
                 Parametros param = db.Parametros.FirstOrDefault();
+      
                 var Deposito = db.Depositos.Where(a => a.id == id).FirstOrDefault();
+                var Sucursal = db.Sucursales.Where(a => a.CodSuc == Deposito.CodSuc).FirstOrDefault();
                 if (Deposito != null)
                 {
                     if (!Deposito.ProcesadoSAP)
@@ -195,7 +199,7 @@ namespace WATickets.Controllers
                         depositoSAP.DepositAccount = Deposito.CuentaFinal;
                         depositoSAP.DepositDate = Deposito.Fecha;
                         depositoSAP.DepositCurrency = Deposito.Moneda;
-                        depositoSAP.Series = param.SerieDeposito;
+                        depositoSAP.Series = Sucursal.SerieDeposito;
                         depositoSAP.BankAccountNum = Deposito.CuentaFinal;
                         depositoSAP.AllocationAccount = Deposito.CuentaInicial;
                         depositoSAP.Bank = Deposito.Banco;

@@ -103,6 +103,7 @@ namespace WATickets.Controllers
                     Sucursal.SerieFECR = sucursales.SerieFECR;
                     Sucursal.SerieNC = sucursales.SerieNC;
                     Sucursal.SeriePago = sucursales.SeriePago;
+                    Sucursal.SerieDeposito = sucursales.SerieDeposito;
                     Sucursal.idListaPrecios = sucursales.idListaPrecios;
                     db.Sucursales.Add(Sucursal);
                     db.SaveChanges();
@@ -155,6 +156,7 @@ namespace WATickets.Controllers
                     Sucursal.SerieFECR = sucursales.SerieFECR;
                     Sucursal.SerieNC = sucursales.SerieNC;
                     Sucursal.SeriePago = sucursales.SeriePago;
+                    Sucursal.SerieDeposito = sucursales.SerieDeposito;
                     Sucursal.idListaPrecios = sucursales.idListaPrecios;
                     db.SaveChanges();
 
