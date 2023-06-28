@@ -687,7 +687,7 @@ namespace WATickets.Controllers
                 db.BitacoraErrores.Add(be);
                 db.SaveChanges();
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, be);
             }
         }
         [Route("api/Clientes/Actualizar")]

@@ -158,7 +158,7 @@ namespace WATickets.Controllers
                 }
                 else
                 {
-                    throw new Exception("Ya existe una cuenta con este ID");
+                    throw new Exception("Ya existe un deposito con este ID");
                 }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
@@ -173,7 +173,7 @@ namespace WATickets.Controllers
                 db.BitacoraErrores.Add(be);
                 db.SaveChanges();
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, be);
             }
         }
         [Route("api/Depositos/SincronizarSAP")]
