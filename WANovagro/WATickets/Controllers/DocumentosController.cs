@@ -869,7 +869,7 @@ namespace WATickets.Controllers
                         // Si es NC debe rebajar de los cierres el monto
                         var time2 = DocumentoG.Fecha.Date;
                         var MontoDevuelto = db.EncDocumento.Where(a => a.BaseEntry == documento.BaseEntry && a.TipoDocumento == "03").Sum(a => a.TotalCompra) - documento.TotalCompra; //Este es el monto que ya se ha devuelto de dineros
-                        var MontosxMetodo = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry).GroupBy(a => a.Metodo).ToList(); // Cantidad de Dinero pagados por metodos de pago
+                        var MontosxMetodo = db.MetodosPagos.Where(a => a.idEncabezado == documento.BaseEntry && a.Monto > 0).GroupBy(a => a.Metodo).ToList(); // Cantidad de Dinero pagados por metodos de pago
                         var CierreCajaM = db.CierreCajas.Where(a => a.FechaCaja == time2 && a.idCaja == DocumentoG.idCaja && a.idUsuario == DocumentoG.idUsuarioCreador).FirstOrDefault();
 
 

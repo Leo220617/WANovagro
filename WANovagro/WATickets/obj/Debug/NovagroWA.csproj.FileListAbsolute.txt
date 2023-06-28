@@ -1017,3 +1017,29 @@ C:\Users\steve\Documents\Repositorios DYD\WANovagro\WANovagro\WATickets\obj\Debu
 C:\Users\steve\Documents\Repositorios DYD\WANovagro\WANovagro\WATickets\obj\Debug\NovagroWA.csproj.CopyComplete
 C:\Users\steve\Documents\Repositorios DYD\WANovagro\WANovagro\WATickets\obj\Debug\WATickets.dll
 C:\Users\steve\Documents\Repositorios DYD\WANovagro\WANovagro\WATickets\obj\Debug\WATickets.pdb
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.CoreUtility.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.Data.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Editor.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Designer.Interfaces.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Utilities.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Imaging.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Threading.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.ImageCatalog.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Validation.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.Logic.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.UI.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.UI.Wpf.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\StreamJsonRpc.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.CoreUtility.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.Data.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Editor.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Designer.Interfaces.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Utilities.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Imaging.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Threading.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.ImageCatalog.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Validation.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.Logic.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.UI.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.UI.Wpf.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\es\StreamJsonRpc.resources.dll
