@@ -383,7 +383,7 @@ namespace WATickets.Controllers
                             }
                             else
                             {
-                                var error = "hubo un error " + Conexion.Company.GetLastErrorDescription();
+                                var error = "Hubo un error en la factura #  "+ Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
                                 BitacoraErrores be = new BitacoraErrores();
                                 be.Descripcion = error;
                                 be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
@@ -405,7 +405,7 @@ namespace WATickets.Controllers
                             be.JSON = JsonConvert.SerializeObject(ex);
                             db.BitacoraErrores.Add(be);
                             db.SaveChanges();
-
+                            Conexion.Desconectar();
                         }
                     }
 
@@ -551,7 +551,7 @@ namespace WATickets.Controllers
                             be.JSON = JsonConvert.SerializeObject(ex);
                             db.BitacoraErrores.Add(be);
                             db.SaveChanges();
-
+                            Conexion.Desconectar();
                         }
                     }
 
@@ -685,7 +685,7 @@ namespace WATickets.Controllers
                                             }
                                             else
                                             {
-                                                var error = "hubo un error en el pago " + Conexion.Company.GetLastErrorDescription();
+                                                var error = "Hubo un error en el pago de la factura # " + Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
                                                 BitacoraErrores be = new BitacoraErrores();
                                                 be.Descripcion = error;
                                                 be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
@@ -693,6 +693,7 @@ namespace WATickets.Controllers
                                                 be.JSON = JsonConvert.SerializeObject(documentoSAP);
                                                 db.BitacoraErrores.Add(be);
                                                 db.SaveChanges();
+                                                Conexion.Desconectar();
                                             }
                                         }
                                         catch (Exception ex)
@@ -704,6 +705,7 @@ namespace WATickets.Controllers
                                             be.JSON = JsonConvert.SerializeObject(ex);
                                             db.BitacoraErrores.Add(be);
                                             db.SaveChanges();
+                                            Conexion.Desconectar();
                                         }
 
                                     }
@@ -757,7 +759,8 @@ namespace WATickets.Controllers
                                             }
                                             else
                                             {
-                                                var error = "hubo un error en el pago " + Conexion.Company.GetLastErrorDescription();
+                                                var error = "Hubo un error en el pago de la factura # " + Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
+
                                                 BitacoraErrores be = new BitacoraErrores();
                                                 be.Descripcion = error;
                                                 be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
@@ -765,6 +768,7 @@ namespace WATickets.Controllers
                                                 be.JSON = JsonConvert.SerializeObject(documentoSAP);
                                                 db.BitacoraErrores.Add(be);
                                                 db.SaveChanges();
+                                                Conexion.Desconectar();
                                             }
                                         }
                                         catch (Exception ex)
@@ -777,6 +781,8 @@ namespace WATickets.Controllers
                                             be.JSON = JsonConvert.SerializeObject(ex);
                                             db.BitacoraErrores.Add(be);
                                             db.SaveChanges();
+                                            Conexion.Desconectar();
+
                                         }
 
                                     }
@@ -892,6 +898,8 @@ namespace WATickets.Controllers
                             be.JSON = JsonConvert.SerializeObject(ex);
                             db.BitacoraErrores.Add(be);
                             db.SaveChanges();
+                            Conexion.Desconectar();
+
 
                         }
                     }
@@ -921,6 +929,7 @@ namespace WATickets.Controllers
                 be.JSON = JsonConvert.SerializeObject(ex);
                 db.BitacoraErrores.Add(be);
                 db.SaveChanges();
+                Conexion.Desconectar();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }

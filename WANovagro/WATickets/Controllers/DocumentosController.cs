@@ -312,7 +312,7 @@ namespace WATickets.Controllers
                                                 }
                                                 else
                                                 {
-                                                    var error = "hubo un error en el pago " + Conexion.Company.GetLastErrorDescription();
+                                                    var error = "Hubo un error en el pago de la factura #"+ Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
                                                     BitacoraErrores be = new BitacoraErrores();
                                                     be.Descripcion = error;
                                                     be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
@@ -320,6 +320,8 @@ namespace WATickets.Controllers
                                                     be.JSON = JsonConvert.SerializeObject(documentoSAP);
                                                     db.BitacoraErrores.Add(be);
                                                     db.SaveChanges();
+                                                    Conexion.Desconectar();
+
                                                 }
                                             }
                                             catch (Exception ex)
@@ -331,6 +333,8 @@ namespace WATickets.Controllers
                                                 be.JSON = JsonConvert.SerializeObject(ex);
                                                 db.BitacoraErrores.Add(be);
                                                 db.SaveChanges();
+                                                Conexion.Desconectar();
+
                                             }
 
                                         }
@@ -384,7 +388,7 @@ namespace WATickets.Controllers
                                                 }
                                                 else
                                                 {
-                                                    var error = "hubo un error en el pago " + Conexion.Company.GetLastErrorDescription();
+                                                    var error = "Hubo un error en el pago de la factura # " + Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
                                                     BitacoraErrores be = new BitacoraErrores();
                                                     be.Descripcion = error;
                                                     be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
@@ -392,6 +396,8 @@ namespace WATickets.Controllers
                                                     be.JSON = JsonConvert.SerializeObject(documentoSAP);
                                                     db.BitacoraErrores.Add(be);
                                                     db.SaveChanges();
+                                                    Conexion.Desconectar();
+
                                                 }
                                             }
                                             catch (Exception ex)
@@ -404,6 +410,8 @@ namespace WATickets.Controllers
                                                 be.JSON = JsonConvert.SerializeObject(ex);
                                                 db.BitacoraErrores.Add(be);
                                                 db.SaveChanges();
+                                                Conexion.Desconectar();
+
                                             }
 
                                         }
@@ -562,6 +570,8 @@ namespace WATickets.Controllers
                             be.JSON = JsonConvert.SerializeObject(ex);
                             db.BitacoraErrores.Add(be);
                             db.SaveChanges();
+                            Conexion.Desconectar();
+
 
                         }
                     }
@@ -587,6 +597,7 @@ namespace WATickets.Controllers
                 be.JSON = JsonConvert.SerializeObject(ex);
                 db2.BitacoraErrores.Add(be);
                 db2.SaveChanges();
+                Conexion.Desconectar();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
@@ -1520,6 +1531,20 @@ namespace WATickets.Controllers
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
                     if (documento.MetodosPagos != null)
                     {
+                         
+                        foreach(var item in documento.MetodosPagos.Where(a => a.Metodo != "Pago a Cuenta"))
+                        {
+                            var Usuario = db.Usuarios.Where(a => a.id == Documento.idUsuarioCreador).FirstOrDefault() == null ? "0" : db.Usuarios.Where(a => a.id == Documento.idUsuarioCreador).FirstOrDefault().Nombre;
+                            BitacoraMovimientos bm = new BitacoraMovimientos();
+                            bm.Descripcion = "El usuario " + Usuario + " ha pagado a cuenta la factura #" + Documento.id + " con el saldo " + item.Monto + ", favor conciliar en SAP";
+                            bm.idUsuario = Documento.idUsuarioCreador;
+                            bm.Fecha = DateTime.Now;
+                            bm.Metodo = "Insercion de Pago a Cuenta de Documento";
+                            db.BitacoraMovimientos.Add(bm);
+                            db.SaveChanges();
+
+                        }
+
                         foreach (var item in documento.MetodosPagos.Where(a => a.Metodo != "Pago a Cuenta"))
                         {
                             MetodosPagos MetodosPagos = new MetodosPagos();
@@ -1644,6 +1669,46 @@ namespace WATickets.Controllers
                             }
                         }
 
+                    }
+                    else
+                    {
+                        if(Documento.TipoDocumento != "03")
+                        {
+                            var Condicion = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault();
+                            if(Condicion != null)
+                            {
+                                if(Condicion.Dias > 0)
+                                {
+                                    var Cliente = db.Clientes.Where(a => a.id == documento.idCliente).FirstOrDefault();
+                                    if (Cliente != null)
+                                    {
+                                        db.Entry(Cliente).State = EntityState.Modified;
+                                        Cliente.Saldo += Documento.TotalCompra;
+                                        db.SaveChanges();
+
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var DocumentoBase = db.EncDocumento.Where(a => a.id == Documento.BaseEntry).FirstOrDefault() == null ? throw new Exception("Nota de credito mal referenciada") : db.EncDocumento.Where(a => a.id == Documento.BaseEntry).FirstOrDefault();
+                            var Condicion = db.CondicionesPagos.Where(a => a.id == DocumentoBase.idCondPago).FirstOrDefault();
+                            if (Condicion != null)
+                            {
+                                if (Condicion.Dias > 0)
+                                {
+                                    var Cliente = db.Clientes.Where(a => a.id == documento.idCliente).FirstOrDefault();
+                                    if (Cliente != null)
+                                    {
+                                        db.Entry(Cliente).State = EntityState.Modified;
+                                        Cliente.Saldo += Documento.TotalCompra;
+                                        db.SaveChanges();
+
+                                    }
+                                }
+                            }
+                        }
                     }
 
 
