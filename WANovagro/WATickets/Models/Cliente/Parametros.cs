@@ -33,6 +33,8 @@
 
         public int SerieOrden { get; set; }
 
+        public int SerieCliente { get; set; }
+
         public string UrlFacturaElectronica { get; set; }
 
         public string UrlConsultaFacturas { get; set; }

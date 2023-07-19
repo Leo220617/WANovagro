@@ -57,6 +57,8 @@ namespace WATickets.Controllers
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
+                            Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
 
 
                             switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
@@ -912,6 +914,7 @@ namespace WATickets.Controllers
             try
             {
                 var clientes = db.Clientes.Where(a => a.ProcesadoSAP != true).ToList();
+                Parametros param = db.Parametros.FirstOrDefault();
                 foreach (var item in clientes)
                 {
                     var cliente = item;
@@ -920,7 +923,7 @@ namespace WATickets.Controllers
                         var client = (SAPbobsCOM.BusinessPartners)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oBusinessPartners);
                         client.CardName = cliente.Nombre;
                         client.EmailAddress = cliente.Email;
-                        client.Series = 70; //Serie para clientes
+                        client.Series = param.SerieCliente; //Serie para clientes70
                         client.CardForeignName = cliente.Cedula;
                         client.FederalTaxID = cliente.Cedula;
                         client.AdditionalID = cliente.Cedula;
@@ -1058,13 +1061,14 @@ namespace WATickets.Controllers
             try
             {
                 Clientes cliente = db.Clientes.Where(a => a.id == id).FirstOrDefault();
+                Parametros param = db.Parametros.FirstOrDefault();
 
                 if (cliente != null)
                 {
                     var client = (SAPbobsCOM.BusinessPartners)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oBusinessPartners);
                     client.CardName = cliente.Nombre;
                     client.EmailAddress = cliente.Email;
-                    client.Series = 70; //Serie para clientes
+                    client.Series =  param.SerieCliente; //Serie para clientes 70
                     client.CardForeignName = cliente.Cedula;
                     client.FederalTaxID = cliente.Cedula;
                     client.AdditionalID = cliente.Cedula;
