@@ -249,7 +249,7 @@ namespace WATickets.Controllers
                             var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault().CuentaSAP;
                             pagocuentaSAP.CashAccount = CuentaI;
                             pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                            pagocuentaSAP.DocCurrency = PagoCuenta.Moneda;
+                            pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : PagoCuenta.Moneda;
                             pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
                             pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
                             pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
@@ -352,7 +352,7 @@ namespace WATickets.Controllers
                     var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault().CuentaSAP;
                     pagocuentaSAP.CashAccount = CuentaI;
                     pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda;
+                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : PagoCuenta.Moneda;
                     pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
                     pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
                     pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
@@ -445,7 +445,7 @@ namespace WATickets.Controllers
                         var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault().CuentaSAP;
                         pagocuentaSAP.CashAccount = CuentaI;
                         pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                        pagocuentaSAP.DocCurrency = PagoCuenta.Moneda;
+                        pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : PagoCuenta.Moneda;
                         pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
                         pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
                         pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";

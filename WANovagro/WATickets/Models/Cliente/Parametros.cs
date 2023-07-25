@@ -51,5 +51,7 @@
 
         public string SQLCuentasBancarias { get; set; }
 
+        public string MonedaLocal { get; set; }
+
     }
 }

@@ -43,7 +43,7 @@ namespace WATickets.Controllers
 
                         ofertaSAP.DocObjectCode = BoObjectTypes.oQuotations;
                         ofertaSAP.CardCode = db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault().Codigo;
-                        ofertaSAP.DocCurrency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                        ofertaSAP.DocCurrency = Oferta.Moneda == "CRC" ? param.MonedaLocal : Oferta.Moneda;
                         ofertaSAP.DocDate = Oferta.Fecha;
                         ofertaSAP.DocDueDate = Oferta.FechaVencimiento;
                         ofertaSAP.DocType = BoDocumentTypes.dDocument_Items;
@@ -61,7 +61,7 @@ namespace WATickets.Controllers
                         {
                             ofertaSAP.Lines.SetCurrentLine(z);
 
-                            ofertaSAP.Lines.Currency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                            ofertaSAP.Lines.Currency = Oferta.Moneda == "CRC" ? param.MonedaLocal : Oferta.Moneda;
                             ofertaSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
                             ofertaSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
                             ofertaSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
@@ -125,7 +125,7 @@ namespace WATickets.Controllers
 
                         ofertaSAP.DocObjectCode = BoObjectTypes.oOrders;
                         ofertaSAP.CardCode = db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Oferta.idCliente).FirstOrDefault().Codigo;
-                        ofertaSAP.DocCurrency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                        ofertaSAP.DocCurrency = Oferta.Moneda == "CRC" ? param.MonedaLocal : Oferta.Moneda;
                         ofertaSAP.DocDate = Oferta.Fecha;
                         ofertaSAP.DocDueDate = Oferta.FechaVencimiento;
                         ofertaSAP.DocType = BoDocumentTypes.dDocument_Items;
@@ -143,7 +143,7 @@ namespace WATickets.Controllers
                         {
                             ofertaSAP.Lines.SetCurrentLine(z);
 
-                            ofertaSAP.Lines.Currency = Oferta.Moneda == "CRC" ? "CRC" : Oferta.Moneda;
+                            ofertaSAP.Lines.Currency = Oferta.Moneda == "CRC" ? param.MonedaLocal : Oferta.Moneda;
                             ofertaSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
                             ofertaSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
                             ofertaSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);

@@ -49,7 +49,7 @@ namespace WATickets.Controllers
 
                             documentoSAP.DocObjectCode = BoObjectTypes.oCreditNotes;
                             documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
-                            documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
+                            documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
                             documentoSAP.DocDate = Documento.Fecha;
                             //documentoSAP.DocDueDate = Documento.FechaVencimiento;
 
@@ -82,7 +82,7 @@ namespace WATickets.Controllers
 
                                 documentoSAP.Lines.SetCurrentLine(z);
 
-                                documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
+                                documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
                                 documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
                                 documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
                                 documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
@@ -175,7 +175,7 @@ namespace WATickets.Controllers
 
                             documentoSAP.DocObjectCode = BoObjectTypes.oInvoices;
                             documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
-                            documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
+                            documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
                             var Dias = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? 0 : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Dias;
                           
                             documentoSAP.DocDate = Documento.Fecha;
@@ -200,7 +200,7 @@ namespace WATickets.Controllers
                             {
                                 documentoSAP.Lines.SetCurrentLine(z);
 
-                                documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? "CRC" : Documento.Moneda;
+                                documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
                                 documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
                                 documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
                                 documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
@@ -277,7 +277,7 @@ namespace WATickets.Controllers
                                                 pagoProcesado.VatDate = DateTime.Now;
                                                 pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
                                                 pagoProcesado.CounterReference = "APP FAC" + Documento.id;
-                                                pagoProcesado.DocCurrency = "CRC";
+                                                pagoProcesado.DocCurrency = param.MonedaLocal;
                                                 pagoProcesado.HandWritten = BoYesNoEnum.tNO;
                                                 //ligar la factura con el pago 
 

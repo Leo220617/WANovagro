@@ -39,7 +39,7 @@ namespace WATickets.Controllers
                         depositoSAP.DepositAccountType = SAPbobsCOM.BoDepositAccountTypeEnum.datBankAccount;
                         depositoSAP.DepositAccount = Deposito.CuentaFinal;
                         depositoSAP.DepositDate = Deposito.Fecha;
-                        depositoSAP.DepositCurrency = Deposito.Moneda;
+                        depositoSAP.DepositCurrency = Deposito.Moneda == "CRC" ? param.MonedaLocal : Deposito.Moneda;
                         depositoSAP.Series = Sucursal.SerieDeposito;
                         depositoSAP.BankAccountNum = Deposito.CuentaFinal;
                         depositoSAP.AllocationAccount = Deposito.CuentaInicial;

@@ -288,7 +288,7 @@ namespace WATickets.Controllers
                             pagoSAP.VatDate = DateTime.Now;
                             pagoSAP.CardCode = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault().Codigo;
                             pagoSAP.Remarks = "Abono procesado por NOVAPOS";
-                            pagoSAP.DocCurrency = Pago.Moneda;
+                            pagoSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : Pago.Moneda;
                             pagoSAP.HandWritten = SAPbobsCOM.BoYesNoEnum.tNO;
                             pagoSAP.CounterReference = "APP ABONO" + Pago.id;
                             var Cuenta2 = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
@@ -366,7 +366,7 @@ namespace WATickets.Controllers
                                     var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
                                     interesSAP.CashAccount = CuentaI;
                                     interesSAP.Remarks = "Interés procesado por NOVAPOS";
-                                    interesSAP.DocCurrency = Pago.Moneda;
+                                    interesSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : Pago.Moneda;
                                     interesSAP.Series = Sucursal.SeriePago; //Crear en parametros
                                     interesSAP.JournalRemarks = Pago.Comentarios;
                                     interesSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "I";
@@ -563,7 +563,7 @@ namespace WATickets.Controllers
                     pagoSAP.VatDate = DateTime.Now;
                     pagoSAP.CardCode = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault().Codigo;
                     pagoSAP.Remarks = "Abono procesado por NOVAPOS";
-                    pagoSAP.DocCurrency = Pago.Moneda;
+                    pagoSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : Pago.Moneda;
                     pagoSAP.HandWritten = SAPbobsCOM.BoYesNoEnum.tNO;
                     pagoSAP.CounterReference = "APP ABONO" + Pago.id;
                     var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
@@ -646,7 +646,7 @@ namespace WATickets.Controllers
                         var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
                         interesSAP.CashAccount = Cuenta;
                         interesSAP.Remarks = "Interés procesado por NOVAPOS";
-                        interesSAP.DocCurrency = Pago.Moneda;
+                        interesSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : Pago.Moneda;
                         interesSAP.Series = Sucursal.SeriePago; //Crear en parametros
                         interesSAP.JournalRemarks = Pago.Comentarios;
                         interesSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "I";
@@ -749,7 +749,7 @@ namespace WATickets.Controllers
                         pagoSAP.VatDate = DateTime.Now;
                         pagoSAP.CardCode = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault().Codigo;
                         pagoSAP.Remarks = "Abono procesado por NOVAPOS";
-                        pagoSAP.DocCurrency = Pago.Moneda;
+                        pagoSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : Pago.Moneda;
                         pagoSAP.HandWritten = SAPbobsCOM.BoYesNoEnum.tNO;
                         pagoSAP.CounterReference = "APP ABONO" + Pago.id;
                         var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
@@ -832,7 +832,7 @@ namespace WATickets.Controllers
                             var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
                             interesSAP.CashAccount = Cuenta;
                             interesSAP.Remarks = "Interés procesado por NOVAPOS";
-                            interesSAP.DocCurrency = Pago.Moneda;
+                            interesSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : Pago.Moneda;
                             interesSAP.Series = Sucursal.SeriePago; //Crear en parametros
                             interesSAP.JournalRemarks = Pago.Comentarios;
                             interesSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "I";
