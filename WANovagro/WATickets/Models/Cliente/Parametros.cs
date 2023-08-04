@@ -53,5 +53,9 @@
 
         public string MonedaLocal { get; set; }
 
+        public string CampoClave { get; set; }
+
+        public string CampoConsecutivo { get; set; }
+
     }
 }
