@@ -66,7 +66,15 @@ namespace WATickets.Controllers
                 {
                     Cuentas = Cuentas.Where(a => a.Moneda == filtro.CardCode).ToList();
                 }
+                if (filtro.Codigo3 > 0)
+                {
+                    Cuentas = Cuentas.Where(a => a.idCaja == filtro.Codigo3).ToList();
 
+                }
+                if (filtro.Codigo2 > 0) // esto por ser integer
+                {
+                    Cuentas = Cuentas.Where(a => a.idUsuarioCreador == filtro.Codigo2).ToList();
+                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Cuentas);
             }

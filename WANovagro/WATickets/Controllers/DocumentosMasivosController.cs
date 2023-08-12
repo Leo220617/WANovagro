@@ -122,7 +122,7 @@ namespace WATickets.Controllers
 
                                 var CondicionPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? db.CondicionesPagos.FirstOrDefault() : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault();
                                 //Procesamos el pago
-                                if (CondicionPago.Dias == 0)
+                                if (CondicionPago.Dias == 0 && Documento.Status == "0")
                                 {
                                     try
                                     {

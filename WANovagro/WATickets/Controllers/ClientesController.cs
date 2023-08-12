@@ -654,6 +654,7 @@ namespace WATickets.Controllers
                         Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.id == clientes.idCondicionPago).FirstOrDefault() == null ? db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado")).FirstOrDefault().id : db.CondicionesPagos.Where(a => a.id == clientes.idCondicionPago).FirstOrDefault().id;
                         Cliente.idGrupo = clientes.idGrupo;
                         Cliente.Saldo = 0;
+                        Cliente.LimiteCredito = 0;
                         Cliente.Activo = true;
                         Cliente.ProcesadoSAP = false;
                         Cliente.LimiteCredito = 0;

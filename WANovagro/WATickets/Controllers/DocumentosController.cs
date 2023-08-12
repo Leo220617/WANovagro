@@ -65,6 +65,7 @@ namespace WATickets.Controllers
                             //documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda;
                             documentoSAP.UserFields.Fields.Item(param.CampoClave).Value = Documento.ClaveHacienda;
+                           
                             documentoSAP.UserFields.Fields.Item("U_DYD_Estado").Value = "A";
 
 
@@ -187,7 +188,7 @@ namespace WATickets.Controllers
                             var CondPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Nombre;
                             documentoSAP.Series = CondPago.ToLower().Contains("contado") ? Sucursal.SerieFECO : Sucursal.SerieFECR;  //4;  //param.SerieProforma; //Quemada
 
-
+                 
                             documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda; //"U_LDT_NumeroGTI"
                             documentoSAP.UserFields.Fields.Item(param.CampoClave).Value = Documento.ClaveHacienda;       //"U_LDT_FiscalDoc"
@@ -246,7 +247,7 @@ namespace WATickets.Controllers
                                 //Procesamos el pago
                                 var CondicionPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? db.CondicionesPagos.FirstOrDefault() : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault();
                                 //Procesamos el pago
-                                if (CondicionPago.Dias == 0)
+                                if (CondicionPago.Dias == 0 && Documento.Status == "0")
                                 {
                                     try
                                     {
@@ -297,6 +298,9 @@ namespace WATickets.Controllers
 
                                                 var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().CuentaSAP;
 
+                                             
+                                              
+                                            
                                                 pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoColones);
                                                 pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
                                                 pagoProcesado.CashAccount = Cuenta;
@@ -372,8 +376,9 @@ namespace WATickets.Controllers
 
 
 
+                                                //var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
+                                             
                                                 var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
-
                                                 pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
                                                 pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoDolares);
                                                 pagoProcesado.CashAccount = Cuenta;
