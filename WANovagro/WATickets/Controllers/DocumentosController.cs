@@ -434,102 +434,104 @@ namespace WATickets.Controllers
                                             db.SaveChanges();
                                         }
 
-                                        //foreach (var item in MetodosPagos)
-                                        //{
-                                        //    switch (item.Moneda)
-                                        //    {
-                                        //        case "CRC":
-                                        //            {
 
-                                        //                var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().Moneda;
-                                        //                var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
+                                        if (param.MontosPagosSeparados) {
+                                            //foreach (var item in MetodosPagos)
+                                            //{
+                                            //    switch (item.Moneda)
+                                            //    {
+                                            //        case "CRC":
+                                            //            {
 
-                                        //                pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
-                                        //                pagoProcesado.Series = 154; //161;
-                                        //                pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().CuentaSAP;
-                                        //                break;
-                                        //            }
-                                        //        case "USD":
-                                        //            {
-                                        //                var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().Moneda;
-                                        //                var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
+                                            //                var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().Moneda;
+                                            //                var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
 
-                                        //                pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Where(a => a.Moneda == Cuenta).Sum(a => a.Monto) + MontoOtros);
-                                        //                pagoProcesado.Series = 154; //161;
-                                        //                pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
-                                        //                break;
-                                        //            }
+                                            //                pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
+                                            //                pagoProcesado.Series = 154; //161;
+                                            //                pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().CuentaSAP;
+                                            //                break;
+                                            //            }
+                                            //        case "USD":
+                                            //            {
+                                            //                var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().Moneda;
+                                            //                var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
 
-                                        //    }
-                                        //}
+                                            //                pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Where(a => a.Moneda == Cuenta).Sum(a => a.Monto) + MontoOtros);
+                                            //                pagoProcesado.Series = 154; //161;
+                                            //                pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
+                                            //                break;
+                                            //            }
 
-
-
-
+                                            //    }
+                                            //}
 
 
 
 
 
-                                        //}  //foreach (var item in MetodosPagos)
-                                        //{
-                                        //    item.Metodo = "Efectivo";
-                                        //    item.idCuentaBancaria = db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault() == null ? item.idCuentaBancaria : db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault().id;
-
-                                        //    switch (item.Metodo)
-                                        //    {
-                                        //        case "Efectivo":
-                                        //            {
-                                        //                pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
-                                        //                pagoProcesado.CashSum = Convert.ToDouble(item.Monto + MontoOtros);
-
-                                        //                break;
-                                        //            }
-                                        //        case "Tarjeta":
-                                        //            {
-
-                                        //                pagoProcesado.CreditCards.SetCurrentLine(0);
-                                        //                pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
-                                        //                pagoProcesado.CreditCards.CreditCard = 1;
-                                        //                pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
-                                        //                pagoProcesado.CreditCards.PaymentMethodCode = 1; //Quemado
-                                        //                pagoProcesado.CreditCards.CreditCardNumber = item.BIN; // Ultimos 4 digitos
-                                        //                pagoProcesado.CreditCards.VoucherNum = item.NumReferencia;// 
-                                        //                pagoProcesado.CreditCards.CreditAcct = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
-                                        //                pagoProcesado.CreditCards.CreditSum = Convert.ToDouble(item.Monto);
 
 
 
-                                        //                break;
-                                        //            }
-                                        //        case "Transferencia":
-                                        //            {
-                                        //                pagoProcesado.TransferAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
-                                        //                pagoProcesado.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                        //                pagoProcesado.TransferReference = item.NumReferencia;
-                                        //                pagoProcesado.TransferSum = Convert.ToDouble(item.Monto);
 
-                                        //                break;
-                                        //            }
-                                        //        case "Cheque":
-                                        //            {
-                                        //                pagoProcesado.Checks.SetCurrentLine(0);
-                                        //                pagoProcesado.Checks.CheckAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
-                                        //                pagoProcesado.Checks.DueDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                        //                pagoProcesado.Checks.CheckNumber = Convert.ToInt32(item.NumReferencia);
-                                        //                pagoProcesado.Checks.CheckSum = Convert.ToDouble(item.Monto);
-                                        //                //pagoProcesado.Checks.CountryCode = "CR";
-                                        //                //pagoProcesado.Checks.Trnsfrable = BoYesNoEnum.tYES;
-                                        //                pagoProcesado.Checks.ManualCheck = BoYesNoEnum.tNO;
+                                            //}  //foreach (var item in MetodosPagos)
+                                            //{
+                                            //    item.Metodo = "Efectivo";
+                                            //    item.idCuentaBancaria = db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault() == null ? item.idCuentaBancaria : db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault().id;
+
+                                            //    switch (item.Metodo)
+                                            //    {
+                                            //        case "Efectivo":
+                                            //            {
+                                            //                pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
+                                            //                pagoProcesado.CashSum = Convert.ToDouble(item.Monto + MontoOtros);
+
+                                            //                break;
+                                            //            }
+                                            //        case "Tarjeta":
+                                            //            {
+
+                                            //                pagoProcesado.CreditCards.SetCurrentLine(0);
+                                            //                pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
+                                            //                pagoProcesado.CreditCards.CreditCard = 1;
+                                            //                pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
+                                            //                pagoProcesado.CreditCards.PaymentMethodCode = 1; //Quemado
+                                            //                pagoProcesado.CreditCards.CreditCardNumber = item.BIN; // Ultimos 4 digitos
+                                            //                pagoProcesado.CreditCards.VoucherNum = item.NumReferencia;// 
+                                            //                pagoProcesado.CreditCards.CreditAcct = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
+                                            //                pagoProcesado.CreditCards.CreditSum = Convert.ToDouble(item.Monto);
 
 
-                                        //                break;
-                                        //            }
-                                        //    }
-                                        //}
+
+                                            //                break;
+                                            //            }
+                                            //        case "Transferencia":
+                                            //            {
+                                            //                pagoProcesado.TransferAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
+                                            //                pagoProcesado.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
+                                            //                pagoProcesado.TransferReference = item.NumReferencia;
+                                            //                pagoProcesado.TransferSum = Convert.ToDouble(item.Monto);
+
+                                            //                break;
+                                            //            }
+                                            //        case "Cheque":
+                                            //            {
+                                            //                pagoProcesado.Checks.SetCurrentLine(0);
+                                            //                pagoProcesado.Checks.CheckAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
+                                            //                pagoProcesado.Checks.DueDate = DateTime.Now; //Fecha en la que se mete el pago 
+                                            //                pagoProcesado.Checks.CheckNumber = Convert.ToInt32(item.NumReferencia);
+                                            //                pagoProcesado.Checks.CheckSum = Convert.ToDouble(item.Monto);
+                                            //                //pagoProcesado.Checks.CountryCode = "CR";
+                                            //                //pagoProcesado.Checks.Trnsfrable = BoYesNoEnum.tYES;
+                                            //                pagoProcesado.Checks.ManualCheck = BoYesNoEnum.tNO;
 
 
+                                            //                break;
+                                            //            }
+                                            //    }
+                                            //}
 
+
+                                        }
 
                                     }
 
@@ -850,6 +852,7 @@ namespace WATickets.Controllers
                         det.TotalLinea = item.TotalLinea; //((det.PrecioUnitario * det.Cantidad) - det.Descuento) + det.TotalImpuesto;
                         det.Cabys = item.Cabys;
                         det.idExoneracion = item.idExoneracion;
+                        det.NumSerie = item.NumSerie;
                         db.DetDocumento.Add(det);
                         db.SaveChanges();
                         i++;

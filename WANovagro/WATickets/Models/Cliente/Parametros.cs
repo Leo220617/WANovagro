@@ -57,5 +57,12 @@
 
         public string CampoConsecutivo { get; set; }
 
+        public bool NumeroSerie { get; set; }
+
+        public bool MontosPagosSeparados { get; set; }
+
+
+        public string SQLSeriesProductos { get; set; }
+
     }
 }

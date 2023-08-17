@@ -418,6 +418,7 @@ namespace WATickets.Controllers
                         det.Cabys = item.Cabys;
                         det.idExoneracion = item.idExoneracion;
                         det.NomPro = item.NomPro;
+                        det.NumSerie = item.NumSerie;
                         db.DetOferta.Add(det);
                         db.SaveChanges();
                         i++;
@@ -517,6 +518,7 @@ namespace WATickets.Controllers
                         det.Cabys = item.Cabys;
                         det.idExoneracion = item.idExoneracion;
                         det.NomPro = item.NomPro;
+                        det.NumSerie = item.NumSerie;
                         db.DetOferta.Add(det);
                         db.SaveChanges();
                         i++;

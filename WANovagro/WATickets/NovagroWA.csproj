@@ -270,6 +270,7 @@
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SeguridadModulosController.cs" />
     <Compile Include="Controllers\SeguridadRolesModulosController.cs" />
+    <Compile Include="Controllers\SeriesProductosController.cs" />
     <Compile Include="Controllers\SucursalesController.cs" />
     <Compile Include="Controllers\TipoCambiosController.cs" />
     <Compile Include="Controllers\TokenGenerator.cs" />
