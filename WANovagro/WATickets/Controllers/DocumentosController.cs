@@ -231,6 +231,14 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.CostingCode = param.CostingCode;
                                 documentoSAP.Lines.CostingCode2 = param.CostingCode2;
                                 documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                if(item.NumSerie != "0")
+                                {
+                                    documentoSAP.Lines.SerialNumbers.InternalSerialNumber = item.NumSerie;
+                                    documentoSAP.Lines.SerialNumbers.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                                    documentoSAP.Lines.SerialNumbers.Add();
+                                    //documentoSAP.Lines.SerialNum = item.NumSerie;
+                                }
+                       
                                 documentoSAP.Lines.Add();
                                 z++;
                             }
