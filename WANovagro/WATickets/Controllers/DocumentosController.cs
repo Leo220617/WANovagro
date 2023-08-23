@@ -231,13 +231,14 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.CostingCode = param.CostingCode;
                                 documentoSAP.Lines.CostingCode2 = param.CostingCode2;
                                 documentoSAP.Lines.CostingCode3 = param.CostingCode3;
-                                if(item.NumSerie != "0")
-                                {
-                                    documentoSAP.Lines.SerialNumbers.InternalSerialNumber = item.NumSerie;
-                                    documentoSAP.Lines.SerialNumbers.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
-                                    documentoSAP.Lines.SerialNumbers.Add();
-                                    //documentoSAP.Lines.SerialNum = item.NumSerie;
-                                }
+                                //if(item.NumSerie != "0" || item.NumSerie != null)
+                                //{
+                                //    documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = item.NumSerie;
+                                //    documentoSAP.Lines.SerialNumbers.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                                //    documentoSAP.Lines.SerialNumbers.Quantity = Convert.ToDouble(item.Cantidad);
+                                //    documentoSAP.Lines.SerialNumbers.Add();
+                                //    //documentoSAP.Lines.SerialNum = item.NumSerie;
+                                //}
                        
                                 documentoSAP.Lines.Add();
                                 z++;
@@ -815,6 +816,7 @@ namespace WATickets.Controllers
             {
                 Parametros param = db.Parametros.FirstOrDefault();
                 EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id).FirstOrDefault();
+               
                 if (Documento == null)
                 {
                     Documento = new EncDocumento();
@@ -845,7 +847,32 @@ namespace WATickets.Controllers
                     db.EncDocumento.Add(Documento);
                     db.SaveChanges();
 
-                    var i = 0;
+                    var Lotes = db.Lotes.Where(a => a.idEncabezado == Documento.id && a.Tipo == "F").ToList();
+
+                    foreach (var lote in Lotes)
+                    {
+                        db.Lotes.Remove(lote);
+                        db.SaveChanges();
+                    }
+
+                    if (documento.Lotes == null)
+                    {
+                        documento.Lotes = new List<Lotes>();
+                    }
+                    foreach (var lote in documento.Lotes )
+                    {
+                        Lotes Lote = new Lotes();
+                        Lote.idEncabezado = Documento.id;
+                        Lote.Tipo = "F";
+                        Lote.Serie = lote.Serie;
+                        Lote.ItemCode = lote.ItemCode;
+                        Lote.Cantidad = lote.Cantidad;
+                        Lote.idDetalle = lote.idDetalle;
+                        db.Lotes.Add(Lote);
+                        db.SaveChanges();
+                    }
+                
+                var i = 0;
                     foreach (var item in documento.Detalle)
                     {
                         DetDocumento det = new DetDocumento();
@@ -860,7 +887,6 @@ namespace WATickets.Controllers
                         det.TotalLinea = item.TotalLinea; //((det.PrecioUnitario * det.Cantidad) - det.Descuento) + det.TotalImpuesto;
                         det.Cabys = item.Cabys;
                         det.idExoneracion = item.idExoneracion;
-                        det.NumSerie = item.NumSerie;
                         db.DetDocumento.Add(det);
                         db.SaveChanges();
                         i++;

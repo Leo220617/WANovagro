@@ -402,9 +402,14 @@ namespace WATickets.Controllers
                     db.EncOferta.Add(Oferta);
                     db.SaveChanges();
 
+
+
+
+
                     var i = 0;
                     foreach (var item in oferta.Detalle)
                     {
+                        var itemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() != null ? db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo : "";
                         DetOferta det = new DetOferta();
                         det.idEncabezado = Oferta.id;
                         det.idProducto = item.idProducto;
@@ -418,10 +423,53 @@ namespace WATickets.Controllers
                         det.Cabys = item.Cabys;
                         det.idExoneracion = item.idExoneracion;
                         det.NomPro = item.NomPro;
-                        det.NumSerie = item.NumSerie;
                         db.DetOferta.Add(det);
                         db.SaveChanges();
                         i++;
+
+                        if (Oferta.Tipo == "01")
+                        {
+                            
+                            if (oferta.Lotes == null)
+                            {
+                                oferta.Lotes = new List<Lotes>();
+                            }
+
+                            foreach (var lote in oferta.Lotes.Where(a => a.ItemCode == itemCode))
+                            {
+                                Lotes Lote = new Lotes();
+                                Lote.idEncabezado = Oferta.id;
+                                Lote.Tipo = "P";
+                                Lote.Serie = lote.Serie;
+                                Lote.ItemCode = lote.ItemCode;
+                                Lote.Cantidad = lote.Cantidad;
+                                Lote.idDetalle = det.id;
+                                db.Lotes.Add(Lote);
+                                db.SaveChanges();
+                            }
+                        }
+                        else
+                        {
+
+                             
+                            if (oferta.Lotes == null)
+                            {
+                                oferta.Lotes = new List<Lotes>();
+                            }
+                            foreach (var lote in oferta.Lotes.Where(a => a.ItemCode == itemCode))
+                            {
+                                Lotes Lote = new Lotes();
+                                Lote.idEncabezado = Oferta.id;
+                                Lote.Tipo = "O";
+                                Lote.Serie = lote.Serie;
+                                Lote.ItemCode = lote.ItemCode;
+                                Lote.Cantidad = lote.Cantidad;
+                                Lote.idDetalle = det.id;
+                                db.Lotes.Add(Lote);
+                                db.SaveChanges();
+                            }
+                        }
+
                     }
 
 
@@ -493,6 +541,30 @@ namespace WATickets.Controllers
 
                     db.SaveChanges();
 
+                    if (Oferta.Tipo == "01")
+                    {
+                        var Lotes = db.Lotes.Where(a => a.idEncabezado == Oferta.id && a.Tipo == "P").ToList();
+                        foreach (var lote in Lotes)
+                        {
+                            db.Lotes.Remove(lote);
+                            db.SaveChanges();
+                        }
+
+
+                    }
+                    else
+                    {
+
+                        var Lotes = db.Lotes.Where(a => a.idEncabezado == Oferta.id && a.Tipo == "O").ToList();
+                        foreach (var lote in Lotes)
+                        {
+                            db.Lotes.Remove(lote);
+                            db.SaveChanges();
+                        }
+
+                    }
+
+
                     var Detalles = db.DetOferta.Where(a => a.idEncabezado == Oferta.id).ToList();
 
                     foreach (var item in Detalles)
@@ -505,6 +577,8 @@ namespace WATickets.Controllers
                     var i = 0;
                     foreach (var item in oferta.Detalle)
                     {
+                        var itemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() != null ? db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo : "";
+
                         DetOferta det = new DetOferta();
                         det.idEncabezado = Oferta.id;
                         det.idProducto = item.idProducto;
@@ -518,10 +592,51 @@ namespace WATickets.Controllers
                         det.Cabys = item.Cabys;
                         det.idExoneracion = item.idExoneracion;
                         det.NomPro = item.NomPro;
-                        det.NumSerie = item.NumSerie;
                         db.DetOferta.Add(det);
                         db.SaveChanges();
                         i++;
+                        if (Oferta.Tipo == "01")
+                        {
+
+                            if (oferta.Lotes == null)
+                            {
+                                oferta.Lotes = new List<Lotes>();
+                            }
+
+                            foreach (var lote in oferta.Lotes.Where(a => a.ItemCode == itemCode))
+                            {
+                                Lotes Lote = new Lotes();
+                                Lote.idEncabezado = Oferta.id;
+                                Lote.Tipo = "P";
+                                Lote.Serie = lote.Serie;
+                                Lote.ItemCode = lote.ItemCode;
+                                Lote.Cantidad = lote.Cantidad;
+                                Lote.idDetalle = det.id;
+                                db.Lotes.Add(Lote);
+                                db.SaveChanges();
+                            }
+                        }
+                        else
+                        {
+
+
+                            if (oferta.Lotes == null)
+                            {
+                                oferta.Lotes = new List<Lotes>();
+                            }
+                            foreach (var lote in oferta.Lotes.Where(a => a.ItemCode == itemCode))
+                            {
+                                Lotes Lote = new Lotes();
+                                Lote.idEncabezado = Oferta.id;
+                                Lote.Tipo = "O";
+                                Lote.Serie = lote.Serie;
+                                Lote.ItemCode = lote.ItemCode;
+                                Lote.Cantidad = lote.Cantidad;
+                                Lote.idDetalle = det.id;
+                                db.Lotes.Add(Lote);
+                                db.SaveChanges();
+                            }
+                        }
                     }
 
 

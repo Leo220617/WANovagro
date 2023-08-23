@@ -53,7 +53,7 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<FECXDia> FECXDia { get; set; }
         public virtual DbSet<Depositos> Depositos { get; set; }
         public virtual DbSet<PagoCuentas> PagoCuentas { get; set; }
-
+        public virtual DbSet<Lotes> Lotes { get; set; }
 
 
 
