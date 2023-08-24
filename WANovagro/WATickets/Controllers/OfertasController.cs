@@ -254,7 +254,8 @@ namespace WATickets.Controllers
                     a.idCondPago,
                     a.TipoDocumento,
                     a.idVendedor,
-                    Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
+                    Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList(),
+                    Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
 
@@ -342,7 +343,8 @@ namespace WATickets.Controllers
                     a.idCondPago,
                     a.TipoDocumento,
                     a.idVendedor,
-                    Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList()
+                    Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList(),
+                    Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => a.id == id).FirstOrDefault();
 

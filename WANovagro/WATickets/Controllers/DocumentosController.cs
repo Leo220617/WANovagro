@@ -193,7 +193,7 @@ namespace WATickets.Controllers
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda; //"U_LDT_NumeroGTI"
                             documentoSAP.UserFields.Fields.Item(param.CampoClave).Value = Documento.ClaveHacienda;       //"U_LDT_FiscalDoc"
                             //documentoSAP.UserFields.Fields.Item("U_DYD_Estado").Value = "A";
-
+                            var Lotes1 = db.Lotes.Where(a => a.idEncabezado == Documento.id && a.Tipo == "F").ToList();
                             //Detalle
                             int z = 0;
                             var Detalle = db.DetDocumento.Where(a => a.idEncabezado == id).ToList();
@@ -223,6 +223,7 @@ namespace WATickets.Controllers
                                     documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EXONERA" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
                                 }
                                 documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
+                                
 
 
                                 documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
@@ -231,6 +232,8 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.CostingCode = param.CostingCode;
                                 documentoSAP.Lines.CostingCode2 = param.CostingCode2;
                                 documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+
+
                                 //if(item.NumSerie != "0" || item.NumSerie != null)
                                 //{
                                 //    documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = item.NumSerie;
@@ -239,7 +242,23 @@ namespace WATickets.Controllers
                                 //    documentoSAP.Lines.SerialNumbers.Add();
                                 //    //documentoSAP.Lines.SerialNum = item.NumSerie;
                                 //}
-                       
+                                var ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                                var Lotes2 = Lotes1.Where(a => a.ItemCode == ItemCode && a.idDetalle == item.id).ToList();
+
+                                var x = 0;
+                                foreach (var lot in Lotes2)
+                                {
+                                  
+
+                                    documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = lot.Serie;
+                                    documentoSAP.Lines.SerialNumbers.ItemCode = lot.ItemCode;
+                                    documentoSAP.Lines.SerialNumbers.Quantity = Convert.ToDouble(lot.Cantidad);
+                                    documentoSAP.Lines.SerialNumbers.Add();
+    
+                                 
+                                    x++;
+                                }
+
                                 documentoSAP.Lines.Add();
                                 z++;
                             }
@@ -659,7 +678,8 @@ namespace WATickets.Controllers
                     a.ClaveHacienda,
                     a.ConsecutivoHacienda,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
-                    Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
+                    Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList(),
+                    Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
 
@@ -784,7 +804,8 @@ namespace WATickets.Controllers
                     a.ClaveHacienda,
                     a.ConsecutivoHacienda,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
-                    Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList()
+                    Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList(),
+                    Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => a.id == id).FirstOrDefault();
 
@@ -847,34 +868,12 @@ namespace WATickets.Controllers
                     db.EncDocumento.Add(Documento);
                     db.SaveChanges();
 
-                    var Lotes = db.Lotes.Where(a => a.idEncabezado == Documento.id && a.Tipo == "F").ToList();
-
-                    foreach (var lote in Lotes)
-                    {
-                        db.Lotes.Remove(lote);
-                        db.SaveChanges();
-                    }
-
-                    if (documento.Lotes == null)
-                    {
-                        documento.Lotes = new List<Lotes>();
-                    }
-                    foreach (var lote in documento.Lotes )
-                    {
-                        Lotes Lote = new Lotes();
-                        Lote.idEncabezado = Documento.id;
-                        Lote.Tipo = "F";
-                        Lote.Serie = lote.Serie;
-                        Lote.ItemCode = lote.ItemCode;
-                        Lote.Cantidad = lote.Cantidad;
-                        Lote.idDetalle = lote.idDetalle;
-                        db.Lotes.Add(Lote);
-                        db.SaveChanges();
-                    }
+               
                 
                 var i = 0;
                     foreach (var item in documento.Detalle)
                     {
+                        var itemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() != null ? db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo : "";
                         DetDocumento det = new DetDocumento();
                         det.idEncabezado = Documento.id;
                         det.idProducto = item.idProducto;
@@ -890,6 +889,24 @@ namespace WATickets.Controllers
                         db.DetDocumento.Add(det);
                         db.SaveChanges();
                         i++;
+
+                        if (documento.Lotes == null)
+                        {
+                            documento.Lotes = new List<Lotes>();
+                        }
+
+                        foreach (var lote in documento.Lotes.Where(a => a.ItemCode == itemCode))
+                        {
+                            Lotes Lote = new Lotes();
+                            Lote.idEncabezado = Documento.id;
+                            Lote.Tipo = "F";
+                            Lote.Serie = lote.Serie;
+                            Lote.ItemCode = lote.ItemCode;
+                            Lote.Cantidad = lote.Cantidad;
+                            Lote.idDetalle = det.id;
+                            db.Lotes.Add(Lote);
+                            db.SaveChanges();
+                        }
 
                         var prod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
                         if (prod != null)
