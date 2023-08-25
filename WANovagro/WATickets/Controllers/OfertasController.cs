@@ -446,6 +446,7 @@ namespace WATickets.Controllers
                                 Lote.ItemCode = lote.ItemCode;
                                 Lote.Cantidad = lote.Cantidad;
                                 Lote.idDetalle = det.id;
+                                Lote.Manufactura = lote.Manufactura;
                                 db.Lotes.Add(Lote);
                                 db.SaveChanges();
                             }
@@ -466,6 +467,7 @@ namespace WATickets.Controllers
                                 Lote.Serie = lote.Serie;
                                 Lote.ItemCode = lote.ItemCode;
                                 Lote.Cantidad = lote.Cantidad;
+                                Lote.Manufactura = lote.Manufactura;
                                 Lote.idDetalle = det.id;
                                 db.Lotes.Add(Lote);
                                 db.SaveChanges();

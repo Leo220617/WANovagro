@@ -205,6 +205,9 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
                                 documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
                                 documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+
+
+                             
                                 var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
                                 var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
                                 var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
@@ -253,6 +256,7 @@ namespace WATickets.Controllers
                                     documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = lot.Serie;
                                     documentoSAP.Lines.SerialNumbers.ItemCode = lot.ItemCode;
                                     documentoSAP.Lines.SerialNumbers.Quantity = Convert.ToDouble(lot.Cantidad);
+                               
                                     documentoSAP.Lines.SerialNumbers.Add();
     
                                  
@@ -903,6 +907,7 @@ namespace WATickets.Controllers
                             Lote.Serie = lote.Serie;
                             Lote.ItemCode = lote.ItemCode;
                             Lote.Cantidad = lote.Cantidad;
+                            Lote.Manufactura = lote.Manufactura;
                             Lote.idDetalle = det.id;
                             db.Lotes.Add(Lote);
                             db.SaveChanges();
