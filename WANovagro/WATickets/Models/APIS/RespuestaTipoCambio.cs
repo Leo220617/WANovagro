@@ -7,6 +7,6 @@ namespace WATickets.Models.APIS
 {
     public class RespuestaTipoCambio
     {
-        public decimal venta { get; set; }
+        public string venta { get; set; }
     }
 }

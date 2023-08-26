@@ -142,21 +142,25 @@ namespace WATickets.Controllers
                 HttpClient clienteProd = new HttpClient();
                 clienteProd.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                string url = "https://tipodecambio.paginasweb.cr/api//" + DateTime.Now.Day + "/" + DateTime.Now.Month + "/" + DateTime.Now.Year;
+                string url = "https://apis.gometa.org/tdc/tdc.json?fbclid=IwAR1Wfr6SFwV8_0-x9n5JrjMmNTkOcUIWdekp1Sc6sFpTnIuP29ok-aVuQWI";
                 try
                 {
                     HttpResponseMessage response3 = await clienteProd.GetAsync(url);
                     if (response3.IsSuccessStatusCode)
                     {
-                        response3.Content.Headers.ContentType.MediaType = "application/json";
                         var res = await response3.Content.ReadAsStringAsync();
 
 
                         try
                         {
-                            var respZoho = await response3.Content.ReadAsAsync<RespuestaTipoCambio>();
+                            //var respZoho = await response3.Content.ReadAsAsync<RespuestaTipoCambio>();
+                            var respZoho = System.Text.Json.JsonSerializer.Deserialize<RespuestaTipoCambio>(res);
 
                             var tp = (SAPbobsCOM.SBObob)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoBridge);
+                            if (Convert.ToDouble(respZoho.venta) > 10000)
+                            {
+                                respZoho.venta = respZoho.venta.Replace(".", ",");
+                            }
 
                             tp.SetCurrencyRate("USD", DateTime.Now, Convert.ToDouble(respZoho.venta));
 
@@ -194,6 +198,7 @@ namespace WATickets.Controllers
 
 
         }
+
 
         public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {

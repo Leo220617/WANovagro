@@ -65,7 +65,7 @@ namespace WATickets.Controllers
                             //documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda;
                             documentoSAP.UserFields.Fields.Item(param.CampoClave).Value = Documento.ClaveHacienda;
-                           
+
                             documentoSAP.UserFields.Fields.Item("U_DYD_Estado").Value = "A";
 
 
@@ -92,7 +92,7 @@ namespace WATickets.Controllers
                                 var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
 
                                 var ProductoCabys = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Cabys;
-                                var DetExoneracion = db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault() == null ? 0  : db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault().id;
+                                var DetExoneracion = db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault() == null ? 0 : db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault().id;
                                 if (ClienteMAG == true && ProductoMAG == true && DetExoneracion == 0)
                                 {
 
@@ -178,7 +178,7 @@ namespace WATickets.Controllers
                             documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
                             documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
                             var Dias = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? 0 : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Dias;
-                          
+
                             documentoSAP.DocDate = Documento.Fecha;
                             documentoSAP.DocDueDate = Documento.Fecha.AddDays(Dias);
                             documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
@@ -188,7 +188,7 @@ namespace WATickets.Controllers
                             var CondPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Nombre;
                             documentoSAP.Series = CondPago.ToLower().Contains("contado") ? Sucursal.SerieFECO : Sucursal.SerieFECR;  //4;  //param.SerieProforma; //Quemada
 
-                 
+
                             documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda; //"U_LDT_NumeroGTI"
                             documentoSAP.UserFields.Fields.Item(param.CampoClave).Value = Documento.ClaveHacienda;       //"U_LDT_FiscalDoc"
@@ -207,7 +207,7 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
 
 
-                             
+
                                 var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
                                 var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
                                 var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
@@ -216,7 +216,7 @@ namespace WATickets.Controllers
                                 var ProductoCabys = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Cabys;
                                 var DetExoneracion = db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault() == null ? 0 : db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault().id;
                                 if (ClienteMAG == true && ProductoMAG == true && DetExoneracion == 0)
-                                    {
+                                {
 
                                     documentoSAP.Lines.TaxCode = db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault() == null ? "IVA-1" : db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault().Codigo;
 
@@ -226,7 +226,7 @@ namespace WATickets.Controllers
                                     documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EXONERA" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
                                 }
                                 documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
-                                
+
 
 
                                 documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
@@ -251,15 +251,15 @@ namespace WATickets.Controllers
                                 var x = 0;
                                 foreach (var lot in Lotes2)
                                 {
-                                  
 
-                                    documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = lot.Serie;
+
+                                    documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = lot.Manufactura;
                                     documentoSAP.Lines.SerialNumbers.ItemCode = lot.ItemCode;
                                     documentoSAP.Lines.SerialNumbers.Quantity = Convert.ToDouble(lot.Cantidad);
-                               
+
                                     documentoSAP.Lines.SerialNumbers.Add();
-    
-                                 
+
+
                                     x++;
                                 }
 
@@ -276,308 +276,490 @@ namespace WATickets.Controllers
                                 Documento.ProcesadaSAP = true;
                                 db.SaveChanges();
 
+
                                 //Procesamos el pago
                                 var CondicionPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? db.CondicionesPagos.FirstOrDefault() : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault();
                                 //Procesamos el pago
                                 if (CondicionPago.Dias == 0 && Documento.Status == "0")
                                 {
-                                    try
+                                    if (param.MontosPagosSeparados)
                                     {
-
-
-                                        //meter los metodos de pago
-                                        var Fecha = Documento.Fecha.Date;
-                                        var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
-                                        var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id).ToList();
-
-
-                                        var SumatoriaPagoColones = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == "CRC" && a.Monto > 0).Sum(a => a.Monto);
-                                        var SumatoriaPagoDolares = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda != "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda != "CRC" && a.Monto > 0).Sum(a => a.Monto);
-                                        bool pagoColonesProcesado = false;
-                                        bool pagoDolaresProcesado = false;
-
-
-                                        if (SumatoriaPagoColones > 0)
+                                        try
                                         {
-                                            try
+
+
+                                            var Fecha = Documento.Fecha.Date;
+                                            var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                            var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Monto > 0).FirstOrDefault() == null ? new List<MetodosPagos>() : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Monto > 0).ToList();
+
+                                            var MetodosPagosColones = MetodosPagos.Where(a => a.Moneda == "CRC").ToList();
+                                            var MetodosPagosDolares = MetodosPagos.Where(a => a.Moneda == "USD").ToList();
+
+                                            bool pagoColonesProcesado = false;
+                                            bool pagoDolaresProcesado = false;
+
+
+
+
+
+
+
+                                            if (MetodosPagosColones.Count() > 0)
                                             {
-                                                var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
-                                                pagoProcesado.DocType = BoRcptTypes.rCustomer;
-                                                pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
-                                                pagoProcesado.DocDate = Documento.Fecha;
-                                                pagoProcesado.DueDate = DateTime.Now;
-                                                pagoProcesado.TaxDate = DateTime.Now;
-                                                pagoProcesado.VatDate = DateTime.Now;
-                                                pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
-                                                pagoProcesado.CounterReference = "APP FAC" + Documento.id;
-                                                pagoProcesado.DocCurrency = param.MonedaLocal;
-                                                pagoProcesado.HandWritten = BoYesNoEnum.tNO;
-                                                //ligar la factura con el pago 
-
-                                                pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
-                                                pagoProcesado.Invoices.DocEntry = Convert.ToInt32(Documento.DocEntry);
-                                                if (Documento.Moneda != "CRC")
+                                                try
                                                 {
-                                                   var SumatoriaPagoColones2 = SumatoriaPagoColones / TipoCambio.TipoCambio;
-                                                    pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones2);
+
+
+                                                    var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
+                                                    pagoProcesado.DocType = BoRcptTypes.rCustomer;
+                                                    pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
+                                                    pagoProcesado.DocDate = Documento.Fecha;
+                                                    pagoProcesado.DueDate = DateTime.Now;
+                                                    pagoProcesado.TaxDate = DateTime.Now;
+                                                    pagoProcesado.VatDate = DateTime.Now;
+                                                    pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
+                                                    pagoProcesado.CounterReference = "APP FAC" + Documento.id;
+                                                    pagoProcesado.DocCurrency = param.MonedaLocal;
+                                                    pagoProcesado.HandWritten = BoYesNoEnum.tNO;
+                                                    pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
+                                                    pagoProcesado.Invoices.DocEntry = Convert.ToInt32(Documento.DocEntry);
+
+                                                    if (Documento.Moneda != "CRC")
+                                                    {
+                                                        var SumatoriaPagoColones = MetodosPagosColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
+                                                        pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones);
+                                                    }
+                                                    else
+                                                    {
+                                                        var SumatoriaPagoColones = MetodosPagosColones.Sum(a => a.Monto);
+
+                                                        pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
+
+                                                    }
+                                                    pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
+
+
+                                                    var SumatoriaEfectivo = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
+                                                    var SumatoriaTarjeta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                                    var SumatoriaTransferencia = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+
+                                                    if (SumatoriaEfectivo > 0)
+                                                    {
+                                                        var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                                        var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+
+                                                         
+                                                        pagoProcesado.CashAccount = Cuenta;
+                                                        pagoProcesado.CashSum = Convert.ToDouble(SumatoriaEfectivo);
+
+                                                    }
+
+                                                    if (SumatoriaTarjeta > 0)
+                                                    {
+                                                        var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                                        var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+
+                                                        pagoProcesado.CreditCards.SetCurrentLine(0);
+                                                        pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
+                                                        pagoProcesado.CreditCards.CreditCard = 1;
+                                                        pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
+                                                        pagoProcesado.CreditCards.PaymentMethodCode = 1; //Quemado
+                                                        pagoProcesado.CreditCards.CreditCardNumber = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
+                                                        pagoProcesado.CreditCards.VoucherNum = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
+                                                        pagoProcesado.CreditCards.CreditAcct = Cuenta;
+                                                        pagoProcesado.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
+
+
+                                                    }
+
+                                                    if (SumatoriaTransferencia > 0)
+                                                    {
+                                                        var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                                        var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+ 
+                                                        pagoProcesado.TransferAccount = Cuenta;
+                                                        pagoProcesado.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
+                                                        pagoProcesado.TransferReference = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
+                                                        pagoProcesado.TransferSum = Convert.ToDouble(SumatoriaTransferencia);
+                                                    }
+
+                                                    var respuestaPago = pagoProcesado.Add();
+                                                    if (respuestaPago == 0)
+                                                    {
+                                                        pagoColonesProcesado = true;
+
+                                                    }
+                                                    else
+                                                    {
+                                                        var error = "Hubo un error en el pago de la factura #" + Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
+                                                        BitacoraErrores be = new BitacoraErrores();
+                                                        be.Descripcion = error;
+                                                        be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                                        be.Fecha = DateTime.Now;
+                                                        be.JSON = JsonConvert.SerializeObject(documentoSAP);
+                                                        db.BitacoraErrores.Add(be);
+                                                        db.SaveChanges();
+                                                        Conexion.Desconectar();
+
+                                                    }
                                                 }
-                                                else
+                                                catch (Exception ex)
                                                 {
-                                                    pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
 
-                                                }
-
-
-                                                var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().CuentaSAP;
-
-                                             
-                                              
-                                            
-                                                pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoColones);
-                                                pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
-                                                pagoProcesado.CashAccount = Cuenta;
-
-                                                var respuestaPago = pagoProcesado.Add();
-                                                if (respuestaPago == 0)
-                                                {
-                                                    pagoColonesProcesado = true;
-                                                    //db.Entry(Documento).State = EntityState.Modified;
-                                                    //Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
-                                                    //Documento.PagoProcesadaSAP = true;
-                                                    //db.SaveChanges();
-                                                }
-                                                else
-                                                {
-                                                    var error = "Hubo un error en el pago de la factura #"+ Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
                                                     BitacoraErrores be = new BitacoraErrores();
-                                                    be.Descripcion = error;
-                                                    be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                                    be.Descripcion = ex.Message;
+                                                    be.StrackTrace = ex.StackTrace;
                                                     be.Fecha = DateTime.Now;
-                                                    be.JSON = JsonConvert.SerializeObject(documentoSAP);
+                                                    be.JSON = JsonConvert.SerializeObject(ex);
                                                     db.BitacoraErrores.Add(be);
                                                     db.SaveChanges();
                                                     Conexion.Desconectar();
-
                                                 }
                                             }
-                                            catch (Exception ex)
+                                            else
                                             {
-                                                BitacoraErrores be = new BitacoraErrores();
-                                                be.Descripcion = ex.Message;
-                                                be.StrackTrace = ex.StackTrace;
-                                                be.Fecha = DateTime.Now;
-                                                be.JSON = JsonConvert.SerializeObject(ex);
-                                                db.BitacoraErrores.Add(be);
-                                                db.SaveChanges();
-                                                Conexion.Desconectar();
+                                                pagoColonesProcesado = true;
 
                                             }
 
-                                        }
-                                        else
-                                        {
-                                            pagoColonesProcesado = true;
 
-                                        }
-
-                                        if (SumatoriaPagoDolares > 0)
-                                        {
-                                            try
+                                            if (MetodosPagosDolares.Count() > 0)
                                             {
-                                                var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
-                                                pagoProcesado.DocType = BoRcptTypes.rCustomer;
-                                                pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
-                                                pagoProcesado.DocDate = Documento.Fecha;
-                                                pagoProcesado.DueDate = DateTime.Now;
-                                                pagoProcesado.TaxDate = DateTime.Now;
-                                                pagoProcesado.VatDate = DateTime.Now;
-                                                pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
-                                                pagoProcesado.CounterReference = "APP FAC" + Documento.id;
-                                                pagoProcesado.DocCurrency = "USD";
-                                                pagoProcesado.HandWritten = BoYesNoEnum.tNO;
-                                                //ligar la factura con el pago 
-
-                                                pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
-                                                pagoProcesado.Invoices.DocEntry = Convert.ToInt32(Documento.DocEntry);
-                                                //  pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares);
-                                                //if (Documento.Moneda != "CRC")
-                                                //{
-                                                //    SumatoriaPagoColones = SumatoriaPagoColones / TipoCambio.TipoCambio;
-                                                //}
-                                                pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
-
-
-
-                                                //var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
-                                             
-                                                var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
-                                                pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
-                                                pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoDolares);
-                                                pagoProcesado.CashAccount = Cuenta;
-                                                var respuestaPago = pagoProcesado.Add();
-                                                if (respuestaPago == 0)
+                                                try
                                                 {
-                                                    pagoDolaresProcesado = true;
-                                                    //db.Entry(Documento).State = EntityState.Modified;
-                                                    //Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
-                                                    //Documento.PagoProcesadaSAP = true;
-                                                    //db.SaveChanges();
+
+
+                                                    var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
+                                                    pagoProcesado.DocType = BoRcptTypes.rCustomer;
+                                                    pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
+                                                    pagoProcesado.DocDate = Documento.Fecha;
+                                                    pagoProcesado.DueDate = DateTime.Now;
+                                                    pagoProcesado.TaxDate = DateTime.Now;
+                                                    pagoProcesado.VatDate = DateTime.Now;
+                                                    pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
+                                                    pagoProcesado.CounterReference = "APP FAC" + Documento.id;
+                                                    pagoProcesado.DocCurrency = "USD";
+                                                    pagoProcesado.HandWritten = BoYesNoEnum.tNO;
+                                                    pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
+                                                    pagoProcesado.Invoices.DocEntry = Convert.ToInt32(Documento.DocEntry);
+
+
+                                                    var SumatoriaPagod = MetodosPagosDolares.Sum(a => a.Monto);
+                                                    pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                                    pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
+
+
+                                                    var SumatoriaEfectivo = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
+                                                    var SumatoriaTarjeta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                                    var SumatoriaTransferencia = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+
+                                                    if (SumatoriaEfectivo > 0)
+                                                    {
+                                                        var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                                        var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+
+                                                        
+                                                        pagoProcesado.CashAccount = Cuenta;
+                                                        pagoProcesado.CashSum = Convert.ToDouble(SumatoriaEfectivo);
+
+                                                    }
+
+                                                    if (SumatoriaTarjeta > 0)
+                                                    {
+                                                        var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                                        var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+
+                                                         
+                                                        pagoProcesado.CreditCards.SetCurrentLine(0);
+                                                        pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
+                                                        pagoProcesado.CreditCards.CreditCard = 1;
+                                                        pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
+                                                        pagoProcesado.CreditCards.PaymentMethodCode = 1; //Quemado
+                                                        pagoProcesado.CreditCards.CreditCardNumber = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
+                                                        pagoProcesado.CreditCards.VoucherNum = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
+                                                        pagoProcesado.CreditCards.CreditAcct = Cuenta;
+                                                        pagoProcesado.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
+
+
+                                                    }
+
+                                                    if (SumatoriaTransferencia > 0)
+                                                    {
+                                                        var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                                        var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+
+
+                                                        pagoProcesado.TransferAccount = Cuenta;
+                                                        pagoProcesado.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
+                                                        pagoProcesado.TransferReference = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
+                                                        pagoProcesado.TransferSum = Convert.ToDouble(SumatoriaTransferencia);
+                                                    }
+                                                    var respuestaPago = pagoProcesado.Add();
+                                                    if (respuestaPago == 0)
+                                                    {
+                                                        pagoDolaresProcesado = true;
+                                                       
+                                                    }
+                                                    else
+                                                    {
+                                                        var error = "Hubo un error en el pago de la factura # " + Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
+                                                        BitacoraErrores be = new BitacoraErrores();
+                                                        be.Descripcion = error;
+                                                        be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                                        be.Fecha = DateTime.Now;
+                                                        be.JSON = JsonConvert.SerializeObject(documentoSAP);
+                                                        db.BitacoraErrores.Add(be);
+                                                        db.SaveChanges();
+                                                        Conexion.Desconectar();
+
+                                                    }
                                                 }
-                                                else
+                                                catch (Exception ex)
                                                 {
-                                                    var error = "Hubo un error en el pago de la factura # " + Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
+
                                                     BitacoraErrores be = new BitacoraErrores();
-                                                    be.Descripcion = error;
-                                                    be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                                    be.Descripcion = ex.Message;
+                                                    be.StrackTrace = ex.StackTrace;
                                                     be.Fecha = DateTime.Now;
-                                                    be.JSON = JsonConvert.SerializeObject(documentoSAP);
+                                                    be.JSON = JsonConvert.SerializeObject(ex);
                                                     db.BitacoraErrores.Add(be);
                                                     db.SaveChanges();
                                                     Conexion.Desconectar();
-
                                                 }
                                             }
-                                            catch (Exception ex)
+                                            else
                                             {
-
-                                                BitacoraErrores be = new BitacoraErrores();
-                                                be.Descripcion = ex.Message;
-                                                be.StrackTrace = ex.StackTrace;
-                                                be.Fecha = DateTime.Now;
-                                                be.JSON = JsonConvert.SerializeObject(ex);
-                                                db.BitacoraErrores.Add(be);
-                                                db.SaveChanges();
-                                                Conexion.Desconectar();
+                                                pagoDolaresProcesado = true;
 
                                             }
 
-                                        }
-                                        else
-                                        {
-                                            pagoDolaresProcesado = true;
+                                            if (pagoColonesProcesado && pagoDolaresProcesado)
+                                            {
+                                                db.Entry(Documento).State = EntityState.Modified;
+                                                Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
+                                                Documento.PagoProcesadaSAP = true;
+                                                db.SaveChanges();
+                                            }
+
 
                                         }
-
-                                        if (pagoColonesProcesado && pagoDolaresProcesado)
+                                        catch (Exception ex)
                                         {
-                                            db.Entry(Documento).State = EntityState.Modified;
-                                            Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
-                                            Documento.PagoProcesadaSAP = true;
+
+                                            BitacoraErrores be = new BitacoraErrores();
+                                            be.Descripcion = ex.Message;
+                                            be.StrackTrace = ex.StackTrace;
+                                            be.Fecha = DateTime.Now;
+                                            be.JSON = JsonConvert.SerializeObject(ex);
+                                            db.BitacoraErrores.Add(be);
                                             db.SaveChanges();
                                         }
+                                    }
+                                    else
+                                    {
+                                        try
+                                        {
 
 
-                                        if (param.MontosPagosSeparados) {
-                                            //foreach (var item in MetodosPagos)
-                                            //{
-                                            //    switch (item.Moneda)
-                                            //    {
-                                            //        case "CRC":
-                                            //            {
-
-                                            //                var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().Moneda;
-                                            //                var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
-
-                                            //                pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Sum(a => a.Monto) + MontoOtros);
-                                            //                pagoProcesado.Series = 154; //161;
-                                            //                pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().CuentaSAP;
-                                            //                break;
-                                            //            }
-                                            //        case "USD":
-                                            //            {
-                                            //                var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().Moneda;
-                                            //                var MontoOtros = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Metodo.Contains("Otros") && a.Moneda == Cuenta).Count() == null || db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Count() == 0 ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == Cuenta && a.Metodo.Contains("Otros")).Sum(a => a.Monto);
-
-                                            //                pagoProcesado.CashSum = Convert.ToDouble(MetodosPagos.Where(a => a.Moneda == Cuenta).Sum(a => a.Monto) + MontoOtros);
-                                            //                pagoProcesado.Series = 154; //161;
-                                            //                pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
-                                            //                break;
-                                            //            }
-
-                                            //    }
-                                            //}
+                                            //meter los metodos de pago
+                                            var Fecha = Documento.Fecha.Date;
+                                            var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                            var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id).ToList();
 
 
+                                            var SumatoriaPagoColones = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda == "CRC" && a.Monto > 0).Sum(a => a.Monto);
+                                            var SumatoriaPagoDolares = db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda != "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == Documento.id && a.Moneda != "CRC" && a.Monto > 0).Sum(a => a.Monto);
+                                            bool pagoColonesProcesado = false;
+                                            bool pagoDolaresProcesado = false;
 
 
+                                            if (SumatoriaPagoColones > 0)
+                                            {
+                                                try
+                                                {
+                                                    var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
+                                                    pagoProcesado.DocType = BoRcptTypes.rCustomer;
+                                                    pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
+                                                    pagoProcesado.DocDate = Documento.Fecha;
+                                                    pagoProcesado.DueDate = DateTime.Now;
+                                                    pagoProcesado.TaxDate = DateTime.Now;
+                                                    pagoProcesado.VatDate = DateTime.Now;
+                                                    pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
+                                                    pagoProcesado.CounterReference = "APP FAC" + Documento.id;
+                                                    pagoProcesado.DocCurrency = param.MonedaLocal;
+                                                    pagoProcesado.HandWritten = BoYesNoEnum.tNO;
+                                                    //ligar la factura con el pago 
+
+                                                    pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
+                                                    pagoProcesado.Invoices.DocEntry = Convert.ToInt32(Documento.DocEntry);
+                                                    if (Documento.Moneda != "CRC")
+                                                    {
+                                                        var SumatoriaPagoColones2 = SumatoriaPagoColones / TipoCambio.TipoCambio;
+                                                        pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones2);
+                                                    }
+                                                    else
+                                                    {
+                                                        pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
+
+                                                    }
 
 
-
-
-
-                                            //}  //foreach (var item in MetodosPagos)
-                                            //{
-                                            //    item.Metodo = "Efectivo";
-                                            //    item.idCuentaBancaria = db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault() == null ? item.idCuentaBancaria : db.CuentasBancarias.Where(a => a.Nombre.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc).FirstOrDefault().id;
-
-                                            //    switch (item.Metodo)
-                                            //    {
-                                            //        case "Efectivo":
-                                            //            {
-                                            //                pagoProcesado.CashAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
-                                            //                pagoProcesado.CashSum = Convert.ToDouble(item.Monto + MontoOtros);
-
-                                            //                break;
-                                            //            }
-                                            //        case "Tarjeta":
-                                            //            {
-
-                                            //                pagoProcesado.CreditCards.SetCurrentLine(0);
-                                            //                pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
-                                            //                pagoProcesado.CreditCards.CreditCard = 1;
-                                            //                pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
-                                            //                pagoProcesado.CreditCards.PaymentMethodCode = 1; //Quemado
-                                            //                pagoProcesado.CreditCards.CreditCardNumber = item.BIN; // Ultimos 4 digitos
-                                            //                pagoProcesado.CreditCards.VoucherNum = item.NumReferencia;// 
-                                            //                pagoProcesado.CreditCards.CreditAcct = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
-                                            //                pagoProcesado.CreditCards.CreditSum = Convert.ToDouble(item.Monto);
+                                                    var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().CuentaSAP;
 
 
 
-                                            //                break;
-                                            //            }
-                                            //        case "Transferencia":
-                                            //            {
-                                            //                pagoProcesado.TransferAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
-                                            //                pagoProcesado.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                            //                pagoProcesado.TransferReference = item.NumReferencia;
-                                            //                pagoProcesado.TransferSum = Convert.ToDouble(item.Monto);
 
-                                            //                break;
-                                            //            }
-                                            //        case "Cheque":
-                                            //            {
-                                            //                pagoProcesado.Checks.SetCurrentLine(0);
-                                            //                pagoProcesado.Checks.CheckAccount = db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == item.idCuentaBancaria).FirstOrDefault().CuentaSAP;
-                                            //                pagoProcesado.Checks.DueDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                            //                pagoProcesado.Checks.CheckNumber = Convert.ToInt32(item.NumReferencia);
-                                            //                pagoProcesado.Checks.CheckSum = Convert.ToDouble(item.Monto);
-                                            //                //pagoProcesado.Checks.CountryCode = "CR";
-                                            //                //pagoProcesado.Checks.Trnsfrable = BoYesNoEnum.tYES;
-                                            //                pagoProcesado.Checks.ManualCheck = BoYesNoEnum.tNO;
+                                                    pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoColones);
+                                                    pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
+                                                    pagoProcesado.CashAccount = Cuenta;
+
+                                                    var respuestaPago = pagoProcesado.Add();
+                                                    if (respuestaPago == 0)
+                                                    {
+                                                        pagoColonesProcesado = true;
+                                                        //db.Entry(Documento).State = EntityState.Modified;
+                                                        //Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
+                                                        //Documento.PagoProcesadaSAP = true;
+                                                        //db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        var error = "Hubo un error en el pago de la factura #" + Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
+                                                        BitacoraErrores be = new BitacoraErrores();
+                                                        be.Descripcion = error;
+                                                        be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                                        be.Fecha = DateTime.Now;
+                                                        be.JSON = JsonConvert.SerializeObject(documentoSAP);
+                                                        db.BitacoraErrores.Add(be);
+                                                        db.SaveChanges();
+                                                        Conexion.Desconectar();
+
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    BitacoraErrores be = new BitacoraErrores();
+                                                    be.Descripcion = ex.Message;
+                                                    be.StrackTrace = ex.StackTrace;
+                                                    be.Fecha = DateTime.Now;
+                                                    be.JSON = JsonConvert.SerializeObject(ex);
+                                                    db.BitacoraErrores.Add(be);
+                                                    db.SaveChanges();
+                                                    Conexion.Desconectar();
+
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                pagoColonesProcesado = true;
+
+                                            }
+
+                                            if (SumatoriaPagoDolares > 0)
+                                            {
+                                                try
+                                                {
+                                                    var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
+                                                    pagoProcesado.DocType = BoRcptTypes.rCustomer;
+                                                    pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
+                                                    pagoProcesado.DocDate = Documento.Fecha;
+                                                    pagoProcesado.DueDate = DateTime.Now;
+                                                    pagoProcesado.TaxDate = DateTime.Now;
+                                                    pagoProcesado.VatDate = DateTime.Now;
+                                                    pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
+                                                    pagoProcesado.CounterReference = "APP FAC" + Documento.id;
+                                                    pagoProcesado.DocCurrency = "USD";
+                                                    pagoProcesado.HandWritten = BoYesNoEnum.tNO;
+                                                    //ligar la factura con el pago 
+
+                                                    pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
+                                                    pagoProcesado.Invoices.DocEntry = Convert.ToInt32(Documento.DocEntry);
+                                                    //  pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares);
+                                                    //if (Documento.Moneda != "CRC")
+                                                    //{
+                                                    //    SumatoriaPagoColones = SumatoriaPagoColones / TipoCambio.TipoCambio;
+                                                    //}
+                                                    pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
 
 
-                                            //                break;
-                                            //            }
-                                            //    }
-                                            //}
+
+                                                    //var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
+
+                                                    var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
+                                                    pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
+                                                    pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoDolares);
+                                                    pagoProcesado.CashAccount = Cuenta;
+                                                    var respuestaPago = pagoProcesado.Add();
+                                                    if (respuestaPago == 0)
+                                                    {
+                                                        pagoDolaresProcesado = true;
+                                                        //db.Entry(Documento).State = EntityState.Modified;
+                                                        //Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
+                                                        //Documento.PagoProcesadaSAP = true;
+                                                        //db.SaveChanges();
+                                                    }
+                                                    else
+                                                    {
+                                                        var error = "Hubo un error en el pago de la factura # " + Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
+                                                        BitacoraErrores be = new BitacoraErrores();
+                                                        be.Descripcion = error;
+                                                        be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                                        be.Fecha = DateTime.Now;
+                                                        be.JSON = JsonConvert.SerializeObject(documentoSAP);
+                                                        db.BitacoraErrores.Add(be);
+                                                        db.SaveChanges();
+                                                        Conexion.Desconectar();
+
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+
+                                                    BitacoraErrores be = new BitacoraErrores();
+                                                    be.Descripcion = ex.Message;
+                                                    be.StrackTrace = ex.StackTrace;
+                                                    be.Fecha = DateTime.Now;
+                                                    be.JSON = JsonConvert.SerializeObject(ex);
+                                                    db.BitacoraErrores.Add(be);
+                                                    db.SaveChanges();
+                                                    Conexion.Desconectar();
+
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                pagoDolaresProcesado = true;
+
+                                            }
+
+                                            if (pagoColonesProcesado && pagoDolaresProcesado)
+                                            {
+                                                db.Entry(Documento).State = EntityState.Modified;
+                                                Documento.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
+                                                Documento.PagoProcesadaSAP = true;
+                                                db.SaveChanges();
+                                            }
+
+
 
 
                                         }
 
+                                        catch (Exception ex)
+                                        {
+
+                                            BitacoraErrores be = new BitacoraErrores();
+                                            be.Descripcion = ex.Message;
+                                            be.StrackTrace = ex.StackTrace;
+                                            be.Fecha = DateTime.Now;
+                                            be.JSON = JsonConvert.SerializeObject(ex);
+                                            db.BitacoraErrores.Add(be);
+                                            db.SaveChanges();
+                                        }
                                     }
 
-                                    catch (Exception ex)
-                                    {
-
-                                        BitacoraErrores be = new BitacoraErrores();
-                                        be.Descripcion = ex.Message;
-                                        be.StrackTrace = ex.StackTrace;
-                                        be.Fecha = DateTime.Now;
-                                        be.JSON = JsonConvert.SerializeObject(ex);
-                                        db.BitacoraErrores.Add(be);
-                                        db.SaveChanges();
-                                    }
                                 }
 
 
@@ -706,7 +888,7 @@ namespace WATickets.Controllers
                     Documentos = Documentos.Where(a => a.Status == filtro.ItemCode).ToList();
                 }
 
-               
+
 
 
                 if (filtro.Codigo3 > 0)
@@ -736,7 +918,7 @@ namespace WATickets.Controllers
                     Documentos = Documentos.Where(a => a.ProcesadaSAP == filtro.Procesado).ToList();
                 }
 
-                if(filtro.BaseEntry > 0)
+                if (filtro.BaseEntry > 0)
                 {
                     Documentos = Documentos.Where(a => a.BaseEntry == filtro.BaseEntry).ToList();
                 }
@@ -841,7 +1023,7 @@ namespace WATickets.Controllers
             {
                 Parametros param = db.Parametros.FirstOrDefault();
                 EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id).FirstOrDefault();
-               
+
                 if (Documento == null)
                 {
                     Documento = new EncDocumento();
@@ -872,9 +1054,9 @@ namespace WATickets.Controllers
                     db.EncDocumento.Add(Documento);
                     db.SaveChanges();
 
-               
-                
-                var i = 0;
+
+
+                    var i = 0;
                     foreach (var item in documento.Detalle)
                     {
                         var itemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() != null ? db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo : "";
@@ -1595,8 +1777,8 @@ namespace WATickets.Controllers
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
                     if (documento.MetodosPagos != null)
                     {
-                         
-                        foreach(var item in documento.MetodosPagos.Where(a => a.Metodo != "Pago a Cuenta"))
+
+                        foreach (var item in documento.MetodosPagos.Where(a => a.Metodo != "Pago a Cuenta"))
                         {
                             var Usuario = db.Usuarios.Where(a => a.id == Documento.idUsuarioCreador).FirstOrDefault() == null ? "0" : db.Usuarios.Where(a => a.id == Documento.idUsuarioCreador).FirstOrDefault().Nombre;
                             BitacoraMovimientos bm = new BitacoraMovimientos();
@@ -1724,7 +1906,7 @@ namespace WATickets.Controllers
                         foreach (var item in documento.MetodosPagos.Where(a => a.Metodo == "Pago a Cuenta"))
                         {
                             var Cliente = db.Clientes.Where(a => a.id == documento.idCliente).FirstOrDefault();
-                            if(Cliente != null)
+                            if (Cliente != null)
                             {
                                 db.Entry(Cliente).State = EntityState.Modified;
                                 Cliente.Saldo += item.Monto;
@@ -1736,12 +1918,12 @@ namespace WATickets.Controllers
                     }
                     else
                     {
-                        if(Documento.TipoDocumento != "03")
+                        if (Documento.TipoDocumento != "03")
                         {
                             var Condicion = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault();
-                            if(Condicion != null)
+                            if (Condicion != null)
                             {
-                                if(Condicion.Dias > 0)
+                                if (Condicion.Dias > 0)
                                 {
                                     var Cliente = db.Clientes.Where(a => a.id == documento.idCliente).FirstOrDefault();
                                     if (Cliente != null)
@@ -1859,7 +2041,7 @@ namespace WATickets.Controllers
 
                     //Se termina el api de facturacion 
 
-                 
+
 
                 }
 
