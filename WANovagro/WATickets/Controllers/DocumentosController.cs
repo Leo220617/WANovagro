@@ -253,7 +253,7 @@ namespace WATickets.Controllers
                                 {
 
 
-                                    documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = lot.Manufactura;
+                                    documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = lot.Serie;
                                     documentoSAP.Lines.SerialNumbers.ItemCode = lot.ItemCode;
                                     documentoSAP.Lines.SerialNumbers.Quantity = Convert.ToDouble(lot.Cantidad);
 

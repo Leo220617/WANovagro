@@ -65,6 +65,7 @@ namespace WATickets.Controllers
 
                             //Detalle
                             var Detalle = db.DetDocumento.Where(a => a.idEncabezado == item2.id).ToList();
+                            var Lotes1 = db.Lotes.Where(a => a.idEncabezado == Documento.id && a.Tipo == "F").ToList();
                             int z = 0;
 
                             foreach (var item in Detalle)
@@ -104,6 +105,23 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.CostingCode3 = param.CostingCode3;
                                 //documentoSAP.Lines.CostingCode4 = "";
                                 //documentoSAP.Lines.CostingCode5 = "";
+                                var ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                                var Lotes2 = Lotes1.Where(a => a.ItemCode == ItemCode && a.idDetalle == item.id).ToList();
+
+                                var x = 0;
+                                foreach (var lot in Lotes2)
+                                {
+
+
+                                    documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = lot.Serie;
+                                    documentoSAP.Lines.SerialNumbers.ItemCode = lot.ItemCode;
+                                    documentoSAP.Lines.SerialNumbers.Quantity = Convert.ToDouble(lot.Cantidad);
+
+                                    documentoSAP.Lines.SerialNumbers.Add();
+
+
+                                    x++;
+                                }
 
                                 documentoSAP.Lines.Add();
                                 z++;
@@ -507,6 +525,8 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.CostingCode = param.CostingCode;
                                 documentoSAP.Lines.CostingCode2 = param.CostingCode2;
                                 documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+
+                              
                                 documentoSAP.Lines.Add();
                                 z++;
                             }
