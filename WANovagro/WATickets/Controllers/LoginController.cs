@@ -161,7 +161,8 @@ namespace WATickets.Controllers
                         CierreCaja.TransferenciasColones = 0;
                         CierreCaja.TransferenciasDolares = 0;
                         CierreCaja.TotalAperturaFC = db.Cajas.Where(a => a.id == CierreCaja.idCaja).FirstOrDefault() == null ? 0 : db.Cajas.Where(a => a.id == CierreCaja.idCaja).FirstOrDefault().MontoAperturaDolares; //Pone el monto de apertura de acuerdo a la caja que abre
-
+                        CierreCaja.NotasCreditoColones = 0;
+                        CierreCaja.NotasCreditoFC = 0;
 
                         CierreCaja.EfectivoColonesC = 0;
                         CierreCaja.EfectivoFCC = 0;

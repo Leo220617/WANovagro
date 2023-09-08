@@ -116,7 +116,8 @@ namespace WATickets.Controllers
                     PreCierre.idCaja = CierreCaja.idCaja;
                     PreCierre.idUsuario = CierreCaja.idUsuario;
                     PreCierre.FechaCaja = FechaActual;
-                    CierreCaja.FecUltAct = DateTime.Now;
+                    PreCierre.FecUltAct = DateTime.Now;
+                    PreCierre.HoraCierre = DateTime.Now;
                     PreCierre.IP = CierreCaja.IP;
                     PreCierre.EfectivoColones = CierreCaja.EfectivoColones;
                     PreCierre.EfectivoFC = CierreCaja.EfectivoFC;
@@ -128,13 +129,14 @@ namespace WATickets.Controllers
                     PreCierre.OtrosMediosFC = CierreCaja.OtrosMediosFC;
                     PreCierre.TotalVendidoColones = CierreCaja.TotalVendidoColones;
                     PreCierre.TotalVendidoFC = CierreCaja.TotalVendidoFC;
-                    PreCierre.TotalRegistradoColones = CierreCaja.TotalRegistradoColones;
-                    PreCierre.TotalRegistradoFC = CierreCaja.TotalRegistradoFC;
+                    PreCierre.TotalRegistradoColones = cierres.TotalRegistradoColones;
+                    PreCierre.TotalRegistradoFC = cierres.TotalRegistradoFC;
                     PreCierre.TotalAperturaColones = CierreCaja.TotalAperturaColones;
                     PreCierre.TransferenciasColones = CierreCaja.TransferenciasColones;
                     PreCierre.TransferenciasDolares = CierreCaja.TransferenciasDolares;
                     PreCierre.TotalAperturaFC = CierreCaja.TotalAperturaFC;
-
+                    PreCierre.NotasCreditoColones = CierreCaja.NotasCreditoColones;
+                    PreCierre.NotasCreditoFC = CierreCaja.NotasCreditoFC;
 
                     PreCierre.EfectivoColonesC = cierres.EfectivoColonesC;
                     PreCierre.EfectivoFCC = cierres.EfectivoFCC;

@@ -118,5 +118,11 @@ namespace WATickets.Models.Cliente
 
         [Column(TypeName = "money")]
         public decimal TransferenciasDolaresC { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal NotasCreditoColones { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal NotasCreditoFC { get; set; }
     }
 }

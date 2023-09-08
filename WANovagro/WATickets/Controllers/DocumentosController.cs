@@ -1162,8 +1162,8 @@ namespace WATickets.Controllers
                                                             var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
                                                             CierreCajaM.EfectivoColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto; //Si la moneda del documento es dolares y estoy metiendo colones, lo convierto a colones el monto a devolver
-
-                                                            MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
+                                                         MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
                                                             MetodosPagos.Monto = -devuelto;
                                                             MetodosPagos.BIN = "";
@@ -1187,6 +1187,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.EfectivoFC -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC += devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1218,6 +1219,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.TarjetasColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto;
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1245,6 +1247,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.TarjetasFC -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1277,6 +1280,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.TransferenciasColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto;
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1303,6 +1307,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.TransferenciasDolares -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1335,6 +1340,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.ChequesColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto;
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1361,6 +1367,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.ChequesFC -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1394,6 +1401,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.OtrosMediosColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto;
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1420,6 +1428,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.OtrosMediosFC -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1470,6 +1479,7 @@ namespace WATickets.Controllers
                                                             var devuelto = Math.Round((documento.Moneda != item2.Moneda ? (item2.Monto > montoadevolverC ? (montoadevolverC) : item2.Monto) : (item2.Monto > montoadevolver2 ? montoadevolver2 : item2.Monto)));
                                                             CierreCajaM.EfectivoColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto; //Si la moneda del documento es dolares y estoy metiendo colones, lo convierto a colones el monto a devolver
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1495,6 +1505,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.EfectivoFC -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1526,6 +1537,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.TarjetasColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto;
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1553,6 +1565,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.TarjetasFC -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1585,6 +1598,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.TransferenciasColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto;
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1611,6 +1625,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.TransferenciasDolares -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1643,6 +1658,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.ChequesColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto;
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1669,6 +1685,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.ChequesFC -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1702,6 +1719,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.OtrosMediosColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto;
+                                                            CierreCajaM.NotasCreditoColones -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
@@ -1728,6 +1746,7 @@ namespace WATickets.Controllers
 
                                                             CierreCajaM.OtrosMediosFC -= devuelto;
                                                             CierreCajaM.TotalVendidoFC -= devuelto;
+                                                            CierreCajaM.NotasCreditoFC -= devuelto;
 
                                                             MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
