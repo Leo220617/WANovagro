@@ -294,6 +294,7 @@
     <Compile Include="Controllers\OfertasController.cs" />
     <Compile Include="Controllers\PagoCuentasController.cs" />
     <Compile Include="Controllers\PagosController.cs" />
+    <Compile Include="Controllers\ParametrosController.cs" />
     <Compile Include="Controllers\PreCierresController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
