@@ -502,10 +502,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2023 14:17:16</publishTime>
     </File>
     <File Include="bin/WATickets.dll">
-      <publishTime>09/10/2023 11:39:12</publishTime>
+      <publishTime>09/12/2023 23:01:37</publishTime>
     </File>
     <File Include="bin/WATickets.pdb">
-      <publishTime>09/10/2023 11:39:12</publishTime>
+      <publishTime>09/12/2023 23:01:37</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>06/27/2023 08:21:26</publishTime>

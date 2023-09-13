@@ -1824,6 +1824,8 @@ namespace WATickets.Controllers
                             MetodosPagos.idCaja = Documento.idCaja;
                             MetodosPagos.idCajero = Documento.idUsuarioCreador;
                             MetodosPagos.Fecha = DateTime.Now.Date;
+                            MetodosPagos.MonedaVuelto = item.MonedaVuelto;
+                            MetodosPagos.PagadoCon = item.PagadoCon;
                             db.MetodosPagos.Add(MetodosPagos);
                             db.SaveChanges();
                             if (CierreCaja != null)
@@ -1835,8 +1837,24 @@ namespace WATickets.Controllers
                                     {
                                         case "Efectivo":
                                             {
-                                                CierreCaja.EfectivoColones += item.Monto;
-                                                CierreCaja.TotalVendidoColones += item.Monto;
+                                                if (MetodosPagos.Moneda != MetodosPagos.MonedaVuelto)
+                                                {
+                                                    var Fecha = DateTime.Now.Date;
+                                                    var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                                    var MontoDevuelto = (MetodosPagos.PagadoCon - MetodosPagos.Monto) / TipoCambio.TipoCambio;
+                                                    CierreCaja.EfectivoFC -= MontoDevuelto;
+                                                    CierreCaja.TotalVendidoFC -= MontoDevuelto;
+
+                                                    CierreCaja.EfectivoColones += MetodosPagos.PagadoCon;
+                                                    CierreCaja.TotalVendidoColones += MetodosPagos.PagadoCon;
+                                                }
+                                                else
+                                                {
+                                                    CierreCaja.EfectivoColones += item.Monto;
+                                                    CierreCaja.TotalVendidoColones += item.Monto;
+                                                }
+
+                                               
                                                 break;
                                             }
                                         case "Tarjeta":
@@ -1878,8 +1896,23 @@ namespace WATickets.Controllers
                                     {
                                         case "Efectivo":
                                             {
-                                                CierreCaja.EfectivoFC += item.Monto;
-                                                CierreCaja.TotalVendidoFC += item.Monto;
+                                                if(MetodosPagos.Moneda != MetodosPagos.MonedaVuelto)
+                                                {
+                                                    var Fecha = DateTime.Now.Date;
+                                                    var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                                    var MontoDevuelto = (MetodosPagos.PagadoCon - MetodosPagos.Monto) * TipoCambio.TipoCambio;
+                                                    CierreCaja.EfectivoColones -= MontoDevuelto;
+                                                    CierreCaja.TotalVendidoColones -= MontoDevuelto;
+                                                   
+                                                    CierreCaja.EfectivoFC +=  MetodosPagos.PagadoCon;
+                                                    CierreCaja.TotalVendidoFC += MetodosPagos.PagadoCon;
+                                                }
+                                                else
+                                                {
+                                                    CierreCaja.EfectivoFC += item.Monto;
+                                                    CierreCaja.TotalVendidoFC += item.Monto;
+                                                }
+                                               
                                                 break;
                                             }
                                         case "Tarjeta":
