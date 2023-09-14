@@ -254,6 +254,7 @@ namespace WATickets.Controllers
                     a.idCondPago,
                     a.TipoDocumento,
                     a.idVendedor,
+                    a.Redondeo,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList(),
                     Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -343,6 +344,7 @@ namespace WATickets.Controllers
                     a.idCondPago,
                     a.TipoDocumento,
                     a.idVendedor,
+                    a.Redondeo,
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList(),
                     Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -401,6 +403,7 @@ namespace WATickets.Controllers
                     Oferta.idCondPago = oferta.idCondPago;
                     Oferta.idVendedor = oferta.idVendedor;
                     Oferta.TipoDocumento = oferta.TipoDocumento;
+                    Oferta.Redondeo = oferta.Redondeo;
                     db.EncOferta.Add(Oferta);
                     db.SaveChanges();
 
@@ -541,7 +544,7 @@ namespace WATickets.Controllers
                     //Oferta.CodSuc = oferta.CodSuc;
                     Oferta.Moneda = oferta.Moneda;
                     // Oferta.Status = oferta.Status;
-
+                    Oferta.Redondeo = oferta.Redondeo;
 
                     db.SaveChanges();
 

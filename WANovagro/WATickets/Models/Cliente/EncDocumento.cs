@@ -34,5 +34,6 @@ namespace WATickets.Models.Cliente
         public string DocEntryPago { get; set; }
         public string ClaveHacienda { get; set; }
         public string ConsecutivoHacienda { get; set; }
+        public decimal Redondeo { get; set; }
     }
 }

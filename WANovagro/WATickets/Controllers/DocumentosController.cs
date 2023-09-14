@@ -863,6 +863,7 @@ namespace WATickets.Controllers
                     a.PagoProcesadaSAP,
                     a.ClaveHacienda,
                     a.ConsecutivoHacienda,
+                    a.Redondeo,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList(),
                     Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
@@ -989,6 +990,7 @@ namespace WATickets.Controllers
                     a.idVendedor,
                     a.ClaveHacienda,
                     a.ConsecutivoHacienda,
+                    a.Redondeo,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList(),
                     Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
@@ -1050,7 +1052,7 @@ namespace WATickets.Controllers
                     Documento.ClaveHacienda = "";
                     Documento.ConsecutivoHacienda = "";
                     // 0 is open, 1 is closed
-
+                    Documento.Redondeo = documento.Redondeo;
                     db.EncDocumento.Add(Documento);
                     db.SaveChanges();
 

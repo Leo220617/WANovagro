@@ -31,5 +31,6 @@ namespace WATickets.Models.Cliente
         public int idCondPago { get; set; }
         public string TipoDocumento { get; set; }
         public int idVendedor { get; set; }
+        public decimal Redondeo { get; set; }
     }
 }
