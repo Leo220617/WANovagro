@@ -99,10 +99,45 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
                                 var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                                 documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
+                                if (!string.IsNullOrEmpty(param.CostingCode) && !string.IsNullOrEmpty(param.CostingCode2) && !string.IsNullOrEmpty(param.CostingCode3))
+                                {
+                                    documentoSAP.Lines.CostingCode = param.CostingCode;
+                                    documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                    documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                }
+                                else
+                                {
+                                    switch (Sucursal.Dimension)
+                                    {
+                                        case 1:
+                                            {
+                                                documentoSAP.Lines.CostingCode = Sucursal.NormaReparto;
 
-                                documentoSAP.Lines.CostingCode = param.CostingCode;
-                                documentoSAP.Lines.CostingCode2 = param.CostingCode2;
-                                documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                                break;
+                                            }
+                                        case 2:
+                                            {
+                                                documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 3:
+                                            {
+                                                documentoSAP.Lines.CostingCode3 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 4:
+                                            {
+                                                documentoSAP.Lines.CostingCode4 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 5:
+                                            {
+                                                documentoSAP.Lines.CostingCode5 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+
+                                    }
+                                }
                                 //documentoSAP.Lines.CostingCode4 = "";
                                 //documentoSAP.Lines.CostingCode5 = "";
                                 var ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
@@ -522,13 +557,54 @@ namespace WATickets.Controllers
                                 //documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
 
                                 //documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea ;
-                                documentoSAP.Lines.CostingCode = param.CostingCode;
+                                if (!string.IsNullOrEmpty(param.CostingCode) && !string.IsNullOrEmpty(param.CostingCode2) && !string.IsNullOrEmpty(param.CostingCode3))
+                                {
+                                    documentoSAP.Lines.CostingCode = param.CostingCode;
                                 documentoSAP.Lines.CostingCode2 = param.CostingCode2;
                                 documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                }
+                                else
+                                {
+                                    switch (Sucursal.Dimension)
+                                    {
+                                        case 1:
+                                            {
+                                                documentoSAP.Lines.CostingCode = Sucursal.NormaReparto;
 
-                              
+                                                break;
+                                            }
+                                        case 2:
+                                            {
+                                                documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 3:
+                                            {
+                                                documentoSAP.Lines.CostingCode3 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 4:
+                                            {
+                                                documentoSAP.Lines.CostingCode4 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 5:
+                                            {
+                                                documentoSAP.Lines.CostingCode5 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+
+                                    }
+                                }
+
                                 documentoSAP.Lines.Add();
                                 z++;
+                            }
+
+                            if (Documento.Redondeo != 0)
+                            {
+                                documentoSAP.Rounding = BoYesNoEnum.tYES;
+                                documentoSAP.RoundingDiffAmount = Convert.ToDouble(Documento.Redondeo);
                             }
 
 

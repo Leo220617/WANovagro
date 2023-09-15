@@ -105,6 +105,8 @@ namespace WATickets.Controllers
                     Sucursal.SeriePago = sucursales.SeriePago;
                     Sucursal.SerieDeposito = sucursales.SerieDeposito;
                     Sucursal.idListaPrecios = sucursales.idListaPrecios;
+                    Sucursal.NormaReparto = sucursales.NormaReparto;
+                    Sucursal.Dimension = sucursales.Dimension;
                     db.Sucursales.Add(Sucursal);
                     db.SaveChanges();
 
@@ -158,6 +160,8 @@ namespace WATickets.Controllers
                     Sucursal.SeriePago = sucursales.SeriePago;
                     Sucursal.SerieDeposito = sucursales.SerieDeposito;
                     Sucursal.idListaPrecios = sucursales.idListaPrecios;
+                    Sucursal.NormaReparto = sucursales.NormaReparto;
+                    Sucursal.Dimension = sucursales.Dimension;
                     db.SaveChanges();
 
                 }

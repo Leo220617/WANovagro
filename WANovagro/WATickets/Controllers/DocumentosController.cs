@@ -112,10 +112,49 @@ namespace WATickets.Controllers
                                 //documentoSAP.Lines.BaseType = Convert.ToInt32(SAPbobsCOM.BoObjectTypes.oInvoices);
                                 //documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
 
+
+                                if(!string.IsNullOrEmpty(param.CostingCode) && !string.IsNullOrEmpty(param.CostingCode2) && !string.IsNullOrEmpty(param.CostingCode3))
+                                {
+                                    documentoSAP.Lines.CostingCode = param.CostingCode;
+                                    documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                    documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                }
+                                else
+                                {
+                                    switch (Sucursal.Dimension)
+                                    {
+                                        case 1:
+                                            {
+                                                documentoSAP.Lines.CostingCode = Sucursal.NormaReparto;
+
+                                                break;
+                                            }
+                                        case 2:
+                                            {
+                                                documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 3:
+                                            {
+                                                documentoSAP.Lines.CostingCode3 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 4:
+                                            {
+                                                documentoSAP.Lines.CostingCode4 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 5:
+                                            {
+                                                documentoSAP.Lines.CostingCode5 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+
+                                    }
+                                }
+                              
                                 //documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea;
-                                documentoSAP.Lines.CostingCode = param.CostingCode;
-                                documentoSAP.Lines.CostingCode2 = param.CostingCode2;
-                                documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                              
                                 //documentoSAP.Lines.CostingCode4 = "";
                                 //documentoSAP.Lines.CostingCode5 = "";
                                 documentoSAP.Lines.Add();
@@ -232,10 +271,45 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
                                 var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                                 documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
-                                documentoSAP.Lines.CostingCode = param.CostingCode;
-                                documentoSAP.Lines.CostingCode2 = param.CostingCode2;
-                                documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                if (!string.IsNullOrEmpty(param.CostingCode) && !string.IsNullOrEmpty(param.CostingCode2) && !string.IsNullOrEmpty(param.CostingCode3))
+                                {
+                                    documentoSAP.Lines.CostingCode = param.CostingCode;
+                                    documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                    documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                }
+                                else
+                                {
+                                    switch (Sucursal.Dimension)
+                                    {
+                                        case 1:
+                                            {
+                                                documentoSAP.Lines.CostingCode = Sucursal.NormaReparto;
 
+                                                break;
+                                            }
+                                        case 2:
+                                            {
+                                                documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 3:
+                                            {
+                                                documentoSAP.Lines.CostingCode3 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 4:
+                                            {
+                                                documentoSAP.Lines.CostingCode4 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+                                        case 5:
+                                            {
+                                                documentoSAP.Lines.CostingCode5 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+
+                                    }
+                                }
 
                                 //if(item.NumSerie != "0" || item.NumSerie != null)
                                 //{
@@ -266,6 +340,16 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.Add();
                                 z++;
                             }
+
+
+                            if (Documento.Redondeo != 0)
+                            {
+                                documentoSAP.Rounding = BoYesNoEnum.tYES;
+                                documentoSAP.RoundingDiffAmount = Convert.ToDouble(Documento.Redondeo);
+                            }
+
+
+
 
 
                             var respuesta = documentoSAP.Add();
@@ -348,7 +432,7 @@ namespace WATickets.Controllers
                                                         var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                                         
+
                                                         pagoProcesado.CashAccount = Cuenta;
                                                         pagoProcesado.CashSum = Convert.ToDouble(SumatoriaEfectivo);
 
@@ -376,7 +460,7 @@ namespace WATickets.Controllers
                                                     {
                                                         var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
- 
+
                                                         pagoProcesado.TransferAccount = Cuenta;
                                                         pagoProcesado.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
                                                         pagoProcesado.TransferReference = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
@@ -458,7 +542,7 @@ namespace WATickets.Controllers
                                                         var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                                        
+
                                                         pagoProcesado.CashAccount = Cuenta;
                                                         pagoProcesado.CashSum = Convert.ToDouble(SumatoriaEfectivo);
 
@@ -469,7 +553,7 @@ namespace WATickets.Controllers
                                                         var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                                         
+
                                                         pagoProcesado.CreditCards.SetCurrentLine(0);
                                                         pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
                                                         pagoProcesado.CreditCards.CreditCard = 1;
@@ -498,7 +582,7 @@ namespace WATickets.Controllers
                                                     if (respuestaPago == 0)
                                                     {
                                                         pagoDolaresProcesado = true;
-                                                       
+
                                                     }
                                                     else
                                                     {
@@ -1165,7 +1249,7 @@ namespace WATickets.Controllers
                                                             CierreCajaM.EfectivoColones -= devuelto;
                                                             CierreCajaM.TotalVendidoColones -= devuelto; //Si la moneda del documento es dolares y estoy metiendo colones, lo convierto a colones el monto a devolver
                                                             CierreCajaM.NotasCreditoColones -= devuelto;
-                                                         MetodosPagos MetodosPagos = new MetodosPagos();
+                                                            MetodosPagos MetodosPagos = new MetodosPagos();
                                                             MetodosPagos.idEncabezado = DocumentoG.id;
                                                             MetodosPagos.Monto = -devuelto;
                                                             MetodosPagos.BIN = "";
@@ -1856,7 +1940,7 @@ namespace WATickets.Controllers
                                                     CierreCaja.TotalVendidoColones += item.Monto;
                                                 }
 
-                                               
+
                                                 break;
                                             }
                                         case "Tarjeta":
@@ -1898,15 +1982,15 @@ namespace WATickets.Controllers
                                     {
                                         case "Efectivo":
                                             {
-                                                if(MetodosPagos.Moneda != MetodosPagos.MonedaVuelto)
+                                                if (MetodosPagos.Moneda != MetodosPagos.MonedaVuelto)
                                                 {
                                                     var Fecha = DateTime.Now.Date;
                                                     var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
                                                     var MontoDevuelto = (MetodosPagos.PagadoCon - MetodosPagos.Monto) * TipoCambio.TipoCambio;
                                                     CierreCaja.EfectivoColones -= MontoDevuelto;
                                                     CierreCaja.TotalVendidoColones -= MontoDevuelto;
-                                                   
-                                                    CierreCaja.EfectivoFC +=  MetodosPagos.PagadoCon;
+
+                                                    CierreCaja.EfectivoFC += MetodosPagos.PagadoCon;
                                                     CierreCaja.TotalVendidoFC += MetodosPagos.PagadoCon;
                                                 }
                                                 else
@@ -1914,7 +1998,7 @@ namespace WATickets.Controllers
                                                     CierreCaja.EfectivoFC += item.Monto;
                                                     CierreCaja.TotalVendidoFC += item.Monto;
                                                 }
-                                               
+
                                                 break;
                                             }
                                         case "Tarjeta":

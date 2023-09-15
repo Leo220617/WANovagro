@@ -53,5 +53,9 @@ namespace WATickets.Models.APIS
 
         public int SerieDeposito { get; set; }
         public int idListaPrecios { get; set; }
+
+        public string NormaReparto { get; set; }
+
+        public int Dimension { get; set; }
     }
 }
