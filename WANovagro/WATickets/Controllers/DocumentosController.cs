@@ -113,7 +113,7 @@ namespace WATickets.Controllers
                                 //documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
 
 
-                                if(!string.IsNullOrEmpty(param.CostingCode) && !string.IsNullOrEmpty(param.CostingCode2) && !string.IsNullOrEmpty(param.CostingCode3))
+                                if (!string.IsNullOrEmpty(param.CostingCode) && !string.IsNullOrEmpty(param.CostingCode2) && !string.IsNullOrEmpty(param.CostingCode3))
                                 {
                                     documentoSAP.Lines.CostingCode = param.CostingCode;
                                     documentoSAP.Lines.CostingCode2 = param.CostingCode2;
@@ -152,9 +152,9 @@ namespace WATickets.Controllers
 
                                     }
                                 }
-                              
+
                                 //documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea;
-                              
+
                                 //documentoSAP.Lines.CostingCode4 = "";
                                 //documentoSAP.Lines.CostingCode5 = "";
                                 documentoSAP.Lines.Add();
@@ -227,6 +227,20 @@ namespace WATickets.Controllers
                             var CondPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Nombre;
                             documentoSAP.Series = CondPago.ToLower().Contains("contado") ? Sucursal.SerieFECO : Sucursal.SerieFECR;  //4;  //param.SerieProforma; //Quemada
 
+
+                          
+                             
+                          
+                                if (Documento.Moneda == "USD")
+                                {
+                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra - Documento.Redondeo);
+                                }
+                                else
+                                {
+                                    documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra - Documento.Redondeo);
+                                }
+                          
+                          
 
                             documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda; //"U_LDT_NumeroGTI"
