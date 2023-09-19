@@ -106,7 +106,7 @@ namespace WATickets.Controllers
                                 documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
                                 var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
                                 documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
-                                if (!string.IsNullOrEmpty(param.CostingCode) && !string.IsNullOrEmpty(param.CostingCode2) && !string.IsNullOrEmpty(param.CostingCode3))
+                                if (param.CostingCode != "N" && param.CostingCode2 != "N" && param.CostingCode3 != "N")
                                 {
                                     documentoSAP.Lines.CostingCode = param.CostingCode;
                                     documentoSAP.Lines.CostingCode2 = param.CostingCode2;
@@ -845,7 +845,7 @@ namespace WATickets.Controllers
                                 //documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
 
                                 //documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea ;
-                                if (!string.IsNullOrEmpty(param.CostingCode) && !string.IsNullOrEmpty(param.CostingCode2) && !string.IsNullOrEmpty(param.CostingCode3))
+                                if (param.CostingCode != "N" && param.CostingCode2 != "N" && param.CostingCode3 != "N")
                                 {
                                     documentoSAP.Lines.CostingCode = param.CostingCode;
                                 documentoSAP.Lines.CostingCode2 = param.CostingCode2;
