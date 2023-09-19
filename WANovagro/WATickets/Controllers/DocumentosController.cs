@@ -380,7 +380,7 @@ namespace WATickets.Controllers
                                 //Procesamos el pago
                                 if (CondicionPago.Dias == 0 && Documento.Status == "0")
                                 {
-                                    if (param.MontosPagosSeparados)
+                                    if (param.MontosPagosSeparados == true)
                                     {
                                         try
                                         {
