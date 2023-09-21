@@ -844,3 +844,47 @@ C:\Users\steve\Documents\Repositorios DYD\WANovagro\WANovagro\WATickets\bin\Syst
 C:\Users\steve\Documents\Repositorios DYD\WANovagro\WANovagro\WATickets\bin\System.Text.Json.xml
 C:\Users\steve\Documents\Repositorios DYD\WANovagro\WANovagro\WATickets\bin\System.Threading.Tasks.Extensions.xml
 C:\Users\steve\Documents\Repositorios DYD\WANovagro\WANovagro\WATickets\bin\System.ValueTuple.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Buffers.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Memory.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Numerics.Vectors.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Text.Encodings.Web.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Text.Json.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Threading.Tasks.Extensions.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.ValueTuple.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.CoreUtility.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.Data.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Editor.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Designer.Interfaces.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Utilities.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Imaging.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Threading.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.ImageCatalog.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Validation.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.Logic.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.UI.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.UI.Wpf.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\StreamJsonRpc.dll
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Buffers.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Memory.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Numerics.Vectors.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Text.Encodings.Web.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Text.Json.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.Threading.Tasks.Extensions.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\System.ValueTuple.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.CoreUtility.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.Data.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Editor.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Designer.Interfaces.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Utilities.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Imaging.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Threading.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.ImageCatalog.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Validation.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.Logic.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.UI.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\Microsoft.VisualStudio.Text.UI.Wpf.xml
+C:\Users\larce\Documents\GitHub\WANovagro\WANovagro\WATickets\bin\es\StreamJsonRpc.resources.dll

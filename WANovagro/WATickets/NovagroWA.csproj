@@ -297,6 +297,7 @@
     <Compile Include="Controllers\ParametrosController.cs" />
     <Compile Include="Controllers\PreCierresController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
+    <Compile Include="Controllers\ProductosWEBController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SeguridadModulosController.cs" />
     <Compile Include="Controllers\SeguridadRolesModulosController.cs" />
