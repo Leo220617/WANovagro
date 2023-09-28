@@ -61,6 +61,16 @@ namespace WATickets.Controllers
 
                             documentoSAP.Series = Sucursal.SerieNC; //Quemada
 
+
+                            if (Documento.Moneda == "USD")
+                            {
+                                documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                            }
+                            else
+                            {
+                                documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                            }
+
                             //documentoSAP.GroupNumber = -1;
                             //documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda;
@@ -161,6 +171,11 @@ namespace WATickets.Controllers
                                 z++;
                             }
 
+                            if (Documento.Redondeo != 0)
+                            {
+                                documentoSAP.Rounding = BoYesNoEnum.tYES;
+                                documentoSAP.RoundingDiffAmount = Convert.ToDouble(Documento.Redondeo);
+                            }
 
                             var respuesta = documentoSAP.Add();
                             if (respuesta == 0) //se creo exitorsamente 
@@ -233,11 +248,11 @@ namespace WATickets.Controllers
                           
                                 if (Documento.Moneda == "USD")
                                 {
-                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra - Documento.Redondeo);
+                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
                                 }
                                 else
                                 {
-                                    documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra - Documento.Redondeo);
+                                    documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
                                 }
                           
                           
