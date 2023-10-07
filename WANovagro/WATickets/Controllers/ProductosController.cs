@@ -44,7 +44,7 @@ namespace WATickets.Controllers
                 Cn.Open(); //se abre la conexion 
                 Da.Fill(Ds, "Productos");
 
-                var Productos = db.Productos.ToList();
+                //var Productos = db.Productos.ToList();
                 foreach (DataRow item in Ds.Tables["Productos"].Rows)
                 {
                     var itemCode = item["Codigo"].ToString();
@@ -56,7 +56,7 @@ namespace WATickets.Controllers
                         var list = db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault().id;
                         if(list > 0) //si existe la lista
                         {
-                            var Producto = Productos.Where(a => a.Codigo == itemCode && a.idBodega == bod && a.idListaPrecios == list).FirstOrDefault();
+                            var Producto = db.Productos.Where(a => a.Codigo == itemCode && a.idBodega == bod && a.idListaPrecios == list).FirstOrDefault();
 
                             if (Producto == null) //Existe ?
                             {
@@ -92,6 +92,15 @@ namespace WATickets.Controllers
                                         Producto.MAG = false;
                                     }
                                     Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
+                                    var Serie = Convert.ToInt32(item["Serie"]);
+                                    if (Serie == 1)
+                                    {
+                                        Producto.Serie = true;
+                                    }
+                                    else if (Serie == 0)
+                                    {
+                                        Producto.Serie = false;
+                                    }
                                     db.Productos.Add(Producto);
                                     db.SaveChanges();
 
@@ -144,6 +153,15 @@ namespace WATickets.Controllers
                                     }
                                     Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
 
+                                    var Serie = Convert.ToInt32(item["Serie"]);
+                                    if (Serie == 1)
+                                    {
+                                        Producto.Serie = true;
+                                    }
+                                    else if (Serie == 0)
+                                    {
+                                        Producto.Serie = false;
+                                    }
                                     db.SaveChanges();
                                 }
                                 catch (Exception ex1)
@@ -507,14 +525,19 @@ namespace WATickets.Controllers
                 DataSet Ds = new DataSet();
                 Cn.Open(); //se abre la conexion
                 Da.Fill(Ds, "Productos");
-
+             
                 var Productos = db.Productos.ToList();
 
                 foreach (DataRow item in Ds.Tables["Productos"].Rows)
                 {
+                    var PriceList = item["ListaPrecio"].ToString();
+                    var list = db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault().id;
                     var cardCode = item["Codigo"].ToString();
 
-                    var Producto = Productos.Where(a => a.Codigo == cardCode).FirstOrDefault();
+                    var Whscode = item["idBodega"].ToString();
+                    var bod = db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault().id;
+
+                    var Producto = db.Productos.Where(a => a.Codigo == cardCode && a.idListaPrecios == list && a.idBodega == idBod ).FirstOrDefault();
                     if (Producto == null) //Existe ?
                     {
 
@@ -550,6 +573,15 @@ namespace WATickets.Controllers
                             }
                             Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
 
+                            var Serie = Convert.ToInt32(item["Serie"]);
+                            if (Serie == 1)
+                            {
+                                Producto.Serie = true;
+                            }
+                            else if (Serie == 0)
+                            {
+                                Producto.Serie = false;
+                            }
                             db.Productos.Add(Producto);
                             db.SaveChanges();
 
@@ -600,6 +632,15 @@ namespace WATickets.Controllers
                                 Producto.MAG = false;
                             }
                             Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
+                            var Serie = Convert.ToInt32(item["Serie"]);
+                            if (Serie == 1)
+                            {
+                                Producto.Serie = true;
+                            }
+                            else if (Serie == 0)
+                            {
+                                Producto.Serie = false;
+                            }
 
                             db.SaveChanges();
                         }
