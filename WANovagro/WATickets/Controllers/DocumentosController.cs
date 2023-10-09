@@ -117,10 +117,10 @@ namespace WATickets.Controllers
                                     {
                                         var Exoneracion = db.Exoneraciones.Where(a => a.id == item.idExoneracion).FirstOrDefault();
 
-                                        documentoSAP.UserFields.Fields.Item("U_Tipo_Doc").Value = Exoneracion.TipoDoc;
-                                        documentoSAP.UserFields.Fields.Item("U_NumDoc").Value = Exoneracion.NumDoc;
-                                        documentoSAP.UserFields.Fields.Item("U_NomInst").Value = Exoneracion.NomInst;
-                                        documentoSAP.UserFields.Fields.Item("U_FecEmis").Value = Exoneracion.FechaEmision;
+                                        documentoSAP.Lines.UserFields.Fields.Item("U_Tipo_Doc").Value = Exoneracion.TipoDoc;
+                                        documentoSAP.Lines.UserFields.Fields.Item("U_NumDoc").Value = Exoneracion.NumDoc;
+                                        documentoSAP.Lines.UserFields.Fields.Item("U_NomInst").Value = Exoneracion.NomInst;
+                                        documentoSAP.Lines.UserFields.Fields.Item("U_FecEmis").Value = Exoneracion.FechaEmision;
                                     }
                                 }
                                 documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
@@ -328,10 +328,10 @@ namespace WATickets.Controllers
                                     {
                                         var Exoneracion = db.Exoneraciones.Where(a => a.id == item.idExoneracion).FirstOrDefault();
 
-                                        documentoSAP.UserFields.Fields.Item("U_Tipo_Doc").Value = Exoneracion.TipoDoc;
-                                        documentoSAP.UserFields.Fields.Item("U_NumDoc").Value = Exoneracion.NumDoc;
-                                        documentoSAP.UserFields.Fields.Item("U_NomInst").Value = Exoneracion.NomInst;
-                                        documentoSAP.UserFields.Fields.Item("U_FecEmis").Value = Exoneracion.FechaEmision;
+                                        documentoSAP.Lines.UserFields.Fields.Item("U_Tipo_Doc").Value = Exoneracion.TipoDoc;
+                                        documentoSAP.Lines.UserFields.Fields.Item("U_NumDoc").Value = Exoneracion.NumDoc;
+                                        documentoSAP.Lines.UserFields.Fields.Item("U_NomInst").Value = Exoneracion.NomInst;
+                                        documentoSAP.Lines.UserFields.Fields.Item("U_FecEmis").Value = Exoneracion.FechaEmision;
                                     }
                                 }
                                 documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
