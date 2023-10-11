@@ -133,7 +133,7 @@ namespace WATickets.Controllers
                                 //documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
 
 
-                                if (param.CostingCode != "N" &&  param.CostingCode2 != "N" && param.CostingCode3 != "N")
+                                if (param.CostingCode != "N" && param.CostingCode2 != "N" && param.CostingCode3 != "N")
                                 {
                                     documentoSAP.Lines.CostingCode = param.CostingCode;
                                     documentoSAP.Lines.CostingCode2 = param.CostingCode2;
@@ -198,7 +198,7 @@ namespace WATickets.Controllers
 
                                 documentoSAP.Lines.Add();
                                 z++;
-                            
+
 
 
                             }
@@ -275,19 +275,19 @@ namespace WATickets.Controllers
                             documentoSAP.Series = CondPago.ToLower().Contains("contado") ? Sucursal.SerieFECO : Sucursal.SerieFECR;  //4;  //param.SerieProforma; //Quemada
 
 
-                          
-                             
-                          
-                                if (Documento.Moneda == "USD")
-                                {
-                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
-                                }
-                                else
-                                {
-                                    documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
-                                }
-                          
-                          
+
+
+
+                            if (Documento.Moneda == "USD")
+                            {
+                                documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                            }
+                            else
+                            {
+                                documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                            }
+
+
 
                             documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda; //"U_LDT_NumeroGTI"
@@ -324,7 +324,7 @@ namespace WATickets.Controllers
                                 else
                                 {
                                     documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EXONERA" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
-                                    if(item.idExoneracion > 0)
+                                    if (item.idExoneracion > 0)
                                     {
                                         var Exoneracion = db.Exoneraciones.Where(a => a.id == item.idExoneracion).FirstOrDefault();
 
@@ -1950,6 +1950,7 @@ namespace WATickets.Controllers
                     }
                     var time = DateTime.Now.Date;
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
+                    var Asiento = db.Asientos.Where(a => a.Fecha == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador && a.CodSuc == Documento.CodSuc && a.ProcesadoSAP == false).FirstOrDefault();
                     if (documento.MetodosPagos != null)
                     {
 
@@ -2062,6 +2063,40 @@ namespace WATickets.Controllers
 
                                                     CierreCaja.EfectivoFC += MetodosPagos.PagadoCon;
                                                     CierreCaja.TotalVendidoFC += MetodosPagos.PagadoCon;
+
+                                                    var Debito = MetodosPagos.PagadoCon - MetodosPagos.Monto;
+                                                    var Credito = Debito * TipoCambio.TipoCambio;
+
+                                                    if (Debito > 0)
+                                                    {
+                                                        if (Asiento == null)
+                                                        {
+                                                            Asientos Asientos = new Asientos();
+                                                            Asientos.idUsuario = Documento.idUsuarioCreador;
+                                                            Asientos.idCaja = documento.idCaja;
+                                                            Asientos.Fecha = DateTime.Now.Date;
+                                                            Asientos.CodSuc = Documento.CodSuc;
+                                                            Asientos.idCuentaCredito = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault() == null ? 0 : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "CRC").FirstOrDefault().id;
+                                                            Asientos.idCuentaDebito = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? 0 : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().id;
+                                                            Asientos.Referencia = "Asiento compra de Dolares";
+                                                            Asientos.ProcesadoSAP = false;
+                                                            Asientos.Credito = Credito;
+                                                            Asientos.Debito = Debito;
+                                                            db.Asientos.Add(Asientos);
+                                                            db.SaveChanges();
+                                                        }
+                                                        else
+                                                        {
+                                                            db.Entry(Asiento).State = EntityState.Modified;
+                                                            Asiento.Credito += Credito;
+                                                            Asiento.Debito += Debito;
+                                                            db.SaveChanges();
+                                                        }
+
+                                                    }
+
+
+
                                                 }
                                                 else
                                                 {
