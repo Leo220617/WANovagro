@@ -130,7 +130,32 @@ namespace WATickets.Controllers
                                     var idLista = item["ListaPrecio"].ToString();
                                     Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                                     Producto.Nombre = item["Nombre"].ToString();
+                                    decimal Porcentaje = 0;
                                     Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
+                                    try
+                                    {
+                                        var TienePorcentaje = db.PrecioXLista.Where(a => a.idProducto == Producto.id && a.idListaPrecio == Producto.idListaPrecios).FirstOrDefault();
+                                        if (TienePorcentaje != null)
+                                        {
+                                            Porcentaje = (TienePorcentaje.Porcentaje > 0 ? Producto.PrecioUnitario * (TienePorcentaje.Porcentaje / 100) : (Producto.PrecioUnitario * (TienePorcentaje.Porcentaje / 100)) * -1);
+
+                                            Producto.PrecioUnitario += Porcentaje;
+                                        }
+                                         
+                                    }
+                                    catch (Exception ex1)
+                                    {
+                                        ModelCliente db2 = new ModelCliente();
+                                        BitacoraErrores be = new BitacoraErrores();
+                                        be.Descripcion = ex1.Message;
+                                        be.StrackTrace = ex1.StackTrace;
+                                        be.Fecha = DateTime.Now;
+                                        be.JSON = JsonConvert.SerializeObject(ex1);
+                                        db2.BitacoraErrores.Add(be);
+                                        db2.SaveChanges();
+
+                                    }
+                                   
                                     Producto.UnidadMedida = item["UnidadMedida"].ToString(); ;
                                     Producto.Cabys = item["Cabys"].ToString();
                                     Producto.TipoCod = item["TipoCodigo"].ToString();
@@ -304,7 +329,8 @@ namespace WATickets.Controllers
         {
             try
             {
-                var Productos = db.Productos.ToList(); //Traemos el listado de productos
+                var Productos = db.Productos.Where(a => (filtro.Codigo2 > 0 ? a.idListaPrecios == filtro.Codigo2 : true) && (filtro.Codigo1 > 0 ? a.idBodega == filtro.Codigo1 : true))
+                    .ToList(); //Traemos el listado de productos
 
                 if(!string.IsNullOrEmpty(filtro.Texto))
                 {
@@ -320,14 +346,14 @@ namespace WATickets.Controllers
 
                     }
                 }
-                if(filtro.Codigo1 > 0) // esto por ser integer
-                {
-                    Productos = Productos.Where(a => a.idBodega == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
-                }
-                if (filtro.Codigo2 > 0) // esto por ser integer
-                {
-                    Productos = Productos.Where(a => a.idListaPrecios == filtro.Codigo2).ToList(); 
-                }
+                //if(filtro.Codigo1 > 0) // esto por ser integer
+                //{
+                //    Productos = Productos.Where(a => a.idBodega == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
+                //}
+                //if (filtro.Codigo2 > 0) // esto por ser integer
+                //{
+                //    Productos = Productos.Where(a => a.idListaPrecios == filtro.Codigo2).ToList(); 
+                //}
 
 
 

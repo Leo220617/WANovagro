@@ -56,6 +56,7 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<Lotes> Lotes { get; set; }
         public virtual DbSet<PreCierres> PreCierres { get; set; }
         public virtual DbSet<Asientos> Asientos { get; set; }
+        public virtual DbSet<PrecioXLista> PrecioXLista { get; set; }
 
 
 
@@ -390,6 +391,8 @@ namespace WATickets.Models.Cliente
             modelBuilder.Entity<UsuariosSucursales>()
                 .Property(e => e.CodSuc)
                 .IsUnicode(false);
+
+           
         }
     }
 }

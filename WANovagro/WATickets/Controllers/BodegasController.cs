@@ -385,6 +385,30 @@ namespace WATickets.Controllers
                             Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Producto.Nombre = item["Nombre"].ToString();
                             Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
+                            decimal Porcentaje = 0;
+                            try
+                            {
+                                var TienePorcentaje = db.PrecioXLista.Where(a => a.idProducto == Producto.id && a.idListaPrecio == Producto.idListaPrecios).FirstOrDefault();
+                                if (TienePorcentaje != null)
+                                {
+                                    Porcentaje = (TienePorcentaje.Porcentaje > 0 ? Producto.PrecioUnitario * (TienePorcentaje.Porcentaje / 100) : (Producto.PrecioUnitario * (TienePorcentaje.Porcentaje / 100)) * -1);
+
+                                    Producto.PrecioUnitario += Porcentaje;
+                                }
+
+                            }
+                            catch (Exception ex1)
+                            {
+                                ModelCliente db2 = new ModelCliente();
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = ex1.Message;
+                                be.StrackTrace = ex1.StackTrace;
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(ex1);
+                                db2.BitacoraErrores.Add(be);
+                                db2.SaveChanges();
+
+                            }
                             Producto.UnidadMedida = item["UnidadMedida"].ToString(); ;
                             Producto.Cabys = item["Cabys"].ToString();
                             Producto.TipoCod = item["TipoCodigo"].ToString();
