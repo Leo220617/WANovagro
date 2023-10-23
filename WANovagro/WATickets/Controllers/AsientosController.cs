@@ -138,6 +138,8 @@ namespace WATickets.Controllers
                         asientoSAP.ReferenceDate = Asiento.Fecha;
                         asientoSAP.DueDate = Asiento.Fecha;
                         asientoSAP.TaxDate = Asiento.Fecha;
+                       
+                       
 
                         asientoSAP.Series = 19;
                         
@@ -155,8 +157,8 @@ namespace WATickets.Controllers
                        
                             asientoSAP.Lines.Credit = Convert.ToDouble(Asiento.Credito);
                            //asientoSAP.Lines.CreditSys = Convert.ToDouble(Asiento.Debito);
-                            asientoSAP.Lines.FCCurrency = "USD";
-                            asientoSAP.Lines.FCCredit = Convert.ToDouble(Asiento.Debito);
+                           
+                            //asientoSAP.Lines.DebitSys = Convert.ToDouble(Asiento.Debito);
 
 
 
@@ -213,6 +215,7 @@ namespace WATickets.Controllers
                         asientoSAP.Lines.Debit = Convert.ToDouble(Asiento.Credito);
                         //asientoSAP.Lines.DebitSys = Convert.ToDouble(Asiento.Debito);
                         asientoSAP.Lines.FCDebit = Convert.ToDouble(Asiento.Debito);
+                        //asientoSAP.Lines.DebitSys = Convert.ToDouble(Asiento.Debito);
                         asientoSAP.Lines.FCCurrency = "USD";
 
 

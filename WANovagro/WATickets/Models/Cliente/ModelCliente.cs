@@ -57,6 +57,7 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<PreCierres> PreCierres { get; set; }
         public virtual DbSet<Asientos> Asientos { get; set; }
         public virtual DbSet<PrecioXLista> PrecioXLista { get; set; }
+        public virtual DbSet<Categorias> Categorias { get; set; }
 
 
 

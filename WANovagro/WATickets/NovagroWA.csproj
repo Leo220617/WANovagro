@@ -271,6 +271,7 @@
     <Compile Include="Controllers\CabysController.cs" />
     <Compile Include="Controllers\CajasController.cs" />
     <Compile Include="Controllers\CantonesController.cs" />
+    <Compile Include="Controllers\CategoriasController.cs" />
     <Compile Include="Controllers\CierreCajasController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\CondicionesPagosController.cs" />
@@ -331,6 +332,7 @@
     <Compile Include="Models\Cliente\Cabys.cs" />
     <Compile Include="Models\Cliente\Cajas.cs" />
     <Compile Include="Models\Cliente\Cantones.cs" />
+    <Compile Include="Models\Cliente\Categorias.cs" />
     <Compile Include="Models\Cliente\CierreCajas.cs" />
     <Compile Include="Models\Cliente\Clientes.cs" />
     <Compile Include="Models\Cliente\CondicionesPagos.cs" />
