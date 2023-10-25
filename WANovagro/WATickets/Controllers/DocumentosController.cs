@@ -72,7 +72,7 @@ namespace WATickets.Controllers
                             }
 
                             //documentoSAP.GroupNumber = -1;
-                            //documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
+                            documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda;
                             documentoSAP.UserFields.Fields.Item(param.CampoClave).Value = Documento.ClaveHacienda;
                             var Lotes1 = db.Lotes.Where(a => a.idEncabezado == Documento.id && a.Tipo == "F").ToList();
