@@ -65,5 +65,7 @@
         public string SQLSeriesProductos { get; set; }
         public string SQLProductosWEB { get; set; }
 
+        public string SQLCategorias { get; set; }
+
     }
 }

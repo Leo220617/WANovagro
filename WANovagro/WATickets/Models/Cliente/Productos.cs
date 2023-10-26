@@ -19,6 +19,8 @@ namespace WATickets.Models.Cliente
 
         public int idListaPrecios { get; set; }
 
+        public int idCategoria { get; set; }
+
         [StringLength(500)]
         public string Nombre { get; set; }
 

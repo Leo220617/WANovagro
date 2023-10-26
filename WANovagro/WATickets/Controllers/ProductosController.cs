@@ -70,6 +70,10 @@ namespace WATickets.Controllers
                                     Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
                                     var idLista = item["ListaPrecio"].ToString();
                                     Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+
+                                    var idCategoria = item["Categoria"].ToString();
+                                    Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
+
                                     Producto.Nombre = item["Nombre"].ToString();
                                     Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
                                     Producto.UnidadMedida = item["UnidadMedida"].ToString();
@@ -129,6 +133,10 @@ namespace WATickets.Controllers
                                     Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
                                     var idLista = item["ListaPrecio"].ToString();
                                     Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+
+                                    var idCategoria = item["Categoria"].ToString();
+                                    Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
+
                                     Producto.Nombre = item["Nombre"].ToString();
                                     decimal Porcentaje = 0;
                                     Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
