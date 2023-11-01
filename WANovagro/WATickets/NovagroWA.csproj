@@ -301,6 +301,7 @@
     <Compile Include="Controllers\PrecioXListaController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="Controllers\ProductosWEBController.cs" />
+    <Compile Include="Controllers\PromocionesController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SeguridadModulosController.cs" />
     <Compile Include="Controllers\SeguridadRolesModulosController.cs" />
@@ -321,6 +322,7 @@
     <Compile Include="Models\APIS\ExoneracionesX.cs" />
     <Compile Include="Models\APIS\Ofertas.cs" />
     <Compile Include="Models\APIS\Pagos.cs" />
+    <Compile Include="Models\APIS\Promocion.cs" />
     <Compile Include="Models\APIS\RecibidoFacturacion.cs" />
     <Compile Include="Models\APIS\RespuestaTipoCambio.cs" />
     <Compile Include="Models\APIS\SucursalesViewModel.cs" />
@@ -350,6 +352,7 @@
     <Compile Include="Models\Cliente\EncDocumentoCredito.cs" />
     <Compile Include="Models\Cliente\EncOferta.cs" />
     <Compile Include="Models\Cliente\EncPagos.cs" />
+    <Compile Include="Models\Cliente\EncPromociones.cs" />
     <Compile Include="Models\Cliente\Exoneraciones.cs" />
     <Compile Include="Models\Cliente\FECXDia.cs" />
     <Compile Include="Models\Cliente\GruposClientes.cs" />
@@ -363,6 +366,7 @@
     <Compile Include="Models\Cliente\PreCierres.cs" />
     <Compile Include="Models\Cliente\PrecioXLista.cs" />
     <Compile Include="Models\Cliente\Productos.cs" />
+    <Compile Include="Models\Cliente\Promociones.cs" />
     <Compile Include="Models\Cliente\Roles.cs" />
     <Compile Include="Models\Cliente\SeguridadModulos.cs" />
     <Compile Include="Models\Cliente\SeguridadRolesModulos.cs" />

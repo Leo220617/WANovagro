@@ -354,6 +354,11 @@ namespace WATickets.Controllers
 
                     }
                 }
+
+                if (filtro.Codigo3 > 0) // esto por ser integer
+                {
+                    Productos = Productos.Where(a => a.idCategoria == filtro.Codigo3).ToList();
+                }
                 //if(filtro.Codigo1 > 0) // esto por ser integer
                 //{
                 //    Productos = Productos.Where(a => a.idBodega == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 

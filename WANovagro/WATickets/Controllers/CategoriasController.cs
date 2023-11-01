@@ -18,7 +18,7 @@ namespace WATickets.Controllers
         ModelCliente db = new ModelCliente();
         G G = new G();
 
-        [Route("api/Categprias/InsertarSAP")]
+        [Route("api/Categorias/InsertarSAP")]
         public HttpResponseMessage GetExtraeDatos()
         {
             try
