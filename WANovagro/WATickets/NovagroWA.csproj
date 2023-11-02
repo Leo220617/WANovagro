@@ -281,6 +281,7 @@
     <Compile Include="Controllers\CuentasSAPController.cs" />
     <Compile Include="Controllers\DepositosController.cs" />
     <Compile Include="Controllers\DepositosMasivosController.cs" />
+    <Compile Include="Controllers\DetPromocionesController.cs" />
     <Compile Include="Controllers\DistritosController.cs" />
     <Compile Include="Controllers\DocumentosController.cs" />
     <Compile Include="Controllers\DocumentosCreditoController.cs" />
