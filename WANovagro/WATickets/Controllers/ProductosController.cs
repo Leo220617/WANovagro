@@ -142,7 +142,7 @@ namespace WATickets.Controllers
                                     Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
 
                                     var time = DateTime.Now.Date;
-                                    var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.FechaVen <= time && a.Fecha >= time).FirstOrDefault();
+                                    var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time).FirstOrDefault();
                                     if(Promocion != null)
                                     {
                                         Producto.PrecioUnitario = Promocion.PrecioFinal;
@@ -663,7 +663,7 @@ namespace WATickets.Controllers
                             var idCategoria = item["Categoria"].ToString();
                             Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
                             var time = DateTime.Now.Date;
-                            var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.FechaVen <= time && a.Fecha >= time).FirstOrDefault();
+                            var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time).FirstOrDefault();
                             if (Promocion != null)
                             {
                                 Producto.PrecioUnitario = Promocion.PrecioFinal;

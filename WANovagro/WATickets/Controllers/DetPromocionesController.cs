@@ -19,7 +19,7 @@ namespace WATickets.Controllers
         {
             try
             {
-                var time = new DateTime();
+                var time = DateTime.Now.Date;
                 var Detalles = db.Promociones.ToList();
 
                 if (filtros.Activo) 
