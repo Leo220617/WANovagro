@@ -293,6 +293,7 @@
     <Compile Include="Controllers\ImpuestosController.cs" />
     <Compile Include="Controllers\ListaPreciosController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\MargenesController.cs" />
     <Compile Include="Controllers\MetodosPagosController.cs" />
     <Compile Include="Controllers\OfertasController.cs" />
     <Compile Include="Controllers\PagoCuentasController.cs" />
@@ -321,6 +322,7 @@
     <Compile Include="Models\APIS\DocumentosCredito.cs" />
     <Compile Include="Models\APIS\ExoneracionesViewModel.cs" />
     <Compile Include="Models\APIS\ExoneracionesX.cs" />
+    <Compile Include="Models\APIS\Margenes.cs" />
     <Compile Include="Models\APIS\Ofertas.cs" />
     <Compile Include="Models\APIS\Pagos.cs" />
     <Compile Include="Models\APIS\Promocion.cs" />
@@ -346,11 +348,13 @@
     <Compile Include="Models\Cliente\DetDocumento.cs" />
     <Compile Include="Models\Cliente\DetDocumentoCredito.cs" />
     <Compile Include="Models\Cliente\DetExoneraciones.cs" />
+    <Compile Include="Models\Cliente\DetMargenes.cs" />
     <Compile Include="Models\Cliente\DetOferta.cs" />
     <Compile Include="Models\Cliente\DetPagos.cs" />
     <Compile Include="Models\Cliente\Distritos.cs" />
     <Compile Include="Models\Cliente\EncDocumento.cs" />
     <Compile Include="Models\Cliente\EncDocumentoCredito.cs" />
+    <Compile Include="Models\Cliente\EncMargenes.cs" />
     <Compile Include="Models\Cliente\EncOferta.cs" />
     <Compile Include="Models\Cliente\EncPagos.cs" />
     <Compile Include="Models\Cliente\EncPromociones.cs" />
