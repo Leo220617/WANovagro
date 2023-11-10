@@ -165,6 +165,7 @@ namespace WATickets.Controllers
                         det.MargenMin = item.MargenMin;
                         det.PrecioFinal = item.PrecioFinal;
                         det.PrecioMin = item.PrecioMin;
+                        det.PrecioCob = item.PrecioCob;
                         db.DetMargenes.Add(det);
                         db.SaveChanges();
 
@@ -248,6 +249,7 @@ namespace WATickets.Controllers
                         det.MargenMin = item.MargenMin;
                         det.PrecioFinal = item.PrecioFinal;
                         det.PrecioMin = item.PrecioMin;
+                        det.PrecioCob = item.PrecioCob;
                         db.DetMargenes.Add(det);
                         db.SaveChanges();
                         i++;
