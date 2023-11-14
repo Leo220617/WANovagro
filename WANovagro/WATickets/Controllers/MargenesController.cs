@@ -149,30 +149,34 @@ namespace WATickets.Controllers
 
 
 
-                    var i = 0;
-                    foreach (var item in margenes.Detalle)
+                    if (margenes.Detalle != null)
                     {
+                        var i = 0;
+                        foreach (var item in margenes.Detalle)
+                        {
 
 
-                        DetMargenes det = new DetMargenes();
-                        det.ItemCode = item.ItemCode;
-                        det.idListaPrecio = item.idListaPrecio;
-                        det.idCategoria = item.idCategoria;
-                        det.Moneda = item.Moneda;
-                        det.PrecioSAP = item.PrecioSAP;
-                        det.Cobertura = item.Cobertura;
-                        det.Margen = item.Margen;
-                        det.MargenMin = item.MargenMin;
-                        det.PrecioFinal = item.PrecioFinal;
-                        det.PrecioMin = item.PrecioMin;
-                        det.PrecioCob = item.PrecioCob;
-                        db.DetMargenes.Add(det);
-                        db.SaveChanges();
+                            DetMargenes det = new DetMargenes();
+                            det.ItemCode = item.ItemCode;
+                            det.idListaPrecio = item.idListaPrecio;
+                            det.idCategoria = item.idCategoria;
+                            det.Moneda = item.Moneda;
+                            det.PrecioSAP = item.PrecioSAP;
+                            det.Cobertura = item.Cobertura;
+                            det.Margen = item.Margen;
+                            det.MargenMin = item.MargenMin;
+                            det.PrecioFinal = item.PrecioFinal;
+                            det.PrecioMin = item.PrecioMin;
+                            det.PrecioCob = item.PrecioCob;
+                            db.DetMargenes.Add(det);
+                            db.SaveChanges();
 
-                        i++;
+                            i++;
 
 
+                        }
                     }
+
 
 
 
@@ -234,28 +238,29 @@ namespace WATickets.Controllers
                         db.SaveChanges();
                     }
 
-
-                    var i = 0;
-                    foreach (var item in margenes.Detalle)
+                    if (margenes.Detalle != null)
                     {
-                        DetMargenes det = new DetMargenes();
-                        det.ItemCode = item.ItemCode;
-                        det.idListaPrecio = item.idListaPrecio;
-                        det.idCategoria = item.idCategoria;
-                        det.Moneda = item.Moneda;
-                        det.PrecioSAP = item.PrecioSAP;
-                        det.Cobertura = item.Cobertura;
-                        det.Margen = item.Margen;
-                        det.MargenMin = item.MargenMin;
-                        det.PrecioFinal = item.PrecioFinal;
-                        det.PrecioMin = item.PrecioMin;
-                        det.PrecioCob = item.PrecioCob;
-                        db.DetMargenes.Add(det);
-                        db.SaveChanges();
-                        i++;
+                        var i = 0;
+                        foreach (var item in margenes.Detalle)
+                        {
+                            DetMargenes det = new DetMargenes();
+                            det.ItemCode = item.ItemCode;
+                            det.idListaPrecio = item.idListaPrecio;
+                            det.idCategoria = item.idCategoria;
+                            det.Moneda = item.Moneda;
+                            det.PrecioSAP = item.PrecioSAP;
+                            det.Cobertura = item.Cobertura;
+                            det.Margen = item.Margen;
+                            det.MargenMin = item.MargenMin;
+                            det.PrecioFinal = item.PrecioFinal;
+                            det.PrecioMin = item.PrecioMin;
+                            det.PrecioCob = item.PrecioCob;
+                            db.DetMargenes.Add(det);
+                            db.SaveChanges();
+                            i++;
+                        }
+
                     }
-
-
 
 
 
