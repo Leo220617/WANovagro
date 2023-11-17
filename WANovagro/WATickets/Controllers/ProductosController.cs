@@ -22,13 +22,13 @@ namespace WATickets.Controllers
         ModelCliente db = new ModelCliente();
         G G = new G();
 
-    
+
 
 
 
 
         [Route("api/Productos/InsertarSAP")]
-        public HttpResponseMessage GetExtraeDatos( )
+        public HttpResponseMessage GetExtraeDatos()
         {
             try
             {
@@ -50,11 +50,11 @@ namespace WATickets.Controllers
                     var itemCode = item["Codigo"].ToString();
                     var Whscode = item["idBodega"].ToString();
                     var bod = db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault().id;
-                    if(bod > 0) // si existe la bodega
+                    if (bod > 0) // si existe la bodega
                     {
                         var PriceList = item["ListaPrecio"].ToString();
                         var list = db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault().id;
-                        if(list > 0) //si existe la lista
+                        if (list > 0) //si existe la lista
                         {
                             var Producto = db.Productos.Where(a => a.Codigo == itemCode && a.idBodega == bod && a.idListaPrecios == list).FirstOrDefault();
 
@@ -140,45 +140,38 @@ namespace WATickets.Controllers
                                     Producto.Nombre = item["Nombre"].ToString();
                                     decimal Porcentaje = 0;
                                     Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
+                                    Producto.Moneda = item["Moneda"].ToString();
+                                    Producto.Costo = Convert.ToDecimal(item["Costo"]);
 
                                     var time = DateTime.Now.Date;
                                     var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time).FirstOrDefault();
-                                    if(Promocion != null)
+                                    var Margenes = db.EncMargenes.Where(a => a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
+                                    var DetMargenes = db.DetMargenes.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
+                                    if (Promocion != null)
                                     {
                                         Producto.PrecioUnitario = Promocion.PrecioFinal;
-                                    }
 
-                                    try
+                                    }
+                                    else if (DetMargenes != null)
                                     {
-                                        var TienePorcentaje = db.PrecioXLista.Where(a => a.idProducto == Producto.id && a.idListaPrecio == Producto.idListaPrecios).FirstOrDefault();
-                                        if (TienePorcentaje != null)
-                                        {
-                                            Porcentaje = (TienePorcentaje.Porcentaje > 0 ? Producto.PrecioUnitario * (TienePorcentaje.Porcentaje / 100) : (Producto.PrecioUnitario * (TienePorcentaje.Porcentaje / 100)) * -1);
-
-                                            Producto.PrecioUnitario += Porcentaje;
-                                        }
-                                         
+                                        Producto.PrecioUnitario = DetMargenes.PrecioFinal;
                                     }
-                                    catch (Exception ex1)
+                                    else if (Margenes != null)
                                     {
-                                        ModelCliente db2 = new ModelCliente();
-                                        BitacoraErrores be = new BitacoraErrores();
-                                        be.Descripcion = ex1.Message;
-                                        be.StrackTrace = ex1.StackTrace;
-                                        be.Fecha = DateTime.Now;
-                                        be.JSON = JsonConvert.SerializeObject(ex1);
-                                        db2.BitacoraErrores.Add(be);
-                                        db2.SaveChanges();
-
+                                        var PrecioCob = Producto.Costo / (1 - (Margenes.Cobertura / 100));
+                                        var PrecioFinal = PrecioCob / (1 - (Margenes.Margen / 100));
+                                        Producto.PrecioUnitario = PrecioFinal;
                                     }
-                                   
+
+                               
+
                                     Producto.UnidadMedida = item["UnidadMedida"].ToString(); ;
                                     Producto.Cabys = item["Cabys"].ToString();
                                     Producto.TipoCod = item["TipoCodigo"].ToString();
                                     Producto.CodBarras = item["CodigoBarras"].ToString();
-                                    Producto.Costo = Convert.ToDecimal(item["Costo"]);
+
                                     Producto.Stock = Convert.ToDecimal(item["StockReal"]);
-                                    Producto.Moneda = item["Moneda"].ToString();
+
 
                                     Producto.Activo = true;
                                     Producto.FechaActualizacion = DateTime.Now;
@@ -220,9 +213,9 @@ namespace WATickets.Controllers
 
                             }
                         }
-                        
+
                     }
-                    
+
 
 
                 }
@@ -280,14 +273,14 @@ namespace WATickets.Controllers
 
                     if (Producto != null) //Existe ?
                     {
-                   
+
                         try
                         {
                             db.Entry(Producto).State = EntityState.Modified;
 
 
                             Producto.FechaActualizacion = DateTime.Now;
-                  
+
                             var MAG = Convert.ToInt32(item["MAG"]);
                             if (MAG == 1)
                             {
@@ -341,22 +334,22 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
-        public HttpResponseMessage GetAll([FromUri] Filtros filtro) 
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
                 var Productos = db.Productos.Where(a => (filtro.Codigo2 > 0 ? a.idListaPrecios == filtro.Codigo2 : true) && (filtro.Codigo1 > 0 ? a.idBodega == filtro.Codigo1 : true))
                     .ToList(); //Traemos el listado de productos
 
-                if(!string.IsNullOrEmpty(filtro.Texto))
+                if (!string.IsNullOrEmpty(filtro.Texto))
                 {
                     // and = &&, or = ||
-                    Productos = Productos.Where(a => a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper()) ).ToList();// filtramos por lo que trae texto
+                    Productos = Productos.Where(a => a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
                 }
-                if(!string.IsNullOrEmpty(filtro.CardCode))
+                if (!string.IsNullOrEmpty(filtro.CardCode))
                 {
                     var Bodegas = db.Bodegas.Where(a => a.CodSuc != filtro.CardCode).ToList();
-                    foreach(var item in Bodegas)
+                    foreach (var item in Bodegas)
                     {
                         Productos = Productos.Where(a => a.idBodega != item.id).ToList();
 
@@ -562,8 +555,8 @@ namespace WATickets.Controllers
                 var conexion = G.DevuelveCadena(db);
 
                 var code = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? db.Bodegas.FirstOrDefault() : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault();
-               
-                var SQL = parametros.SQLProductos + " and t2.WhsCode = '" + db.Bodegas.Where(a => a.id == code.id).FirstOrDefault().CodSAP + "' " ;
+
+                var SQL = parametros.SQLProductos + " and t2.WhsCode = '" + db.Bodegas.Where(a => a.id == code.id).FirstOrDefault().CodSAP + "' ";
 
 
                 SqlConnection Cn = new SqlConnection(conexion);
@@ -572,7 +565,7 @@ namespace WATickets.Controllers
                 DataSet Ds = new DataSet();
                 Cn.Open(); //se abre la conexion
                 Da.Fill(Ds, "Productos");
-             
+
                 var Productos = db.Productos.ToList();
 
                 foreach (DataRow item in Ds.Tables["Productos"].Rows)
@@ -584,7 +577,7 @@ namespace WATickets.Controllers
                     var Whscode = item["idBodega"].ToString();
                     var bod = db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault().id;
 
-                    var Producto = db.Productos.Where(a => a.Codigo == cardCode && a.idListaPrecios == list && a.idBodega == idBod ).FirstOrDefault();
+                    var Producto = db.Productos.Where(a => a.Codigo == cardCode && a.idListaPrecios == list && a.idBodega == idBod).FirstOrDefault();
                     if (Producto == null) //Existe ?
                     {
 
@@ -662,19 +655,35 @@ namespace WATickets.Controllers
                             Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
                             var idCategoria = item["Categoria"].ToString();
                             Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
+                            Producto.Costo = Convert.ToDecimal(item["Costo"]);
+                            Producto.Moneda = item["Moneda"].ToString();
+
                             var time = DateTime.Now.Date;
                             var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time).FirstOrDefault();
+                            var Margenes = db.EncMargenes.Where(a => a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
+                            var DetMargenes = db.DetMargenes.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
                             if (Promocion != null)
                             {
                                 Producto.PrecioUnitario = Promocion.PrecioFinal;
+
+                            }
+                            else if (DetMargenes != null)
+                            {
+                                Producto.PrecioUnitario = DetMargenes.PrecioFinal;
+                            }
+                            else if (Margenes != null)
+                            {
+                                var PrecioCob = Producto.Costo / (1 - (Margenes.Cobertura / 100));
+                                var PrecioFinal = PrecioCob / (1 - (Margenes.Margen / 100));
+                                Producto.PrecioUnitario = PrecioFinal;
                             }
                             Producto.UnidadMedida = item["UnidadMedida"].ToString(); ;
                             Producto.Cabys = item["Cabys"].ToString();
                             Producto.TipoCod = item["TipoCodigo"].ToString();
                             Producto.CodBarras = item["CodigoBarras"].ToString();
-                            Producto.Costo = Convert.ToDecimal(item["Costo"]);
+                            
                             Producto.Stock = Convert.ToDecimal(item["StockReal"]);
-                            Producto.Moneda = item["Moneda"].ToString();
+                           
 
                             Producto.Activo = true;
                             Producto.ProcesadoSAP = true;
@@ -731,7 +740,7 @@ namespace WATickets.Controllers
                 db2.SaveChanges();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
-              
+
             }
 
         }

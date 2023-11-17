@@ -22,28 +22,7 @@ namespace WATickets.Controllers
         {
             try
             {
-                var time = DateTime.Now; // 01-01-0001
-                if (filtro.FechaFinal != time)
-                {
-                    filtro.FechaInicial = filtro.FechaInicial.Date;
-                    filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
-                }
-                var Margenes = db.EncMargenes.Select(a => new
-                {
-                    a.idListaPrecio,
-                    a.idCategoria,
-                    a.Moneda,
-                    a.Cobertura,
-                    a.Margen,
-                    a.MargenMin,
-                    a.idUsuarioCreador,
-                    a.FechaCreacion,
-
-                    Detalle = db.DetMargenes.Where(b => b.idListaPrecio == a.idListaPrecio && b.idCategoria == a.idCategoria && b.Moneda == a.Moneda).ToList()
-
-                }).Where(a => (filtro.FechaInicial != time ? a.FechaCreacion >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.FechaCreacion <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
-
-
+                var Margenes = db.EncMargenes.ToList();
 
                 if (filtro.Codigo1 > 0) // esto por ser integer
                 {
