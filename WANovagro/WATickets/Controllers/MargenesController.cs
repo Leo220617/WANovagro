@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
@@ -264,6 +266,82 @@ namespace WATickets.Controllers
                 db.SaveChanges();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, be);
+            }
+        }
+
+        [Route("api/Margenes/MargenesProductos")]
+        public HttpResponseMessage GetExtraeDatos([FromUri]int idListaPrecio, int idCategoria, string Moneda)
+        {
+            try
+            {
+           
+
+                var ProductosSP = db.Productos.Where(a => a.idListaPrecios == idListaPrecio && a.idCategoria == idCategoria && a.Moneda == Moneda).ToList();
+
+                foreach (var item in ProductosSP)
+                {
+
+
+                    var Producto = item;
+                 
+                    if(Producto != null)
+                    {
+                        try
+                        {
+                            db.Entry(Producto).State = EntityState.Modified;
+                      
+
+                            var time = DateTime.Now.Date;
+                            var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time).FirstOrDefault();
+                            var Margenes = db.EncMargenes.Where(a => a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
+                            var DetMargenes = db.DetMargenes.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
+                            if (Promocion != null)
+                            {
+                                Producto.PrecioUnitario = Promocion.PrecioFinal;
+
+                            }
+                            else if (DetMargenes != null)
+                            {
+                                Producto.PrecioUnitario = DetMargenes.PrecioFinal;
+                            }
+                            else if (Margenes != null)
+                            {
+                                var PrecioCob = Producto.Costo / (1 - (Margenes.Cobertura / 100));
+                                var PrecioFinal = PrecioCob / (1 - (Margenes.Margen / 100));
+                                Producto.PrecioUnitario = PrecioFinal;
+                            }
+                         
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex1)
+                        {
+
+                            ModelCliente db2 = new ModelCliente();
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex1.Message;
+                            be.StrackTrace = ex1.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex1);
+                            db2.BitacoraErrores.Add(be);
+                            db2.SaveChanges();
+                        }
+
+                    }
+                }
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
     }
