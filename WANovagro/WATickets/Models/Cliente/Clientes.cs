@@ -71,6 +71,8 @@ namespace WATickets.Models.Cliente
 
         public decimal LimiteCredito { get; set; }
 
+        public decimal Descuento { get; set; }
+
     }
        
 }
