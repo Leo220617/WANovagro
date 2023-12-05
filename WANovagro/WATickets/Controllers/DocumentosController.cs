@@ -136,8 +136,10 @@ namespace WATickets.Controllers
                                 if (param.CostingCode != "N" && param.CostingCode2 != "N" && param.CostingCode3 != "N")
                                 {
                                     documentoSAP.Lines.CostingCode = param.CostingCode;
-                                    documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                    //documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                    documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto; //Cambiar progra para Novagro
                                     documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                    
                                 }
                                 else
                                 {
@@ -344,8 +346,10 @@ namespace WATickets.Controllers
                                 if (param.CostingCode != "N" && param.CostingCode2 != "N" && param.CostingCode3 != "N")
                                 {
                                     documentoSAP.Lines.CostingCode = param.CostingCode;
-                                    documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                    //documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                    documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto; //Cambiar progra para Novagro
                                     documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                  
                                 }
                                 else
                                 {
