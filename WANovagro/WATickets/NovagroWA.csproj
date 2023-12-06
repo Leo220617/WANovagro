@@ -263,6 +263,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\AprobacionesCreditosController.cs" />
     <Compile Include="Controllers\AsientosController.cs" />
     <Compile Include="Controllers\BarriosController.cs" />
     <Compile Include="Controllers\BitacoraController.cs" />
@@ -330,6 +331,7 @@
     <Compile Include="Models\APIS\RecibidoFacturacion.cs" />
     <Compile Include="Models\APIS\RespuestaTipoCambio.cs" />
     <Compile Include="Models\APIS\SucursalesViewModel.cs" />
+    <Compile Include="Models\Cliente\AprobacionesCreditos.cs" />
     <Compile Include="Models\Cliente\Asientos.cs" />
     <Compile Include="Models\Cliente\Barrios.cs" />
     <Compile Include="Models\Cliente\BitacoraErrores.cs" />
