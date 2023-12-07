@@ -295,14 +295,14 @@ namespace WATickets.Controllers
             }
         }
         [Route("api/Bodegas/InsertarSAPByProduct")]
-        public HttpResponseMessage GetExtraeByProduct([FromUri] int id)
+        public HttpResponseMessage GetExtraeByProduct([FromUri] int idBod)
         {
             try
             {
                 Parametros parametros = db.Parametros.FirstOrDefault();
                 var conexion = G.DevuelveCadena(db);
 
-                var code = db.Bodegas.Where(a => a.id == id).FirstOrDefault() == null ? db.Bodegas.FirstOrDefault() : db.Bodegas.Where(a => a.id == id).FirstOrDefault();
+                var code = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? db.Bodegas.FirstOrDefault() : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault();
 
                 var SQL = parametros.SQLProductos + " and t2.WhsCode = '" + db.Bodegas.Where(a => a.id == code.id).FirstOrDefault().CodSAP + "' ";
 
@@ -318,9 +318,14 @@ namespace WATickets.Controllers
 
                 foreach (DataRow item in Ds.Tables["Productos"].Rows)
                 {
+                    var PriceList = item["ListaPrecio"].ToString();
+                    var list = db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == PriceList).FirstOrDefault().id;
                     var cardCode = item["Codigo"].ToString();
 
-                    var Producto = Productos.Where(a => a.Codigo == cardCode).FirstOrDefault();
+                    var Whscode = item["idBodega"].ToString();
+                    var bod = db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault().id;
+
+                    var Producto = db.Productos.Where(a => a.Codigo == cardCode && a.idListaPrecios == list && a.idBodega == idBod).FirstOrDefault();
                     if (Producto == null) //Existe ?
                     {
 
@@ -344,8 +349,8 @@ namespace WATickets.Controllers
                             Producto.Stock = Convert.ToDecimal(item["StockReal"]);
                             Producto.Moneda = item["Moneda"].ToString();
                             Producto.Activo = true;
-                            Producto.FechaActualizacion = DateTime.Now;
                             Producto.ProcesadoSAP = true;
+
                             var MAG = Convert.ToInt32(item["MAG"]);
                             if (MAG == 1)
                             {
@@ -354,6 +359,17 @@ namespace WATickets.Controllers
                             else if (MAG == 0)
                             {
                                 Producto.MAG = false;
+                            }
+                            Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
+
+                            var Serie = Convert.ToInt32(item["Serie"]);
+                            if (Serie == 1)
+                            {
+                                Producto.Serie = true;
+                            }
+                            else if (Serie == 0)
+                            {
+                                Producto.Serie = false;
                             }
                             db.Productos.Add(Producto);
                             db.SaveChanges();
@@ -385,40 +401,39 @@ namespace WATickets.Controllers
                             Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Producto.Nombre = item["Nombre"].ToString();
                             Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
-                            decimal Porcentaje = 0;
-                            try
-                            {
-                                var TienePorcentaje = db.PrecioXLista.Where(a => a.idProducto == Producto.id && a.idListaPrecio == Producto.idListaPrecios).FirstOrDefault();
-                                if (TienePorcentaje != null)
-                                {
-                                    Porcentaje = (TienePorcentaje.Porcentaje > 0 ? Producto.PrecioUnitario * (TienePorcentaje.Porcentaje / 100) : (Producto.PrecioUnitario * (TienePorcentaje.Porcentaje / 100)) * -1);
+                            var idCategoria = item["Categoria"].ToString();
+                            Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
+                            Producto.Costo = Convert.ToDecimal(item["Costo"]);
+                            Producto.Moneda = item["Moneda"].ToString();
 
-                                    Producto.PrecioUnitario += Porcentaje;
-                                }
+                            var time = DateTime.Now.Date;
+                            var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time).FirstOrDefault();
+                            var Margenes = db.EncMargenes.Where(a => a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
+                            var DetMargenes = db.DetMargenes.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
+                            if (Promocion != null)
+                            {
+                                Producto.PrecioUnitario = Promocion.PrecioFinal;
 
                             }
-                            catch (Exception ex1)
+                            else if (DetMargenes != null)
                             {
-                                ModelCliente db2 = new ModelCliente();
-                                BitacoraErrores be = new BitacoraErrores();
-                                be.Descripcion = ex1.Message;
-                                be.StrackTrace = ex1.StackTrace;
-                                be.Fecha = DateTime.Now;
-                                be.JSON = JsonConvert.SerializeObject(ex1);
-                                db2.BitacoraErrores.Add(be);
-                                db2.SaveChanges();
-
+                                Producto.PrecioUnitario = DetMargenes.PrecioFinal;
+                            }
+                            else if (Margenes != null)
+                            {
+                                var PrecioCob = Producto.Costo / (1 - (Margenes.Cobertura / 100));
+                                var PrecioFinal = PrecioCob / (1 - (Margenes.Margen / 100));
+                                Producto.PrecioUnitario = PrecioFinal;
                             }
                             Producto.UnidadMedida = item["UnidadMedida"].ToString(); ;
                             Producto.Cabys = item["Cabys"].ToString();
                             Producto.TipoCod = item["TipoCodigo"].ToString();
                             Producto.CodBarras = item["CodigoBarras"].ToString();
-                            Producto.Costo = Convert.ToDecimal(item["Costo"]);
+
                             Producto.Stock = Convert.ToDecimal(item["StockReal"]);
-                            Producto.Moneda = item["Moneda"].ToString();
+
 
                             Producto.Activo = true;
-                            Producto.FechaActualizacion = DateTime.Now;
                             Producto.ProcesadoSAP = true;
                             var MAG = Convert.ToInt32(item["MAG"]);
                             if (MAG == 1)
@@ -428,6 +443,16 @@ namespace WATickets.Controllers
                             else if (MAG == 0)
                             {
                                 Producto.MAG = false;
+                            }
+                            Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
+                            var Serie = Convert.ToInt32(item["Serie"]);
+                            if (Serie == 1)
+                            {
+                                Producto.Serie = true;
+                            }
+                            else if (Serie == 0)
+                            {
+                                Producto.Serie = false;
                             }
 
                             db.SaveChanges();

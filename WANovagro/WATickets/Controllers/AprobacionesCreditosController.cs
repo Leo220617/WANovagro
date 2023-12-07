@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
@@ -29,10 +30,13 @@ namespace WATickets.Controllers
                 {
                     a.id,
                     a.idCliente,
+                    a.idUsuarioCreador,
+                    a.idUsuarioAceptador,
                     a.FechaCreacion,
                     a.Status,
                     a.Activo,
-                    a.Total
+                    a.Total,
+                    a.TotalAprobado
                   
 
                 }).Where(a => (filtro.FechaInicial != time ? a.FechaCreacion >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.FechaCreacion <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
@@ -105,10 +109,14 @@ namespace WATickets.Controllers
                     Aprobacion = new AprobacionesCreditos();
                     Aprobacion.id = aprobaciones.id;
                     Aprobacion.idCliente = aprobaciones.idCliente;
-                    Aprobacion.FechaCreacion = DateTime.Now;
+                    Aprobacion.idUsuarioCreador = aprobaciones.idUsuarioCreador;
+                    Aprobacion.idUsuarioAceptador = 0;
+                    Aprobacion.FechaCreacion = DateTime.Now.Date;
                     Aprobacion.Status = "P";
                     Aprobacion.Activo = true;
                     Aprobacion.Total = 0;
+                    Aprobacion.TotalAprobado = 0;
+                    
                     db.AprobacionesCreditos.Add(Aprobacion);
                     db.SaveChanges();
 
@@ -144,6 +152,7 @@ namespace WATickets.Controllers
                 {
                     db.Entry(Aprobacion).State = System.Data.Entity.EntityState.Modified;
                     Aprobacion.Status = aprobaciones.Status;
+                    Aprobacion.idUsuarioAceptador = aprobaciones.idUsuarioAceptador;
                     if (Aprobacion.Status == "A")
                     {
                         Aprobacion.Activo = true;
@@ -152,8 +161,8 @@ namespace WATickets.Controllers
                     {
                         Aprobacion.Activo = false;
                     }
-
-                    Aprobacion.Total = aprobaciones.Total;
+                    Aprobacion.TotalAprobado = aprobaciones.TotalAprobado;
+                    Aprobacion.Total = Aprobacion.TotalAprobado;
                     db.SaveChanges();
 
                 }
@@ -161,6 +170,55 @@ namespace WATickets.Controllers
                 {
                     throw new Exception("No existe una aprobacion" +
                         " con este ID");
+                }
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
+        [Route("api/AprobacionesCreditos/Eliminar")]
+        [HttpDelete]
+        public HttpResponseMessage Delete([FromUri] int id)
+        {
+            try
+            {
+                AprobacionesCreditos Aprobaciones = db.AprobacionesCreditos.Where(a => a.id == id).FirstOrDefault();
+                if (Aprobaciones != null)
+                {
+                    db.Entry(Aprobaciones).State = System.Data.Entity.EntityState.Modified;
+
+
+                    if (Aprobaciones.Activo)
+                    {
+
+                        Aprobaciones.Activo = false;
+
+                    }
+                    else
+                    {
+
+                        Aprobaciones.Activo = true;
+                    }
+
+
+
+
+                    db.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("No existe una aprobacion con este ID");
                 }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);

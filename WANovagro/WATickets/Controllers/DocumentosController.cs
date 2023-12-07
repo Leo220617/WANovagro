@@ -2168,17 +2168,30 @@ namespace WATickets.Controllers
                         if (Documento.TipoDocumento != "03")
                         {
                             var Condicion = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault();
+                           
                             if (Condicion != null)
                             {
                                 if (Condicion.Dias > 0)
                                 {
                                     var Cliente = db.Clientes.Where(a => a.id == documento.idCliente).FirstOrDefault();
+                                    var Aprobados = db.AprobacionesCreditos.Where(a => a.idCliente == Documento.idCliente && a.Status == "A" && a.Activo == true && a.FechaCreacion == time).FirstOrDefault();
                                     if (Cliente != null)
                                     {
                                         db.Entry(Cliente).State = EntityState.Modified;
                                         Cliente.Saldo += Documento.TotalCompra;
                                         db.SaveChanges();
 
+                                    }
+                                    if(Aprobados != null)
+                                    {
+                                        db.Entry(Aprobados).State = EntityState.Modified;
+                                        Aprobados.Total -= Documento.TotalCompra;
+
+                                        if(Aprobados.Total <= 1) // puede que la resta de 0.05 y no lo cierre
+                                        {
+                                            Aprobados.Activo = false;
+                                        }
+                                        db.SaveChanges();
                                     }
                                 }
                             }
