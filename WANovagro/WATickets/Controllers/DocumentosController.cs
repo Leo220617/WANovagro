@@ -2242,6 +2242,7 @@ namespace WATickets.Controllers
 
                         var Url = Parametros.UrlFacturaElectronica.Replace("@DocNumR", Documento.id.ToString()).Replace("@ObjTypeR", (Documento.TipoDocumento != "03" ? "13" : "14")).Replace("@SucursalR", "099");
 
+                        cliente.Timeout = TimeSpan.FromMinutes(30);
                         HttpResponseMessage response = await cliente.GetAsync(Url);
                         if (response.IsSuccessStatusCode)
                         {
