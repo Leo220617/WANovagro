@@ -537,7 +537,265 @@ namespace WATickets.Controllers
         }
 
 
+        [Route("api/Clientes/InsertarSAPByCardCode")]
+        public HttpResponseMessage GetExtraeByClientSAP([FromUri] string code)
+        {
+            try
+            {
+                Parametros parametros = db.Parametros.FirstOrDefault(); //de aqui nos traemos los querys
+                var conexion = G.DevuelveCadena(db); //aqui extraemos la informacion de la tabla de sap para hacerle un query a sap
 
+               
+                if (string.IsNullOrEmpty(code.ToString()))
+                {
+                    throw new Exception("El codigo del cliente no es valido");
+                }
+                var SQL = parametros.SQLClientes + " and t0.CardCode = '" + code + "'"; //Preparo el query
+
+                SqlConnection Cn = new SqlConnection(conexion);
+                SqlCommand Cmd = new SqlCommand(SQL, Cn);
+                SqlDataAdapter Da = new SqlDataAdapter(Cmd);
+                DataSet Ds = new DataSet();
+                Cn.Open(); //se abre la conexion
+                Da.Fill(Ds, "Clientes");
+
+                var Clientes = db.Clientes.ToList();
+                foreach (DataRow item in Ds.Tables["Clientes"].Rows)
+                {
+                    var cardCode = item["id"].ToString();
+
+                    var Cliente = Clientes.Where(a => a.Codigo == cardCode).FirstOrDefault();
+
+                    if (Cliente == null) //Existe ?
+                    {
+                        try
+                        {
+                            Cliente = new Clientes();
+                            Cliente.Codigo = item["id"].ToString();
+                            var idLista = item["ListaPrecio"].ToString();
+                            Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+                            Cliente.Nombre = item["Nombre"].ToString();
+                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+
+
+                            switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                            {
+                                case 9:
+                                    {
+                                        Cliente.TipoCedula = "01";
+                                        break;
+                                    }
+                                case 10:
+                                    {
+                                        Cliente.TipoCedula = "02";
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        Cliente.TipoCedula = "03";
+                                        break;
+                                    }
+                            }
+
+                            Cliente.Email = item["Correo"].ToString();
+                            Cliente.CodPais = "506";
+                            Cliente.Telefono = item["Telefono"].ToString();
+                            if (!string.IsNullOrEmpty(item["Provincia"].ToString()))
+                            {
+                                Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
+                                var canton = item["Canton"].ToString();
+                                Cliente.Canton = db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault() == null ? db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia).FirstOrDefault().CodCanton.ToString() : db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault().CodCanton.ToString();
+                                var canton2 = Convert.ToInt32(Cliente.Canton);
+                                var distrito = item["Distrito"].ToString();
+                                Cliente.Distrito = db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault() == null ? db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2).FirstOrDefault().CodDistrito.ToString() : db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault().CodDistrito.ToString();
+                                var distrito2 = Convert.ToInt32(Cliente.Distrito);
+
+                                var barrio = item["Barrio"].ToString();
+                                Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
+
+                                Cliente.Sennas = item["Sennas"].ToString();
+                            }
+                            else
+                            {
+                                Cliente.Provincia = 0;
+                            }
+
+                            Cliente.CorreoPublicitario = "";
+                            string MAG = item["MAG"].ToString();
+                            if (MAG == "SI")
+                            {
+                                Cliente.MAG = true;
+                            }
+                            else
+                            {
+                                Cliente.MAG = false;
+                            }
+
+                            string INT = item["INT"].ToString();
+                            if (INT == "SI")
+                            {
+                                Cliente.INT = true;
+                            }
+                            else
+                            {
+                                Cliente.INT = false;
+                            }
+
+                            Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
+                            Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
+
+                            Cliente.Descuento = Convert.ToDecimal(item["Descuento"]);
+                            Cliente.Activo = true;
+                            Cliente.FechaActualizacion = DateTime.Now;
+                            Cliente.ProcesadoSAP = true;
+
+
+                            var idCond = item["idCondPago"].ToString();
+                            Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault() == null ? db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado")).FirstOrDefault().id : db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault().id;
+
+                            var idGrupo = item["idGrupo"].ToString();
+                            Cliente.idGrupo = db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault() == null ? db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id : db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id;
+
+                            db.Clientes.Add(Cliente);
+                            db.SaveChanges();
+
+                        }
+                        catch (Exception ex1)
+                        {
+
+                            ModelCliente db2 = new ModelCliente();
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex1.Message;
+                            be.StrackTrace = ex1.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex1);
+                            db2.BitacoraErrores.Add(be);
+                            db2.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            db.Entry(Cliente).State = EntityState.Modified;
+                            var idLista = item["ListaPrecio"].ToString();
+                            Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+                            Cliente.Nombre = item["Nombre"].ToString();
+                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+
+                            switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                            {
+                                case 9:
+                                    {
+                                        Cliente.TipoCedula = "01";
+                                        break;
+                                    }
+                                case 10:
+                                    {
+                                        Cliente.TipoCedula = "02";
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        Cliente.TipoCedula = "03";
+                                        break;
+                                    }
+                            }
+
+                            Cliente.Email = item["Correo"].ToString();
+                            Cliente.CodPais = "506";
+                            Cliente.Telefono = item["Telefono"].ToString();
+
+                            if (!string.IsNullOrEmpty(item["Provincia"].ToString()))
+                            {
+                                Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
+                                var canton = item["Canton"].ToString();
+                                Cliente.Canton = db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault() == null ? db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia).FirstOrDefault().CodCanton.ToString() : db.Cantones.Where(a => a.CodProvincia == Cliente.Provincia && a.NomCanton.ToUpper().Contains(canton.ToUpper())).FirstOrDefault().CodCanton.ToString();
+                                var canton2 = Convert.ToInt32(Cliente.Canton);
+                                var distrito = item["Distrito"].ToString();
+                                Cliente.Distrito = db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault() == null ? db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2).FirstOrDefault().CodDistrito.ToString() : db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault().CodDistrito.ToString();
+                                var distrito2 = Convert.ToInt32(Cliente.Distrito);
+
+                                var barrio = item["Barrio"].ToString();
+                                Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
+
+                                Cliente.Sennas = item["Sennas"].ToString();
+                            }
+                            else
+                            {
+                                Cliente.Provincia = 0;
+                            }
+                            var idCond = item["idCondPago"].ToString();
+                            Cliente.idCondicionPago = db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault() == null ? db.CondicionesPagos.Where(a => a.Nombre.ToLower().Contains("Contado")).FirstOrDefault().id : db.CondicionesPagos.Where(a => a.CodSAP == idCond).FirstOrDefault().id;
+                            var idGrupo = item["idGrupo"].ToString();
+                            Cliente.idGrupo = db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault() == null ? db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id : db.GruposClientes.Where(a => a.CodSAP == idGrupo).FirstOrDefault().id;
+                            Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
+                            Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
+                            Cliente.Descuento = Convert.ToDecimal(item["Descuento"]);
+                            Cliente.Activo = true;
+                            Cliente.FechaActualizacion = DateTime.Now;
+                            Cliente.ProcesadoSAP = true;
+                            string MAG = item["MAG"].ToString();
+                            if (MAG == "SI")
+                            {
+                                Cliente.MAG = true;
+                            }
+                            else
+                            {
+                                Cliente.MAG = false;
+                            }
+
+                            string INT = item["INT"].ToString();
+                            if (INT == "SI")
+                            {
+                                Cliente.INT = true;
+                            }
+                            else
+                            {
+                                Cliente.INT = false;
+                            }
+
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex1)
+                        {
+                            ModelCliente db2 = new ModelCliente();
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex1.Message;
+                            be.StrackTrace = ex1.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex1);
+                            db2.BitacoraErrores.Add(be);
+                            db2.SaveChanges();
+                        }
+
+                    }
+
+
+                }
+
+
+                Cn.Close(); //se cierra la conexion
+                Cn.Dispose();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Procesado con exito");
+
+            }
+            catch (Exception ex)
+            {
+
+                ModelCliente db2 = new ModelCliente();
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db2.BitacoraErrores.Add(be);
+                db2.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
+        }
 
 
 
