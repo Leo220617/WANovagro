@@ -57,7 +57,7 @@ namespace WATickets.Controllers
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
-                      
+
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
                             Cliente.Descuento = Convert.ToDecimal(item["Descuento"]);
@@ -85,7 +85,7 @@ namespace WATickets.Controllers
                             {
                                 Cliente.MAG = true;
                             }
-                            else 
+                            else
                             {
                                 Cliente.MAG = false;
                             }
@@ -221,7 +221,7 @@ namespace WATickets.Controllers
                             {
                                 Cliente.MAG = true;
                             }
-                            else 
+                            else
                             {
                                 Cliente.MAG = false;
                             }
@@ -316,7 +316,7 @@ namespace WATickets.Controllers
                             Cliente.Nombre = item["Nombre"].ToString();
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
 
-                            
+
                             switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
                             {
                                 case 9:
@@ -365,7 +365,7 @@ namespace WATickets.Controllers
                             {
                                 Cliente.MAG = true;
                             }
-                            else 
+                            else
                             {
                                 Cliente.MAG = false;
                             }
@@ -382,7 +382,7 @@ namespace WATickets.Controllers
 
                             Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
-                     
+
                             Cliente.Descuento = Convert.ToDecimal(item["Descuento"]);
                             Cliente.Activo = true;
                             Cliente.FechaActualizacion = DateTime.Now;
@@ -545,7 +545,7 @@ namespace WATickets.Controllers
                 Parametros parametros = db.Parametros.FirstOrDefault(); //de aqui nos traemos los querys
                 var conexion = G.DevuelveCadena(db); //aqui extraemos la informacion de la tabla de sap para hacerle un query a sap
 
-               
+
                 if (string.IsNullOrEmpty(code.ToString()))
                 {
                     throw new Exception("El codigo del cliente no es valido");
@@ -1072,7 +1072,7 @@ namespace WATickets.Controllers
                                 {
                                     client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";
                                 }
-                                else if(Clientes.MAG == false)
+                                else if (Clientes.MAG == false)
                                 {
                                     client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
                                 }
@@ -1337,7 +1337,7 @@ namespace WATickets.Controllers
                     var client = (SAPbobsCOM.BusinessPartners)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oBusinessPartners);
                     client.CardName = cliente.Nombre;
                     client.EmailAddress = cliente.Email;
-                    client.Series =  param.SerieCliente; //Serie para clientes 70
+                    client.Series = param.SerieCliente; //Serie para clientes 70
                     client.CardForeignName = cliente.Cedula;
                     client.FederalTaxID = cliente.Cedula;
                     client.AdditionalID = cliente.Cedula;
@@ -1493,6 +1493,120 @@ namespace WATickets.Controllers
                 db.BitacoraErrores.Add(be);
                 db.SaveChanges();
                 return "";
+            }
+        }
+
+        //Reenviar correo
+        [HttpGet]
+        [Route("api/Clientes/Reenvio")]
+        public HttpResponseMessage GeCorreo([FromUri]string code, string correos)
+        {
+            try
+            {
+                Parametros parametros = db.Parametros.FirstOrDefault(); //de aqui nos traemos los querys
+                var conexion = G.DevuelveCadena(db); //aqui extraemos la informacion de la tabla de sap para hacerle un query a sap
+
+
+                if (string.IsNullOrEmpty(code.ToString()))
+                {
+                    throw new Exception("El codigo del cliente no es valido");
+                }
+
+                
+
+
+
+                var Cliente = db.Clientes.Where(a => a.Codigo == code).FirstOrDefault();
+
+
+                ////Enviar Correo
+                ///
+                try
+                {
+
+                    var CorreoEnvio = db.CorreoEnvio.FirstOrDefault();
+
+                    var resp = false;
+
+
+
+                    try
+                    {
+                        var html = parametros.HTMLEstadoCuenta;
+
+
+                        html = html.Replace("@Cliente", Cliente.Codigo.ToString() + "-" + Cliente.Nombre.ToString());
+
+                        html = html.Replace("@Fecha", DateTime.Now.ToString("dd/MM/yyyy"));
+
+                        var SQL = parametros.SQLEstadoCuenta + " and t0.CardCode ='" + code + "'"; //Preparo el query
+
+                        SqlConnection Cn = new SqlConnection(conexion);
+                        SqlCommand Cmd = new SqlCommand(SQL, Cn);
+                        SqlDataAdapter Da = new SqlDataAdapter(Cmd);
+                        DataSet Ds = new DataSet();
+                        Cn.Open(); //se abre la conexion
+                        Da.Fill(Ds, "Detalle");
+
+                      
+                        var htmlDetalle = "";
+                        foreach (DataRow itemDetalle in Ds.Tables["Detalle"].Rows)
+                        {
+
+                            htmlDetalle += parametros.HTMLInyectadoEstadoCuenta.Replace("@DocNum", itemDetalle["DocNum"].ToString()).Replace("@FechaDet", itemDetalle["Fecha"].ToString()).Replace("@FechaVen", itemDetalle["FechaVen"].ToString()).Replace("@Dias", itemDetalle["Dias"].ToString()).Replace("@MonedaDet", itemDetalle["MonedaDet"].ToString()).Replace("@TotalDet", itemDetalle["TotalDet"].ToString()).Replace("@SaldoDet", itemDetalle["Saldo"].ToString()).Replace("@SinVen", itemDetalle["SinVen"].ToString());
+                        }
+                        html = html.Replace("@INYECTADO", htmlDetalle);
+
+                        Cn.Close(); //se cierra la conexion
+                        Cn.Dispose();
+
+                        resp = G.SendV2(Cliente.Email + ";" + correos, "", "", CorreoEnvio.RecepcionEmail, "KARCHER", "Estado de Cuenta al" + " " + DateTime.Now.ToString("dd/MM/yyyy"), html, CorreoEnvio.RecepcionHostName, CorreoEnvio.EnvioPort, CorreoEnvio.RecepcionUseSSL, CorreoEnvio.RecepcionEmail, CorreoEnvio.RecepcionPassword);
+
+
+
+                        if (!resp)
+                        {
+                            throw new Exception("No se ha podido enviar el correo a " + Cliente.Email + ";" + correos);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
+                        BitacoraErrores be = new BitacoraErrores();
+                        be.Descripcion = ex.Message;
+                        be.StrackTrace = ex.StackTrace;
+                        be.Fecha = DateTime.Now;
+                        be.JSON = JsonConvert.SerializeObject(ex);
+                        db.BitacoraErrores.Add(be);
+                        db.SaveChanges();
+
+                        return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+                    }
+
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    BitacoraErrores be = new BitacoraErrores();
+                    be.Descripcion = ex.Message;
+                    be.StrackTrace = ex.StackTrace;
+                    be.Fecha = DateTime.Now;
+                    be.JSON = JsonConvert.SerializeObject(ex);
+                    db.BitacoraErrores.Add(be);
+                    db.SaveChanges();
+
+                    return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+                }
+
+
+                return Request.CreateResponse(HttpStatusCode.OK, Cliente);
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }
