@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -1552,8 +1553,26 @@ namespace WATickets.Controllers
                         var htmlDetalle = "";
                         foreach (DataRow itemDetalle in Ds.Tables["Detalle"].Rows)
                         {
+                            string fechaString = itemDetalle["Fecha"].ToString();
+                            DateTime fecha = DateTime.Parse(fechaString);
+                            string fechaFormateada = fecha.ToString("dd/MM/yyyy");
 
-                            htmlDetalle += parametros.HTMLInyectadoEstadoCuenta.Replace("@DocNum", itemDetalle["DocNum"].ToString()).Replace("@FechaDet", itemDetalle["Fecha"].ToString()).Replace("@FechaVen", itemDetalle["FechaVen"].ToString()).Replace("@Dias", itemDetalle["Dias"].ToString()).Replace("@MonedaDet", itemDetalle["MonedaDet"].ToString()).Replace("@TotalDet", itemDetalle["TotalDet"].ToString()).Replace("@SaldoDet", itemDetalle["Saldo"].ToString()).Replace("@SinVen", itemDetalle["SinVen"].ToString());
+                            string fechaVenString = itemDetalle["FechaVen"].ToString();
+                            DateTime fechaVen = DateTime.Parse(fechaVenString);
+                            string fechaVenFormateada = fechaVen.ToString("dd/MM/yyyy");
+
+                            var totalDet = Convert.ToDecimal(itemDetalle["TotalDet"]); 
+                            var totalDetFormateado = totalDet.ToString("N2");
+
+                            var saldo = Convert.ToDecimal(itemDetalle["Saldo"]);
+                            var saldoFormateado = saldo.ToString("N2");
+
+                            var sinVen = Convert.ToDecimal(itemDetalle["SinVen"]);
+                            var sinVenFormateado = sinVen.ToString("N2");
+
+
+
+                            htmlDetalle += parametros.HTMLInyectadoEstadoCuenta.Replace("@DocNum", itemDetalle["DocNum"].ToString()).Replace("@FechaDet", fechaFormateada).Replace("@FechaVen", fechaVenFormateada).Replace("@Dias", itemDetalle["Dias"].ToString()).Replace("@MonedaDet", itemDetalle["MonedaDet"].ToString()).Replace("@TotalDet", totalDetFormateado).Replace("@SaldoDet", saldoFormateado).Replace("@SinVen", sinVenFormateado);
                         }
                         html = html.Replace("@INYECTADO", htmlDetalle);
 
