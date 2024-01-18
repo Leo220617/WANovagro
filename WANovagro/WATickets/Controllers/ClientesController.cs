@@ -102,6 +102,7 @@ namespace WATickets.Controllers
                             }
 
                             Cliente.Email = item["Correo"].ToString();
+                            Cliente.CorreoEC = item["CorreoEC"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
                             if (!string.IsNullOrEmpty(item["Provincia"].ToString()))
@@ -185,6 +186,7 @@ namespace WATickets.Controllers
                             }
 
                             Cliente.Email = item["Correo"].ToString();
+                            Cliente.CorreoEC = item["CorreoEC"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
 
@@ -338,6 +340,7 @@ namespace WATickets.Controllers
                             }
 
                             Cliente.Email = item["Correo"].ToString();
+                            Cliente.CorreoEC = item["CorreoEC"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
                             if (!string.IsNullOrEmpty(item["Provincia"].ToString()))
@@ -443,6 +446,7 @@ namespace WATickets.Controllers
                             }
 
                             Cliente.Email = item["Correo"].ToString();
+                            Cliente.CorreoEC = item["CorreoEC"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
 
@@ -599,6 +603,7 @@ namespace WATickets.Controllers
                             }
 
                             Cliente.Email = item["Correo"].ToString();
+                            Cliente.CorreoEC = item["CorreoEC"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
                             if (!string.IsNullOrEmpty(item["Provincia"].ToString()))
@@ -704,6 +709,7 @@ namespace WATickets.Controllers
                             }
 
                             Cliente.Email = item["Correo"].ToString();
+                            Cliente.CorreoEC = item["CorreoEC"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
 
@@ -928,6 +934,7 @@ namespace WATickets.Controllers
                         Cliente.FechaActualizacion = DateTime.Now;
                         Cliente.MAG = false;
                         Cliente.INT = false;
+                        Cliente.CorreoEC = "";
                         db.Clientes.Add(Cliente);
                         db.SaveChanges();
                     }
@@ -1534,7 +1541,10 @@ namespace WATickets.Controllers
                     try
                     {
                         var html = parametros.HTMLEstadoCuenta;
-
+                        var TotalSaldoFC = 0.0m;
+                        var TotalSinVenFC = 0.0m;
+                        var TotalSaldo = 0.0m;
+                        var TotalSinVen = 0.0m;
 
                         html = html.Replace("@Cliente", Cliente.Codigo.ToString() + "-" + Cliente.Nombre.ToString());
 
@@ -1570,22 +1580,43 @@ namespace WATickets.Controllers
                             var sinVen = Convert.ToDecimal(itemDetalle["SinVen"]);
                             var sinVenFormateado = sinVen.ToString("N2");
 
+                            var Moneda = itemDetalle["MonedaDet"].ToString();
+                            if(Moneda == "USD")
+                            {
+                                var saldoFC = Convert.ToDecimal(itemDetalle["Saldo"]);
+                                var sinVenFC = Convert.ToDecimal(itemDetalle["SinVen"]);
+                                TotalSaldoFC += saldoFC;
+                                TotalSinVenFC += sinVenFC;
+
+                            }
+                            else
+                            {
+                                var saldoC = Convert.ToDecimal(itemDetalle["Saldo"]);
+                                var sinVenC = Convert.ToDecimal(itemDetalle["SinVen"]);
+                                TotalSaldo += saldoC;
+                                TotalSinVen += sinVenC;
+                            }
+
 
 
                             htmlDetalle += parametros.HTMLInyectadoEstadoCuenta.Replace("@DocNum", itemDetalle["DocNum"].ToString()).Replace("@FechaDet", fechaFormateada).Replace("@FechaVen", fechaVenFormateada).Replace("@Dias", itemDetalle["Dias"].ToString()).Replace("@MonedaDet", itemDetalle["MonedaDet"].ToString()).Replace("@TotalDet", totalDetFormateado).Replace("@SaldoDet", saldoFormateado).Replace("@SinVen", sinVenFormateado);
                         }
                         html = html.Replace("@INYECTADO", htmlDetalle);
+                        html = html.Replace("@TotalSaldoFC", TotalSaldoFC.ToString("N2"));
+                        html = html.Replace("@TotalSinVenFC", TotalSinVenFC.ToString("N2"));
+                        html = html.Replace("@TotalSaldo", TotalSaldo.ToString("N2"));
+                        html = html.Replace("@TotalSinVen", TotalSinVen.ToString("N2"));
 
                         Cn.Close(); //se cierra la conexion
                         Cn.Dispose();
 
-                        resp = G.SendV2(Cliente.Email + ";" + correos, "", "", CorreoEnvio.RecepcionEmail, "KARCHER", "Estado de Cuenta al" + " " + DateTime.Now.ToString("dd/MM/yyyy"), html, CorreoEnvio.RecepcionHostName, CorreoEnvio.EnvioPort, CorreoEnvio.RecepcionUseSSL, CorreoEnvio.RecepcionEmail, CorreoEnvio.RecepcionPassword);
+                        resp = G.SendV2((!string.IsNullOrEmpty(Cliente.CorreoEC) ? Cliente.CorreoEC : Cliente.Email) + ";" + correos, "", "", CorreoEnvio.RecepcionEmail, parametros.NombreEmpresa, "Estado de Cuenta al" + " " + DateTime.Now.ToString("dd/MM/yyyy"), html, CorreoEnvio.RecepcionHostName, CorreoEnvio.EnvioPort, CorreoEnvio.RecepcionUseSSL, CorreoEnvio.RecepcionEmail, CorreoEnvio.RecepcionPassword);
 
 
 
                         if (!resp)
                         {
-                            throw new Exception("No se ha podido enviar el correo a " + Cliente.Email + ";" + correos);
+                            throw new Exception("No se ha podido enviar el correo a " + (!string.IsNullOrEmpty(Cliente.CorreoEC) ? Cliente.CorreoEC : Cliente.Email) + ";" + correos);
                         }
                     }
                     catch (Exception ex)
@@ -1624,9 +1655,196 @@ namespace WATickets.Controllers
             }
             catch (Exception ex)
             {
-
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet]
+        [Route("api/Clientes/ReenvioMasivo")]
+        public HttpResponseMessage GeCorreoMasivo()
+        {
+            try
+            {
+                Parametros parametros = db.Parametros.FirstOrDefault(); //de aqui nos traemos los querys
+                var conexion = G.DevuelveCadena(db); //aqui extraemos la informacion de la tabla de sap para hacerle un query a sap
+
+                var SQL2 = parametros.SQLEstadoCuentaMasivo; //Preparo el query
+
+                SqlConnection Cn2 = new SqlConnection(conexion);
+                SqlCommand Cmd2 = new SqlCommand(SQL2, Cn2);
+                SqlDataAdapter Da2 = new SqlDataAdapter(Cmd2);
+                DataSet Ds2 = new DataSet();
+                Cn2.Open(); //se abre la conexion
+                Da2.Fill(Ds2, "Clientes");
+                foreach (DataRow code in Ds2.Tables["Clientes"].Rows)
+                {
+                    var codigoCliente = code["CardCode"].ToString();
+                    var Cliente = db.Clientes.Where(a => a.Codigo == codigoCliente ).FirstOrDefault();
+
+                    if(Cliente != null)
+                    {
+                        ////Enviar Correo
+                        ///
+                        try
+                        {
+
+                            var CorreoEnvio = db.CorreoEnvio.FirstOrDefault();
+
+                            var resp = false;
+
+
+
+                            try
+                            {
+                                var html = parametros.HTMLEstadoCuenta;
+                                var TotalSaldoFC = 0.0m;
+                                var TotalSinVenFC = 0.0m;
+                                var TotalSaldo = 0.0m;
+                                var TotalSinVen = 0.0m;
+
+                                html = html.Replace("@Cliente", Cliente.Codigo.ToString() + "-" + Cliente.Nombre.ToString());
+
+                                html = html.Replace("@Fecha", DateTime.Now.ToString("dd/MM/yyyy"));
+
+                                var SQL = parametros.SQLEstadoCuenta + " and t0.CardCode ='" + codigoCliente + "'"; //Preparo el query
+
+                                SqlConnection Cn = new SqlConnection(conexion);
+                                SqlCommand Cmd = new SqlCommand(SQL, Cn);
+                                SqlDataAdapter Da = new SqlDataAdapter(Cmd);
+                                DataSet Ds = new DataSet();
+                                Cn.Open(); //se abre la conexion
+                                Da.Fill(Ds, "Detalle");
+
+
+                                var htmlDetalle = "";
+                                foreach (DataRow itemDetalle in Ds.Tables["Detalle"].Rows)
+                                {
+                                    string fechaString = itemDetalle["Fecha"].ToString();
+                                    DateTime fecha = DateTime.Parse(fechaString);
+                                    string fechaFormateada = fecha.ToString("dd/MM/yyyy");
+
+                                    string fechaVenString = itemDetalle["FechaVen"].ToString();
+                                    DateTime fechaVen = DateTime.Parse(fechaVenString);
+                                    string fechaVenFormateada = fechaVen.ToString("dd/MM/yyyy");
+
+                                    var totalDet = Convert.ToDecimal(itemDetalle["TotalDet"]);
+                                    var totalDetFormateado = totalDet.ToString("N2");
+
+                                    var saldo = Convert.ToDecimal(itemDetalle["Saldo"]);
+                                    var saldoFormateado = saldo.ToString("N2");
+
+                                    var sinVen = Convert.ToDecimal(itemDetalle["SinVen"]);
+                                    var sinVenFormateado = sinVen.ToString("N2");
+
+                                    var Moneda = itemDetalle["MonedaDet"].ToString();
+                                    if (Moneda == "USD")
+                                    {
+                                        var saldoFC = Convert.ToDecimal(itemDetalle["Saldo"]);
+                                        var sinVenFC = Convert.ToDecimal(itemDetalle["SinVen"]);
+                                        TotalSaldoFC += saldoFC;
+                                        TotalSinVenFC += sinVenFC;
+
+                                    }
+                                    else
+                                    {
+                                        var saldoC = Convert.ToDecimal(itemDetalle["Saldo"]);
+                                        var sinVenC = Convert.ToDecimal(itemDetalle["SinVen"]);
+                                        TotalSaldo += saldoC;
+                                        TotalSinVen += sinVenC;
+                                    }
+
+
+
+                                    htmlDetalle += parametros.HTMLInyectadoEstadoCuenta.Replace("@DocNum", itemDetalle["DocNum"].ToString()).Replace("@FechaDet", fechaFormateada).Replace("@FechaVen", fechaVenFormateada).Replace("@Dias", itemDetalle["Dias"].ToString()).Replace("@MonedaDet", itemDetalle["MonedaDet"].ToString()).Replace("@TotalDet", totalDetFormateado).Replace("@SaldoDet", saldoFormateado).Replace("@SinVen", sinVenFormateado);
+                                }
+                                html = html.Replace("@INYECTADO", htmlDetalle);
+                                html = html.Replace("@TotalSaldoFC", TotalSaldoFC.ToString("N2"));
+                                html = html.Replace("@TotalSinVenFC", TotalSinVenFC.ToString("N2"));
+                                html = html.Replace("@TotalSaldo", TotalSaldo.ToString("N2"));
+                                html = html.Replace("@TotalSinVen", TotalSinVen.ToString("N2"));
+
+                                Cn.Close(); //se cierra la conexion
+                                Cn.Dispose();
+
+                                resp = G.SendV2((!string.IsNullOrEmpty(Cliente.CorreoEC) ? Cliente.CorreoEC : Cliente.Email), "", "", CorreoEnvio.RecepcionEmail, parametros.NombreEmpresa, "Estado de Cuenta al" + " " + DateTime.Now.ToString("dd/MM/yyyy"), html, CorreoEnvio.RecepcionHostName, CorreoEnvio.EnvioPort, CorreoEnvio.RecepcionUseSSL, CorreoEnvio.RecepcionEmail, CorreoEnvio.RecepcionPassword);
+
+
+
+                                if (!resp)
+                                {
+                                    throw new Exception("No se ha podido enviar el correo a " + (!string.IsNullOrEmpty(Cliente.CorreoEC) ? Cliente.CorreoEC : Cliente.Email));
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = ex.Message;
+                                be.StrackTrace = ex.StackTrace;
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(ex);
+                                db.BitacoraErrores.Add(be);
+                                db.SaveChanges();
+
+
+                            }
+
+
+
+
+                        }
+                        catch (Exception ex)
+                        {
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex.Message;
+                            be.StrackTrace = ex.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+
+                        }
+                    }
+                    else
+                    {
+                        BitacoraErrores be = new BitacoraErrores();
+                        be.Descripcion = "Cliente con el cardCode " + codigoCliente + " no existe en nuestras bases de datos";
+                        be.StrackTrace = "No se envio correo con estado de cuenta";
+                        be.Fecha = DateTime.Now;
+                        be.JSON = "";
+                        db.BitacoraErrores.Add(be);
+                        db.SaveChanges();
+                    }
+                  
+                }
+
+
+                 
+                Cn2.Close(); //se cierra la conexion
+                Cn2.Dispose();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "proceso terminado con exito");
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+
     }
 }

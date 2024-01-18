@@ -73,6 +73,9 @@ namespace WATickets.Models.Cliente
 
         public decimal Descuento { get; set; }
 
+       
+        public string CorreoEC { get; set; }
+
     }
        
 }
