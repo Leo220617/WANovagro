@@ -47,7 +47,7 @@ namespace WATickets.Controllers
                     a.idUsuarioCreador,
                     a.idCaja,
                     a.idCuentaBancaria,
-                    MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
+                    MetodosPagosCuentas = db.MetodosPagosCuentas.Where(b => b.idEncabezado == a.id).ToList(),
 
                 }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
 
@@ -120,7 +120,7 @@ namespace WATickets.Controllers
                     a.idUsuarioCreador,
                     a.idCaja,
                     a.idCuentaBancaria,
-                    MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
+                    MetodosPagosCuentas = db.MetodosPagosCuentas.Where(b => b.idEncabezado == a.id).ToList(),
 
 
 
@@ -186,10 +186,10 @@ namespace WATickets.Controllers
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == cuenta.idCaja && a.idUsuario == cuenta.idUsuarioCreador).FirstOrDefault();
                     var Asiento = db.Asientos.Where(a => a.Fecha == time && a.idCaja == PagoCuenta.idCaja && a.idUsuario == PagoCuenta.idUsuarioCreador && a.CodSuc == PagoCuenta.CodSuc && a.ProcesadoSAP == false).FirstOrDefault();
 
-                    if (cuenta.MetodosPagos != null)
+                    if (cuenta.MetodosPagosCuentas != null)
                     {
 
-                        foreach (var item in cuenta.MetodosPagos.Where(a => a.Metodo != "Pago a Cuenta"))
+                        foreach (var item in cuenta.MetodosPagosCuentas.Where(a => a.Metodo != "Pago a Cuenta"))
                         {
                             var Usuario = db.Usuarios.Where(a => a.id == cuenta.idUsuarioCreador).FirstOrDefault() == null ? "0" : db.Usuarios.Where(a => a.id == cuenta.idUsuarioCreador).FirstOrDefault().Nombre;
                             BitacoraMovimientos bm = new BitacoraMovimientos();
@@ -202,43 +202,43 @@ namespace WATickets.Controllers
 
                         }
 
-                        foreach (var item in cuenta.MetodosPagos.Where(a => a.Metodo != "Pago a Cuenta"))
+                        foreach (var item in cuenta.MetodosPagosCuentas.Where(a => a.Metodo != "Pago a Cuenta"))
                         {
-                            MetodosPagos MetodosPagos = new MetodosPagos();
-                            MetodosPagos.idEncabezado = PagoCuenta.id;
-                            MetodosPagos.Monto = item.Monto;
-                            MetodosPagos.BIN = item.BIN;
-                            MetodosPagos.NumCheque = item.NumCheque;
-                            MetodosPagos.NumReferencia = item.NumReferencia;
-                            MetodosPagos.Metodo = item.Metodo;
-                            MetodosPagos.idCuentaBancaria = item.idCuentaBancaria;
-                            MetodosPagos.Moneda = item.Moneda;
-                            MetodosPagos.idCaja = PagoCuenta.idCaja;
-                            MetodosPagos.idCajero = PagoCuenta.idUsuarioCreador;
-                            MetodosPagos.Fecha = DateTime.Now.Date;
-                            MetodosPagos.MonedaVuelto = item.MonedaVuelto;
-                            MetodosPagos.PagadoCon = item.PagadoCon;
-                            db.MetodosPagos.Add(MetodosPagos);
+                            MetodosPagosCuentas MetodosPagosCuentas = new MetodosPagosCuentas();
+                            MetodosPagosCuentas.idEncabezado = PagoCuenta.id;
+                            MetodosPagosCuentas.Monto = item.Monto;
+                            MetodosPagosCuentas.BIN = item.BIN;
+                            MetodosPagosCuentas.NumCheque = item.NumCheque;
+                            MetodosPagosCuentas.NumReferencia = item.NumReferencia;
+                            MetodosPagosCuentas.Metodo = item.Metodo;
+                            MetodosPagosCuentas.idCuentaBancaria = item.idCuentaBancaria;
+                            MetodosPagosCuentas.Moneda = item.Moneda;
+                            MetodosPagosCuentas.idCaja = PagoCuenta.idCaja;
+                            MetodosPagosCuentas.idCajero = PagoCuenta.idUsuarioCreador;
+                            MetodosPagosCuentas.Fecha = DateTime.Now.Date;
+                            MetodosPagosCuentas.MonedaVuelto = item.MonedaVuelto;
+                            MetodosPagosCuentas.PagadoCon = item.PagadoCon;
+                            db.MetodosPagosCuentas.Add(MetodosPagosCuentas);
                             db.SaveChanges();
                             if (CierreCaja != null)
                             {
                                 db.Entry(CierreCaja).State = EntityState.Modified;
-                                if (MetodosPagos.Moneda == "CRC")
+                                if (MetodosPagosCuentas.Moneda == "CRC")
                                 {
                                     switch (item.Metodo)
                                     {
                                         case "Efectivo":
                                             {
-                                                if (MetodosPagos.Moneda != MetodosPagos.MonedaVuelto)
+                                                if (MetodosPagosCuentas.Moneda != MetodosPagosCuentas.MonedaVuelto)
                                                 {
                                                     var FechaX = DateTime.Now.Date;
                                                     var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == FechaX).FirstOrDefault();
-                                                    var MontoDevuelto = (MetodosPagos.PagadoCon - MetodosPagos.Monto) / TipoCambio.TipoCambio;
+                                                    var MontoDevuelto = (MetodosPagosCuentas.PagadoCon - MetodosPagosCuentas.Monto) / TipoCambio.TipoCambio;
                                                     CierreCaja.EfectivoFC -= MontoDevuelto;
                                                     CierreCaja.TotalVendidoFC -= MontoDevuelto;
 
-                                                    CierreCaja.EfectivoColones += MetodosPagos.PagadoCon;
-                                                    CierreCaja.TotalVendidoColones += MetodosPagos.PagadoCon;
+                                                    CierreCaja.EfectivoColones += MetodosPagosCuentas.PagadoCon;
+                                                    CierreCaja.TotalVendidoColones += MetodosPagosCuentas.PagadoCon;
                                                 }
                                                 else
                                                 {
@@ -288,18 +288,18 @@ namespace WATickets.Controllers
                                     {
                                         case "Efectivo":
                                             {
-                                                if (MetodosPagos.Moneda != MetodosPagos.MonedaVuelto)
+                                                if (MetodosPagosCuentas.Moneda != MetodosPagosCuentas.MonedaVuelto)
                                                 {
                                                     var FechaX2 = DateTime.Now.Date;
                                                     var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == FechaX2).FirstOrDefault();
-                                                    var MontoDevuelto = (MetodosPagos.PagadoCon - MetodosPagos.Monto) * TipoCambio.TipoCambio;
+                                                    var MontoDevuelto = (MetodosPagosCuentas.PagadoCon - MetodosPagosCuentas.Monto) * TipoCambio.TipoCambio;
                                                     CierreCaja.EfectivoColones -= MontoDevuelto;
                                                     CierreCaja.TotalVendidoColones -= MontoDevuelto;
 
-                                                    CierreCaja.EfectivoFC += MetodosPagos.PagadoCon;
-                                                    CierreCaja.TotalVendidoFC += MetodosPagos.PagadoCon;
+                                                    CierreCaja.EfectivoFC += MetodosPagosCuentas.PagadoCon;
+                                                    CierreCaja.TotalVendidoFC += MetodosPagosCuentas.PagadoCon;
 
-                                                    var Debito = MetodosPagos.PagadoCon - MetodosPagos.Monto;
+                                                    var Debito = MetodosPagosCuentas.PagadoCon - MetodosPagosCuentas.Monto;
                                                     var Credito = Debito * TipoCambio.TipoCambio;
 
                                                     if (Debito > 0)
@@ -381,7 +381,7 @@ namespace WATickets.Controllers
 
 
 
-                        foreach (var item in cuenta.MetodosPagos.Where(a => a.Metodo == "Pago a Cuenta"))
+                        foreach (var item in cuenta.MetodosPagosCuentas.Where(a => a.Metodo == "Pago a Cuenta"))
                         {
                             var ClienteX = db.Clientes.Where(a => a.id == cuenta.idCliente).FirstOrDefault();
                             if (ClienteX != null)
@@ -434,10 +434,10 @@ namespace WATickets.Controllers
 
                                 var Fecha = PagoCuenta.Fecha.Date;
                                 var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
-                                var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).FirstOrDefault() == null ? new List<MetodosPagos>() : db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).ToList();
+                                var MetodosPagosCuentas = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).FirstOrDefault() == null ? new List<MetodosPagosCuentas>() : db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).ToList();
 
-                                var MetodosPagosColones = MetodosPagos.Where(a => a.Moneda == "CRC").ToList();
-                                var MetodosPagosDolares = MetodosPagos.Where(a => a.Moneda == "USD").ToList();
+                                var MetodosPagosCuentasColones = MetodosPagosCuentas.Where(a => a.Moneda == "CRC").ToList();
+                                var MetodosPagosCuentasDolares = MetodosPagosCuentas.Where(a => a.Moneda == "USD").ToList();
 
                                 bool pagoColonesProcesado = false;
                                 bool pagoDolaresProcesado = false;
@@ -448,7 +448,7 @@ namespace WATickets.Controllers
 
 
 
-                                if (MetodosPagosColones.Count() > 0)
+                                if (MetodosPagosCuentasColones.Count() > 0)
                                 {
                                     try
                                     {
@@ -472,12 +472,12 @@ namespace WATickets.Controllers
 
                                         if (PagoCuenta.Moneda != "CRC")
                                         {
-                                            var SumatoriaPagoColones = MetodosPagosColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
+                                            var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
                                             pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones);
                                         }
                                         else
                                         {
-                                            var SumatoriaPagoColones = MetodosPagosColones.Sum(a => a.Monto);
+                                            var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto);
 
                                             pagocuentaSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
 
@@ -485,13 +485,13 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
 
 
-                                        var SumatoriaEfectivo = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
-                                        var SumatoriaTarjeta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
-                                        var SumatoriaTransferencia = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaEfectivo = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaTarjeta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaTransferencia = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
 
                                         if (SumatoriaEfectivo > 0)
                                         {
-                                            var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
@@ -502,7 +502,7 @@ namespace WATickets.Controllers
 
                                         if (SumatoriaTarjeta > 0)
                                         {
-                                            var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
                                             pagocuentaSAP.CreditCards.SetCurrentLine(0);
@@ -510,8 +510,8 @@ namespace WATickets.Controllers
                                             pagocuentaSAP.CreditCards.CreditCard = 1;
                                             pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
                                             pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
+                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
+                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
                                             pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
                                             pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
 
@@ -520,12 +520,12 @@ namespace WATickets.Controllers
 
                                         if (SumatoriaTransferencia > 0)
                                         {
-                                            var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
                                             pagocuentaSAP.TransferAccount = Cuenta;
                                             pagocuentaSAP.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                            pagocuentaSAP.TransferReference = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
+                                            pagocuentaSAP.TransferReference = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
                                             pagocuentaSAP.TransferSum = Convert.ToDouble(SumatoriaTransferencia);
                                         }
 
@@ -569,7 +569,7 @@ namespace WATickets.Controllers
                                 }
 
 
-                                if (MetodosPagosDolares.Count() > 0)
+                                if (MetodosPagosCuentasDolares.Count() > 0)
                                 {
                                     try
                                     {
@@ -590,18 +590,18 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
 
-                                        var SumatoriaPagod = MetodosPagosDolares.Sum(a => a.Monto);
+                                        var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
                                         pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
                                         pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
 
 
-                                        var SumatoriaEfectivo = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
-                                        var SumatoriaTarjeta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
-                                        var SumatoriaTransferencia = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaEfectivo = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaTarjeta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaTransferencia = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
 
                                         if (SumatoriaEfectivo > 0)
                                         {
-                                            var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
@@ -612,7 +612,7 @@ namespace WATickets.Controllers
 
                                         if (SumatoriaTarjeta > 0)
                                         {
-                                            var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
@@ -621,8 +621,8 @@ namespace WATickets.Controllers
                                             pagocuentaSAP.CreditCards.CreditCard = 1;
                                             pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
                                             pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
+                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
+                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
                                             pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
                                             pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
 
@@ -631,13 +631,13 @@ namespace WATickets.Controllers
 
                                         if (SumatoriaTransferencia > 0)
                                         {
-                                            var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
                                             pagocuentaSAP.TransferAccount = Cuenta;
                                             pagocuentaSAP.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                            pagocuentaSAP.TransferReference = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
+                                            pagocuentaSAP.TransferReference = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
                                             pagocuentaSAP.TransferSum = Convert.ToDouble(SumatoriaTransferencia);
                                         }
                                         var respuestaPago = pagocuentaSAP.Add();
@@ -711,11 +711,11 @@ namespace WATickets.Controllers
                                 //meter los metodos de pago
                                 var Fecha = PagoCuenta.Fecha.Date;
                                 var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
-                                var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id).ToList();
+                                var MetodosPagosCuentas = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id).ToList();
 
 
-                                var SumatoriaPagoColones = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).Sum(a => a.Monto);
-                                var SumatoriaPagoDolares = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).Sum(a => a.Monto);
+                                var SumatoriaPagoColones = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).Sum(a => a.Monto);
+                                var SumatoriaPagoDolares = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).Sum(a => a.Monto);
                                 bool pagoColonesProcesado = false;
                                 bool pagoDolaresProcesado = false;
 
@@ -989,10 +989,10 @@ namespace WATickets.Controllers
 
                             var Fecha = PagoCuenta.Fecha.Date;
                             var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
-                            var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).FirstOrDefault() == null ? new List<MetodosPagos>() : db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).ToList();
+                            var MetodosPagosCuentas = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).FirstOrDefault() == null ? new List<MetodosPagosCuentas>() : db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).ToList();
 
-                            var MetodosPagosColones = MetodosPagos.Where(a => a.Moneda == "CRC").ToList();
-                            var MetodosPagosDolares = MetodosPagos.Where(a => a.Moneda == "USD").ToList();
+                            var MetodosPagosCuentasColones = MetodosPagosCuentas.Where(a => a.Moneda == "CRC").ToList();
+                            var MetodosPagosCuentasDolares = MetodosPagosCuentas.Where(a => a.Moneda == "USD").ToList();
 
                             bool pagoColonesProcesado = false;
                             bool pagoDolaresProcesado = false;
@@ -1003,7 +1003,7 @@ namespace WATickets.Controllers
 
 
 
-                            if (MetodosPagosColones.Count() > 0)
+                            if (MetodosPagosCuentasColones.Count() > 0)
                             {
                                 try
                                 {
@@ -1027,12 +1027,12 @@ namespace WATickets.Controllers
 
                                     if (PagoCuenta.Moneda != "CRC")
                                     {
-                                        var SumatoriaPagoColones = MetodosPagosColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
+                                        var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
                                         pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones);
                                     }
                                     else
                                     {
-                                        var SumatoriaPagoColones = MetodosPagosColones.Sum(a => a.Monto);
+                                        var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto);
 
                                         pagocuentaSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
 
@@ -1040,13 +1040,13 @@ namespace WATickets.Controllers
                                     pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
 
 
-                                    var SumatoriaEfectivo = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
-                                    var SumatoriaTarjeta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
-                                    var SumatoriaTransferencia = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+                                    var SumatoriaEfectivo = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
+                                    var SumatoriaTarjeta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                    var SumatoriaTransferencia = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
 
                                     if (SumatoriaEfectivo > 0)
                                     {
-                                        var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                        var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
@@ -1057,7 +1057,7 @@ namespace WATickets.Controllers
 
                                     if (SumatoriaTarjeta > 0)
                                     {
-                                        var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                        var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
                                         pagocuentaSAP.CreditCards.SetCurrentLine(0);
@@ -1065,8 +1065,8 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.CreditCards.CreditCard = 1;
                                         pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
                                         pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                        pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                        pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
+                                        pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
+                                        pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
                                         pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
                                         pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
 
@@ -1075,12 +1075,12 @@ namespace WATickets.Controllers
 
                                     if (SumatoriaTransferencia > 0)
                                     {
-                                        var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                        var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
                                         pagocuentaSAP.TransferAccount = Cuenta;
                                         pagocuentaSAP.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                        pagocuentaSAP.TransferReference = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
+                                        pagocuentaSAP.TransferReference = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
                                         pagocuentaSAP.TransferSum = Convert.ToDouble(SumatoriaTransferencia);
                                     }
 
@@ -1124,7 +1124,7 @@ namespace WATickets.Controllers
                             }
 
 
-                            if (MetodosPagosDolares.Count() > 0)
+                            if (MetodosPagosCuentasDolares.Count() > 0)
                             {
                                 try
                                 {
@@ -1145,18 +1145,18 @@ namespace WATickets.Controllers
                                     pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
 
-                                    var SumatoriaPagod = MetodosPagosDolares.Sum(a => a.Monto);
+                                    var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
                                     pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
                                     pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
 
 
-                                    var SumatoriaEfectivo = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
-                                    var SumatoriaTarjeta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
-                                    var SumatoriaTransferencia = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+                                    var SumatoriaEfectivo = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
+                                    var SumatoriaTarjeta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                    var SumatoriaTransferencia = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
 
                                     if (SumatoriaEfectivo > 0)
                                     {
-                                        var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                        var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
@@ -1167,7 +1167,7 @@ namespace WATickets.Controllers
 
                                     if (SumatoriaTarjeta > 0)
                                     {
-                                        var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                        var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
@@ -1176,8 +1176,8 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.CreditCards.CreditCard = 1;
                                         pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
                                         pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                        pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                        pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
+                                        pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
+                                        pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
                                         pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
                                         pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
 
@@ -1186,13 +1186,13 @@ namespace WATickets.Controllers
 
                                     if (SumatoriaTransferencia > 0)
                                     {
-                                        var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                        var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
                                         pagocuentaSAP.TransferAccount = Cuenta;
                                         pagocuentaSAP.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                        pagocuentaSAP.TransferReference = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
+                                        pagocuentaSAP.TransferReference = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
                                         pagocuentaSAP.TransferSum = Convert.ToDouble(SumatoriaTransferencia);
                                     }
                                     var respuestaPago = pagocuentaSAP.Add();
@@ -1266,11 +1266,11 @@ namespace WATickets.Controllers
                             //meter los metodos de pago
                             var Fecha = PagoCuenta.Fecha.Date;
                             var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
-                            var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id).ToList();
+                            var MetodosPagosCuentas = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id).ToList();
 
 
-                            var SumatoriaPagoColones = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).Sum(a => a.Monto);
-                            var SumatoriaPagoDolares = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).Sum(a => a.Monto);
+                            var SumatoriaPagoColones = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).Sum(a => a.Monto);
+                            var SumatoriaPagoDolares = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).Sum(a => a.Monto);
                             bool pagoColonesProcesado = false;
                             bool pagoDolaresProcesado = false;
 
@@ -1537,10 +1537,10 @@ namespace WATickets.Controllers
 
                                 var Fecha = PagoCuenta.Fecha.Date;
                                 var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
-                                var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).FirstOrDefault() == null ? new List<MetodosPagos>() : db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).ToList();
+                                var MetodosPagosCuentas = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).FirstOrDefault() == null ? new List<MetodosPagosCuentas>() : db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Monto > 0).ToList();
 
-                                var MetodosPagosColones = MetodosPagos.Where(a => a.Moneda == "CRC").ToList();
-                                var MetodosPagosDolares = MetodosPagos.Where(a => a.Moneda == "USD").ToList();
+                                var MetodosPagosCuentasColones = MetodosPagosCuentas.Where(a => a.Moneda == "CRC").ToList();
+                                var MetodosPagosCuentasDolares = MetodosPagosCuentas.Where(a => a.Moneda == "USD").ToList();
 
                                 bool pagoColonesProcesado = false;
                                 bool pagoDolaresProcesado = false;
@@ -1551,7 +1551,7 @@ namespace WATickets.Controllers
 
 
 
-                                if (MetodosPagosColones.Count() > 0)
+                                if (MetodosPagosCuentasColones.Count() > 0)
                                 {
                                     try
                                     {
@@ -1575,12 +1575,12 @@ namespace WATickets.Controllers
 
                                         if (PagoCuenta.Moneda != "CRC")
                                         {
-                                            var SumatoriaPagoColones = MetodosPagosColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
+                                            var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
                                             pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones);
                                         }
                                         else
                                         {
-                                            var SumatoriaPagoColones = MetodosPagosColones.Sum(a => a.Monto);
+                                            var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto);
 
                                             pagocuentaSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
 
@@ -1588,13 +1588,13 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
 
 
-                                        var SumatoriaEfectivo = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
-                                        var SumatoriaTarjeta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
-                                        var SumatoriaTransferencia = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaEfectivo = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaTarjeta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaTransferencia = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
 
                                         if (SumatoriaEfectivo > 0)
                                         {
-                                            var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
@@ -1605,7 +1605,7 @@ namespace WATickets.Controllers
 
                                         if (SumatoriaTarjeta > 0)
                                         {
-                                            var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
                                             pagocuentaSAP.CreditCards.SetCurrentLine(0);
@@ -1613,8 +1613,8 @@ namespace WATickets.Controllers
                                             pagocuentaSAP.CreditCards.CreditCard = 1;
                                             pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
                                             pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
+                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
+                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
                                             pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
                                             pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
 
@@ -1623,12 +1623,12 @@ namespace WATickets.Controllers
 
                                         if (SumatoriaTransferencia > 0)
                                         {
-                                            var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
                                             pagocuentaSAP.TransferAccount = Cuenta;
                                             pagocuentaSAP.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                            pagocuentaSAP.TransferReference = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
+                                            pagocuentaSAP.TransferReference = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
                                             pagocuentaSAP.TransferSum = Convert.ToDouble(SumatoriaTransferencia);
                                         }
 
@@ -1672,7 +1672,7 @@ namespace WATickets.Controllers
                                 }
 
 
-                                if (MetodosPagosDolares.Count() > 0)
+                                if (MetodosPagosCuentasDolares.Count() > 0)
                                 {
                                     try
                                     {
@@ -1693,18 +1693,18 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
 
-                                        var SumatoriaPagod = MetodosPagosDolares.Sum(a => a.Monto);
+                                        var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
                                         pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
                                         pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
 
 
-                                        var SumatoriaEfectivo = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
-                                        var SumatoriaTarjeta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
-                                        var SumatoriaTransferencia = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaEfectivo = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaTarjeta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                        var SumatoriaTransferencia = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
 
                                         if (SumatoriaEfectivo > 0)
                                         {
-                                            var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
@@ -1715,7 +1715,7 @@ namespace WATickets.Controllers
 
                                         if (SumatoriaTarjeta > 0)
                                         {
-                                            var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
@@ -1724,8 +1724,8 @@ namespace WATickets.Controllers
                                             pagocuentaSAP.CreditCards.CreditCard = 1;
                                             pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
                                             pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
+                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
+                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
                                             pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
                                             pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
 
@@ -1734,13 +1734,13 @@ namespace WATickets.Controllers
 
                                         if (SumatoriaTransferencia > 0)
                                         {
-                                            var idcuenta = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
+                                            var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
                                             pagocuentaSAP.TransferAccount = Cuenta;
                                             pagocuentaSAP.TransferDate = DateTime.Now; //Fecha en la que se mete el pago 
-                                            pagocuentaSAP.TransferReference = MetodosPagosDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
+                                            pagocuentaSAP.TransferReference = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().NumReferencia;
                                             pagocuentaSAP.TransferSum = Convert.ToDouble(SumatoriaTransferencia);
                                         }
                                         var respuestaPago = pagocuentaSAP.Add();
@@ -1814,11 +1814,11 @@ namespace WATickets.Controllers
                                 //meter los metodos de pago
                                 var Fecha = PagoCuenta.Fecha.Date;
                                 var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
-                                var MetodosPagos = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id).ToList();
+                                var MetodosPagosCuentas = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id).ToList();
 
 
-                                var SumatoriaPagoColones = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).Sum(a => a.Monto);
-                                var SumatoriaPagoDolares = db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagos.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).Sum(a => a.Monto);
+                                var SumatoriaPagoColones = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda == "CRC" && a.Monto > 0).Sum(a => a.Monto);
+                                var SumatoriaPagoDolares = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).FirstOrDefault() == null ? 0 : db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id && a.Moneda != "CRC" && a.Monto > 0).Sum(a => a.Monto);
                                 bool pagoColonesProcesado = false;
                                 bool pagoDolaresProcesado = false;
 
