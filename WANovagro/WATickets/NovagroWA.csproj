@@ -326,6 +326,7 @@
     <Compile Include="Models\APIS\ExoneracionesX.cs" />
     <Compile Include="Models\APIS\Margenes.cs" />
     <Compile Include="Models\APIS\Ofertas.cs" />
+    <Compile Include="Models\APIS\PagoCuentaViewModel.cs" />
     <Compile Include="Models\APIS\Pagos.cs" />
     <Compile Include="Models\APIS\Promocion.cs" />
     <Compile Include="Models\APIS\RecibidoFacturacion.cs" />
