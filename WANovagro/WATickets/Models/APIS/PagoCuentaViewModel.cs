@@ -23,6 +23,6 @@ namespace WATickets.Models.APIS
         public int idUsuarioCreador { get; set; }
         public int idCuentaBancaria { get; set; }
 
-        public List<MetodosPagosCuentas> MetodosPagosCuentas { get; set; }
+        public List<MetodosPagos> MetodosPagos { get; set; }
     }
 }
