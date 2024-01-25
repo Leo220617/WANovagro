@@ -260,8 +260,8 @@ namespace WATickets.Controllers
                             det.ItemCode = item.ItemCode;
                             det.idCategoria = item.idCategoria;
                             det.idListaPrecio = item.idListaPrecio;
-                            det.FechaVen = item.FechaVen.Date;
-                            det.Fecha = item.Fecha.Date;
+                            det.FechaVen = Promo.FechaVencimiento.Date;
+                            det.Fecha = Promo.Fecha.Date;
                             det.Moneda = item.Moneda;
                             det.PrecioFinal = item.PrecioFinal;
                             det.PrecioAnterior = item.PrecioAnterior;
