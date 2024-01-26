@@ -129,7 +129,7 @@ namespace WATickets.Controllers
                     db.SaveChanges();
 
                     var i = 0;
-                    foreach (var item in exoneraciones.Detalle)
+                    foreach (var item in exoneraciones.Detalle.Where(a => a.CodCabys != "0"))
                     {
                         DetExoneraciones det = new DetExoneraciones();
                         det.idEncabezado = Exoneracion.id;
@@ -200,7 +200,7 @@ namespace WATickets.Controllers
 
 
                     var i = 0;
-                    foreach (var item in exoneraciones.Detalle)
+                    foreach (var item in exoneraciones.Detalle.Where(a => a.CodCabys != "0"))
                     {
                         DetExoneraciones det = new DetExoneraciones();
                         det.idEncabezado = Exoneraciones.id;

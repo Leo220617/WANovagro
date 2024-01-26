@@ -67,5 +67,14 @@
 
         public string SQLCategorias { get; set; }
 
+        public string SQLEstadoCuenta { get; set; }
+
+        public string HTMLEstadoCuenta { get; set; }
+        public string HTMLInyectadoEstadoCuenta { get; set; }
+
+        public string SQLEstadoCuentaMasivo { get; set; }
+
+        public string NombreEmpresa { get; set; }
+
     }
 }

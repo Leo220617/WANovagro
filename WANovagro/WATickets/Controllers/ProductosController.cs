@@ -163,7 +163,7 @@ namespace WATickets.Controllers
                                         Producto.PrecioUnitario = PrecioFinal;
                                     }
 
-                               
+
 
                                     Producto.UnidadMedida = item["UnidadMedida"].ToString(); ;
                                     Producto.Cabys = item["Cabys"].ToString();
@@ -361,7 +361,7 @@ namespace WATickets.Controllers
                     Productos = Productos.Where(a => a.idCategoria == filtro.Codigo3).ToList();
                 }
 
-             
+
 
                 //if(filtro.Codigo1 > 0) // esto por ser integer
                 //{
@@ -684,9 +684,9 @@ namespace WATickets.Controllers
                             Producto.Cabys = item["Cabys"].ToString();
                             Producto.TipoCod = item["TipoCodigo"].ToString();
                             Producto.CodBarras = item["CodigoBarras"].ToString();
-                            
+
                             Producto.Stock = Convert.ToDecimal(item["StockReal"]);
-                           
+
 
                             Producto.Activo = true;
                             Producto.ProcesadoSAP = true;
@@ -746,6 +746,181 @@ namespace WATickets.Controllers
 
             }
 
+        }
+
+        [Route("api/Productos/InsertarSAPByItemCode")]
+        public HttpResponseMessage GetExtraeByItemCode([FromUri] string Codigo)
+        {
+            try
+            {
+                Parametros parametros = db.Parametros.FirstOrDefault(); //de aqui nos traemos los querys
+                var conexion = G.DevuelveCadena(db); //aqui extraemos la informacion de la tabla de sap para hacerle un query a sap
+
+                if (Codigo == "0")
+                {
+                    throw new Exception("El codigo del producto no es valido");
+                }
+                var SQL = parametros.SQLProductos + " and t0.ItemCode = '" + Codigo + "'"; //Preparo el query
+
+                SqlConnection Cn = new SqlConnection(conexion);
+                SqlCommand Cmd = new SqlCommand(SQL, Cn);
+                SqlDataAdapter Da = new SqlDataAdapter(Cmd);
+                DataSet Ds = new DataSet();
+                Cn.Open(); //se abre la conexion
+                Da.Fill(Ds, "Productos");
+
+                var Productos = db.Productos.ToList();
+                foreach (DataRow item in Ds.Tables["Productos"].Rows)
+                {
+                    var ItemCode = item["Codigo"].ToString();
+
+                    var Producto = Productos.Where(a => a.Codigo == ItemCode).FirstOrDefault();
+
+                    if (Producto != null) //Existe ?
+                    {
+
+                        try
+                        {
+                            db.Entry(Producto).State = EntityState.Modified;
+
+
+                            Producto.FechaActualizacion = DateTime.Now;
+
+                            var MAG = Convert.ToInt32(item["MAG"]);
+                            if (MAG == 1)
+                            {
+                                Producto.MAG = true;
+                            }
+                            else if (MAG == 0)
+                            {
+                                Producto.MAG = false;
+                            }
+                            Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
+
+                            db.SaveChanges();
+
+                        }
+                        catch (Exception ex1)
+                        {
+                            ModelCliente db2 = new ModelCliente();
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex1.Message;
+                            be.StrackTrace = ex1.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex1);
+                            db2.BitacoraErrores.Add(be);
+                            db2.SaveChanges();
+                        }
+
+                    }
+                    else
+                    {
+
+                        try
+                        {
+                            Producto = new Productos();
+                            Producto.Codigo = item["Codigo"].ToString();
+                            var idBodega = item["idBodega"].ToString();
+                            Producto.idBodega = db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == idBodega).FirstOrDefault().id;
+                            var idImpuesto = item["Impuesto"].ToString();
+                            Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
+                            var idLista = item["ListaPrecio"].ToString();
+                            Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+
+                            var idCategoria = item["Categoria"].ToString();
+                            Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
+
+                            Producto.Nombre = item["Nombre"].ToString();
+                            var time = DateTime.Now.Date;
+                            var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time).FirstOrDefault();
+                            var Margenes = db.EncMargenes.Where(a => a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
+                            var DetMargenes = db.DetMargenes.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
+                            if (Promocion != null)
+                            {
+                                Producto.PrecioUnitario = Promocion.PrecioFinal;
+
+                            }
+                            else if (DetMargenes != null)
+                            {
+                                Producto.PrecioUnitario = DetMargenes.PrecioFinal;
+                            }
+                            else if (Margenes != null)
+                            {
+                                var PrecioCob = Producto.Costo / (1 - (Margenes.Cobertura / 100));
+                                var PrecioFinal = PrecioCob / (1 - (Margenes.Margen / 100));
+                                Producto.PrecioUnitario = PrecioFinal;
+                            }
+                            Producto.UnidadMedida = item["UnidadMedida"].ToString();
+                            Producto.Cabys = item["Cabys"].ToString();
+                            Producto.TipoCod = item["TipoCodigo"].ToString();
+                            Producto.CodBarras = item["CodigoBarras"].ToString();
+                            Producto.Costo = Convert.ToDecimal(item["Costo"]);
+                            Producto.Stock = Convert.ToDecimal(item["StockReal"]);
+                            Producto.Moneda = item["Moneda"].ToString();
+                            Producto.Activo = true;
+                            Producto.FechaActualizacion = DateTime.Now;
+                            Producto.ProcesadoSAP = true;
+                            var MAG = Convert.ToInt32(item["MAG"]);
+                            if (MAG == 1)
+                            {
+                                Producto.MAG = true;
+                            }
+                            else if (MAG == 0)
+                            {
+                                Producto.MAG = false;
+                            }
+                            Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
+                            var Serie = Convert.ToInt32(item["Serie"]);
+                            if (Serie == 1)
+                            {
+                                Producto.Serie = true;
+                            }
+                            else if (Serie == 0)
+                            {
+                                Producto.Serie = false;
+                            }
+                            db.Productos.Add(Producto);
+                            db.SaveChanges();
+
+                        }
+                        catch (Exception ex1)
+                        {
+
+                            ModelCliente db2 = new ModelCliente();
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex1.Message;
+                            be.StrackTrace = ex1.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex1);
+                            db2.BitacoraErrores.Add(be);
+                            db2.SaveChanges();
+                        }
+
+                    }
+
+                }
+
+
+                Cn.Close(); //se cierra la conexion
+                Cn.Dispose();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Procesado con exito");
+
+            }
+            catch (Exception ex)
+            {
+
+                ModelCliente db2 = new ModelCliente();
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db2.BitacoraErrores.Add(be);
+                db2.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+            }
         }
 
     }
