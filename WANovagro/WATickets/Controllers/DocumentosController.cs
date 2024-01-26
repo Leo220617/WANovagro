@@ -2263,7 +2263,7 @@ namespace WATickets.Controllers
                                 HttpClient cliente2 = new HttpClient();
 
                                 var Url2 = Parametros.UrlConsultaFacturas.Replace("@ClaveR", Documento.ClaveHacienda.ToString()).Replace("@SucursalR", "099");
-
+                                cliente2.Timeout = TimeSpan.FromMinutes(30);
                                 HttpResponseMessage response2 = await cliente2.GetAsync(Url2);
                                 if (response2.IsSuccessStatusCode)
                                 {
