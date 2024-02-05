@@ -76,5 +76,7 @@
 
         public string NombreEmpresa { get; set; }
 
+        public bool PrecioDescuento { get; set; }
+
     }
 }

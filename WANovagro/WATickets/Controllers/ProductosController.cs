@@ -760,6 +760,7 @@ namespace WATickets.Controllers
                 {
                     throw new Exception("El codigo del producto no es valido");
                 }
+
                 var SQL = parametros.SQLProductos + " and t0.ItemCode = '" + Codigo + "'"; //Preparo el query
 
                 SqlConnection Cn = new SqlConnection(conexion);
@@ -773,48 +774,51 @@ namespace WATickets.Controllers
                 foreach (DataRow item in Ds.Tables["Productos"].Rows)
                 {
                     var ItemCode = item["Codigo"].ToString();
-
-                    var Producto = Productos.Where(a => a.Codigo == ItemCode).FirstOrDefault();
-
-                    if (Producto != null) //Existe ?
+                    var Whscode = item["idBodega"].ToString();
+                    var bod = db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault() == null ? 0 : db.Bodegas.Where(a => a.CodSAP == Whscode).FirstOrDefault().id;
+                    if (bod > 0) // si existe la bodega
                     {
+                        var Producto = Productos.Where(a => a.Codigo == ItemCode && a.idBodega == bod).FirstOrDefault();
 
-                        try
+                        if (Producto != null) //Existe ?
                         {
-                            db.Entry(Producto).State = EntityState.Modified;
 
-
-                            Producto.FechaActualizacion = DateTime.Now;
-
-                            var MAG = Convert.ToInt32(item["MAG"]);
-                            if (MAG == 1)
+                            try
                             {
-                                Producto.MAG = true;
-                            }
-                            else if (MAG == 0)
-                            {
-                                Producto.MAG = false;
-                            }
-                            Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
+                                db.Entry(Producto).State = EntityState.Modified;
 
-                            db.SaveChanges();
+
+                                Producto.FechaActualizacion = DateTime.Now;
+
+                                var MAG = Convert.ToInt32(item["MAG"]);
+                                if (MAG == 1)
+                                {
+                                    Producto.MAG = true;
+                                }
+                                else if (MAG == 0)
+                                {
+                                    Producto.MAG = false;
+                                }
+                                Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
+
+                                db.SaveChanges();
+
+                            }
+                            catch (Exception ex1)
+                            {
+                                ModelCliente db2 = new ModelCliente();
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = ex1.Message;
+                                be.StrackTrace = ex1.StackTrace;
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(ex1);
+                                db2.BitacoraErrores.Add(be);
+                                db2.SaveChanges();
+                            }
 
                         }
-                        catch (Exception ex1)
+                        else
                         {
-                            ModelCliente db2 = new ModelCliente();
-                            BitacoraErrores be = new BitacoraErrores();
-                            be.Descripcion = ex1.Message;
-                            be.StrackTrace = ex1.StackTrace;
-                            be.Fecha = DateTime.Now;
-                            be.JSON = JsonConvert.SerializeObject(ex1);
-                            db2.BitacoraErrores.Add(be);
-                            db2.SaveChanges();
-                        }
-
-                    }
-                    else
-                    {
 
                             try
                             {
@@ -877,9 +881,10 @@ namespace WATickets.Controllers
                                 db2.BitacoraErrores.Add(be);
                                 db2.SaveChanges();
                             }
-                        
-                    }
 
+                        }
+
+                    }
                 }
 
 
