@@ -714,7 +714,7 @@ namespace WATickets.Controllers
                                    
                                     var pagocuentaSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                     pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
-                                    pagocuentaSAP.DocDate = DateTime.Now;
+                                    pagocuentaSAP.DocDate = PagoCuenta.Fecha;
                                     pagocuentaSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
                                     pagocuentaSAP.CardCode = ClienteI.Codigo;
                                     pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
@@ -1128,7 +1128,7 @@ namespace WATickets.Controllers
                                 var ClienteI = db.Clientes.Where(a => a.id == PagoCuenta.idCliente).FirstOrDefault();
                                 var pagocuentaSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                 pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
-                                pagocuentaSAP.DocDate = DateTime.Now;
+                                pagocuentaSAP.DocDate = PagoCuenta.Fecha;
                                 pagocuentaSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
                                 pagocuentaSAP.CardCode = ClienteI.Codigo;
                                 pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
@@ -1535,7 +1535,7 @@ namespace WATickets.Controllers
                                     var ClienteI = db.Clientes.Where(a => a.id == PagoCuenta.idCliente).FirstOrDefault();
                                     var pagocuentaSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                     pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
-                                    pagocuentaSAP.DocDate = DateTime.Now;
+                                    pagocuentaSAP.DocDate = PagoCuenta.Fecha;
                                     pagocuentaSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
                                     pagocuentaSAP.CardCode = ClienteI.Codigo;
                                     pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
