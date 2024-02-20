@@ -1026,7 +1026,11 @@ namespace WATickets.Controllers
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList(),
                     Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
+                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true)
+                && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)
+                && (filtro.BaseEntry > 0 ? a.BaseEntry == filtro.BaseEntry : true)
+                && (!string.IsNullOrEmpty(filtro.CardCode) ? a.TipoDocumento == filtro.CardCode : true)
+                ).ToList(); //Traemos el listado de productos
 
                 if (!string.IsNullOrEmpty(filtro.Texto))
                 {
@@ -1077,15 +1081,15 @@ namespace WATickets.Controllers
                     Documentos = Documentos.Where(a => a.ProcesadaSAP == filtro.Procesado).ToList();
                 }
 
-                if (filtro.BaseEntry > 0)
-                {
-                    Documentos = Documentos.Where(a => a.BaseEntry == filtro.BaseEntry).ToList();
-                }
+                //if (filtro.BaseEntry > 0)
+                //{
+                //    Documentos = Documentos.Where(a => a.BaseEntry == filtro.BaseEntry).ToList();
+                //}
 
-                if (!string.IsNullOrEmpty(filtro.CardCode))
-                {
-                    Documentos = Documentos.Where(a => a.TipoDocumento == filtro.CardCode).ToList();
-                }
+                //if (!string.IsNullOrEmpty(filtro.CardCode))
+                //{
+                //    Documentos = Documentos.Where(a => a.TipoDocumento == filtro.CardCode).ToList();
+                //}
 
 
 
