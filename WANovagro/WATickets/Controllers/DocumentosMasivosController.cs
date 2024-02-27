@@ -198,7 +198,7 @@ namespace WATickets.Controllers
 
                                 var CondicionPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? db.CondicionesPagos.FirstOrDefault() : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault();
                                 //Procesamos el pago
-                                if (CondicionPago.Dias == 0 && Documento.Status == "0")
+                                if (CondicionPago.Dias == 0)
                                 {
                                     if (param.MontosPagosSeparados == true)
                                     {
@@ -1020,7 +1020,7 @@ namespace WATickets.Controllers
             {
                 Parametros param = db.Parametros.FirstOrDefault();
 
-                var DocumentosSPP = db.EncDocumento.Where(a => a.ProcesadaSAP == true && a.TipoDocumento != "03" && a.Status == "0").ToList();
+                var DocumentosSPP = db.EncDocumento.Where(a => a.ProcesadaSAP == true && a.TipoDocumento != "03").ToList();
 
                 foreach (var item2 in DocumentosSPP)
                 {
