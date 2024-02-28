@@ -1030,78 +1030,22 @@ namespace WATickets.Controllers
                 && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)
                 && (filtro.BaseEntry > 0 ? a.BaseEntry == filtro.BaseEntry : true)
                 && (!string.IsNullOrEmpty(filtro.CardCode) ? a.TipoDocumento == filtro.CardCode : true)
+                && (filtro.Codigo1 > 0 ? a.idCliente == filtro.Codigo1 : true)
+                && (filtro.Codigo2 > 0 ? a.idUsuarioCreador == filtro.Codigo2 : true)
+                && (!string.IsNullOrEmpty(filtro.ItemCode) ? a.Status == filtro.ItemCode : true)
+                && (filtro.Codigo3 > 0 ? a.idCaja == filtro.Codigo3 : true)
+                && (filtro.Codigo4 > 0 ? a.idCondPago == filtro.Codigo4 : true)
+                && (filtro.Codigo5 > 0 ? a.idVendedor == filtro.Codigo5 : true)
+                && (filtro.Codigo6 > 0 ? a.idCaja == filtro.Codigo6  : true)
+                && (filtro.Procesado != null && filtro.Activo ? a.ProcesadaSAP == filtro.Procesado : true)
+                && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto  : true)
                 ).ToList(); //Traemos el listado de productos
-
-                if (!string.IsNullOrEmpty(filtro.Texto))
-                {
-                    Documentos = Documentos.Where(a => a.CodSuc == filtro.Texto).ToList();
-                }
-
-                if (filtro.Codigo1 > 0) // esto por ser integer
-                {
-                    Documentos = Documentos.Where(a => a.idCliente == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
-                }
-                if (filtro.Codigo2 > 0) // esto por ser integer
-                {
-                    Documentos = Documentos.Where(a => a.idUsuarioCreador == filtro.Codigo2).ToList();
-                }
-
-                if (!string.IsNullOrEmpty(filtro.ItemCode)) // esto por ser string
-                {
-                    Documentos = Documentos.Where(a => a.Status == filtro.ItemCode).ToList();
-                }
-
-
-
-
-                if (filtro.Codigo3 > 0)
-                {
-                    Documentos = Documentos.Where(a => a.idCaja == filtro.Codigo3).ToList();
-
-                }
-
-                if (filtro.Codigo4 > 0) // esto por ser integer
-                {
-                    Documentos = Documentos.Where(a => a.idCondPago == filtro.Codigo4).ToList();
-                }
-
-                if (filtro.Codigo5 > 0) // esto por ser integer
-                {
-                    Documentos = Documentos.Where(a => a.idVendedor == filtro.Codigo5).ToList();
-                }
-
-                if (filtro.Codigo6 > 0) // esto por ser integer
-                {
-                    Documentos = Documentos.Where(a => a.idCaja == filtro.Codigo6).ToList();
-                }
-
-
-                if (filtro.Procesado != null && filtro.Activo) //recordar poner el filtro.activo en novapp
-                {
-                    Documentos = Documentos.Where(a => a.ProcesadaSAP == filtro.Procesado).ToList();
-                }
-
-                //if (filtro.BaseEntry > 0)
-                //{
-                //    Documentos = Documentos.Where(a => a.BaseEntry == filtro.BaseEntry).ToList();
-                //}
-
-                //if (!string.IsNullOrEmpty(filtro.CardCode))
-                //{
-                //    Documentos = Documentos.Where(a => a.TipoDocumento == filtro.CardCode).ToList();
-                //}
-
 
 
                 //if (filtro.PagoProcesado != null)
                 //{
                 //    Documentos = Documentos.Where(a => a.PagoProcesadaSAP == filtro.PagoProcesado).ToList();
                 //}
-
-
-
-
-
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Documentos);
             }

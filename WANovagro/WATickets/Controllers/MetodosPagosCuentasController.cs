@@ -18,28 +18,10 @@ namespace WATickets.Controllers
             try
             {
                 var time = new DateTime();
-                var Pagos = db.MetodosPagosCuentas.ToList();
+                var Pagos = db.MetodosPagosCuentas.Where(a=> (filtros.Codigo1 > 0 && filtros.FechaInicial != time && filtros.Codigo2 > 0 ? a.idCaja == filtros.Codigo1 && a.idCajero == filtros.Codigo2 && a.Fecha == filtros.FechaInicial : true)
+                ).ToList();
 
-                if (filtros.Codigo1 > 0 && filtros.FechaInicial != time && filtros.Codigo2 > 0) // para buscar los pagos realizados en una caja
-                {
-
-                    //var Documentos = db.EncDocumento.Where(a => a.idCaja != filtros.Codigo1 ).ToList(); //Todos los documentos hechos en otras cajas
-                    //foreach(var item in Documentos)
-                    //{
-                    //    Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList(); //tenemos todos los pagos pertenecientes a una caja
-                    //}
-                    //filtros.FechaFinal = filtros.FechaInicial.AddDays(1);
-                    //Documentos = db.EncDocumento.Where(a => a.idCaja == filtros.Codigo1 && (a.Fecha < filtros.FechaInicial || a.Fecha >= filtros.FechaFinal)).ToList();
-                    //foreach (var item in Documentos)
-                    //{
-                    //    Pagos = Pagos.Where(a => a.idEncabezado != item.id).ToList();
-                    //}
-
-                    Pagos = Pagos.Where(a => a.idCaja == filtros.Codigo1 && a.idCajero == filtros.Codigo2 && a.Fecha == filtros.FechaInicial).ToList();
-                    //Pagos = Pagos.Where(a => a.idEncabezado != 0 ).ToList();
-                }
-
-
+ 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Pagos);
             }
             catch (Exception ex)

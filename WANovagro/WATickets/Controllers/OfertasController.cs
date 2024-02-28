@@ -258,44 +258,18 @@ namespace WATickets.Controllers
                     Detalle = db.DetOferta.Where(b => b.idEncabezado == a.id).ToList(),
                     Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
+                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) 
+                && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)
+                && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto  : true)
+                && (filtro.Codigo1 > 0 ? a.idCliente == filtro.Codigo1  : true)
+                && (filtro.Codigo2 > 0 ? a.idUsuarioCreador == filtro.Codigo2  : true)
+                && (!string.IsNullOrEmpty(filtro.ItemCode) ? a.Status == filtro.ItemCode  : true)
+                && (!string.IsNullOrEmpty(filtro.Categoria) ? a.Tipo == filtro.Categoria  : true)
+                && (filtro.Codigo3 > 0 ? a.idCondPago == filtro.Codigo3 : true)
+                && (filtro.Codigo4 > 0 ? a.idVendedor == filtro.Codigo4 : true)
+                && (filtro.Procesado != null ? a.ProcesadaSAP == filtro.Procesado  : true)
+                ).ToList(); //Traemos el listado de productos
 
-                if (!string.IsNullOrEmpty(filtro.Texto))
-                {
-                    Ofertas = Ofertas.Where(a => a.CodSuc == filtro.Texto).ToList();
-                }
-
-                if (filtro.Codigo1 > 0) // esto por ser integer
-                {
-                    Ofertas = Ofertas.Where(a => a.idCliente == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
-                }
-                if (filtro.Codigo2 > 0) // esto por ser integer
-                {
-                    Ofertas = Ofertas.Where(a => a.idUsuarioCreador == filtro.Codigo2).ToList();
-                }
-
-                if (!string.IsNullOrEmpty(filtro.ItemCode)) // esto por ser string
-                {
-                    Ofertas = Ofertas.Where(a => a.Status == filtro.ItemCode).ToList();
-                }
-
-                if (!string.IsNullOrEmpty(filtro.Categoria))
-                {
-                    Ofertas = Ofertas.Where(a => a.Tipo == filtro.Categoria).ToList();
-                }
-                if (filtro.Codigo3 > 0) // esto por ser integer
-                {
-                    Ofertas = Ofertas.Where(a => a.idCondPago == filtro.Codigo3).ToList();
-                }
-                if (filtro.Codigo4 > 0) // esto por ser integer
-                {
-                    Ofertas = Ofertas.Where(a => a.idVendedor == filtro.Codigo4).ToList();
-                }
-
-                if (filtro.Procesado != null )
-                {
-                    Ofertas = Ofertas.Where(a => a.ProcesadaSAP == filtro.Procesado).ToList();
-                }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Ofertas);
             }

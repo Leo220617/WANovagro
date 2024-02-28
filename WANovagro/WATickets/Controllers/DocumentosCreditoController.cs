@@ -30,6 +30,7 @@ namespace WATickets.Controllers
             try
             {
                 var time = new DateTime(); // 01-01-0001
+                var Fecha = DateTime.Now;
                 if (filtro.FechaFinal != time)
                 {
                     filtro.FechaInicial = filtro.FechaInicial.Date;
@@ -64,44 +65,16 @@ namespace WATickets.Controllers
 
                     Detalle = db.DetDocumentoCredito.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
-
-                if (!string.IsNullOrEmpty(filtro.Texto))
-                {
-                    Creditos = Creditos.Where(a => a.CodSuc == filtro.Texto).ToList();
-                }
-
-                if (filtro.Codigo1 > 0) // esto por ser integer
-                {
-                    Creditos = Creditos.Where(a => a.idCliente == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
-                }
-
-                if (filtro.Codigo2 > 0) // esto por ser integer
-                {
-                    var Fecha = DateTime.Now;
-                    Creditos = Creditos.Where(a => a.idCliente == filtro.Codigo2 && a.FechaVencimiento < Fecha && a.Saldo > 0).ToList(); // filtramos por lo que traiga el codigo1 
-                }
-                if (!string.IsNullOrEmpty(filtro.ItemCode)) // esto por ser string
-                {
-                    Creditos = Creditos.Where(a => a.Status == filtro.ItemCode).ToList();
-                }
-
-                if (!string.IsNullOrEmpty(filtro.Categoria))
-                {
-                    Creditos = Creditos.Where(a => a.TipoDocumento == filtro.Categoria).ToList();
-                }
-                if (filtro.Codigo3 > 0) // esto por ser integer
-                {
-                    Creditos = Creditos.Where(a => a.idCondPago == filtro.Codigo3).ToList();
-                }
-                if (filtro.Codigo4 > 0) // esto por ser integer
-                {
-                    Creditos = Creditos.Where(a => a.idVendedor == filtro.Codigo4).ToList();
-                }
-
-
-
-
+                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) 
+                && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)
+                &&  (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto  : true)
+                && (filtro.Codigo1 > 0 ? a.idCliente == filtro.Codigo1  : true)
+                && (!string.IsNullOrEmpty(filtro.ItemCode) ? a.Status == filtro.ItemCode  : true)
+                && (!string.IsNullOrEmpty(filtro.Categoria) ? a.TipoDocumento == filtro.Categoria  : true)
+                && (filtro.Codigo3 > 0 ? a.idCondPago == filtro.Codigo3  : true)
+                && (filtro.Codigo4 > 0 ? a.idVendedor == filtro.Codigo4 : true)
+                && (filtro.Codigo2 > 0 ? a.idCliente == filtro.Codigo2 && a.FechaVencimiento < Fecha && a.Saldo > 0 : true)
+                ).ToList(); //Traemos el listado de productos
 
 
 

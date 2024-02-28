@@ -338,43 +338,43 @@ namespace WATickets.Controllers
         {
             try
             {
-                var Productos = db.Productos.Where(a => (filtro.Codigo2 > 0 ? a.idListaPrecios == filtro.Codigo2 : true) && (filtro.Codigo1 > 0 ? a.idBodega == filtro.Codigo1 : true))
-                    .ToList(); //Traemos el listado de productos
-
-                if (!string.IsNullOrEmpty(filtro.Texto))
-                {
-                    // and = &&, or = ||
-                    Productos = Productos.Where(a => a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
-                }
                 if (!string.IsNullOrEmpty(filtro.CardCode))
                 {
-                    var Bodegas = db.Bodegas.Where(a => a.CodSuc != filtro.CardCode).ToList();
-                    foreach (var item in Bodegas)
-                    {
-                        Productos = Productos.Where(a => a.idBodega != item.id).ToList();
+                    var Bodegas = db.Bodegas.Where(a => a.CodSuc != filtro.CardCode).Select(a => a.id).ToList();
+                    var Productos = db.Productos.Where(a => (filtro.Codigo2 > 0 ? a.idListaPrecios == filtro.Codigo2 : true)
+                 && (filtro.Codigo1 > 0 ? a.idBodega == filtro.Codigo1 : true)
+                 && (!string.IsNullOrEmpty(filtro.Texto) ? a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper()) : true)
+                 && (filtro.Codigo3 > 0 ? a.idCategoria == filtro.Codigo3 : true)
+                 && (!string.IsNullOrEmpty(filtro.CardCode) ? !Bodegas.Contains(a.idBodega) : true)
 
-                    }
+                 ).ToList(); //Traemos el listado de productos
+
+                    //if (!string.IsNullOrEmpty(filtro.CardCode)) // este no
+                    //{
+                    //    var Bodegas = db.Bodegas.Where(a => a.CodSuc != filtro.CardCode).ToList();
+                    //    foreach (var item in Bodegas)
+                    //    {
+                    //        Productos = Productos.Where(a => a.idBodega != item.id).ToList();
+
+                    //    }
+                    //}
+
+
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK, Productos);
                 }
-
-                if (filtro.Codigo3 > 0) // esto por ser integer
+                else
                 {
-                    Productos = Productos.Where(a => a.idCategoria == filtro.Codigo3).ToList();
+                    var Productos = db.Productos.Where(a => (filtro.Codigo2 > 0 ? a.idListaPrecios == filtro.Codigo2 : true)
+                && (filtro.Codigo1 > 0 ? a.idBodega == filtro.Codigo1 : true)
+                && (!string.IsNullOrEmpty(filtro.Texto) ? a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper()) : true)
+                && (filtro.Codigo3 > 0 ? a.idCategoria == filtro.Codigo3 : true)
+
+
+                ).ToList(); //Traemos el listado de productos
+
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK, Productos);
                 }
 
-
-
-                //if(filtro.Codigo1 > 0) // esto por ser integer
-                //{
-                //    Productos = Productos.Where(a => a.idBodega == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
-                //}
-                //if (filtro.Codigo2 > 0) // esto por ser integer
-                //{
-                //    Productos = Productos.Where(a => a.idListaPrecios == filtro.Codigo2).ToList(); 
-                //}
-
-
-
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Productos);
             }
             catch (Exception ex)
             {

@@ -24,22 +24,10 @@ namespace WATickets.Controllers
         {
             try
             {
-                var Margenes = db.EncMargenes.ToList();
-
-                if (filtro.Codigo1 > 0) // esto por ser integer
-                {
-                    Margenes = Margenes.Where(a => a.idListaPrecio == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
-                }
-
-                if (filtro.Codigo2 > 0) // esto por ser integer
-                {
-                    Margenes = Margenes.Where(a => a.idCategoria == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
-                }
-                if (!string.IsNullOrEmpty(filtro.Texto))
-                {
-
-                    Margenes = Margenes.Where(a => a.Moneda.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
-                }
+                var Margenes = db.EncMargenes.Where(a => (filtro.Codigo1 > 0 ? a.idListaPrecio == filtro.Codigo1 : true)
+                && (filtro.Codigo2 > 0 ? a.idCategoria == filtro.Codigo1 : true)
+                && (!string.IsNullOrEmpty(filtro.Texto) ? a.Moneda.ToUpper().Contains(filtro.Texto.ToUpper())  : true)
+                ).ToList();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Margenes);
             }

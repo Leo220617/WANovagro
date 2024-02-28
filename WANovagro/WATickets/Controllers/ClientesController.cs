@@ -811,40 +811,30 @@ namespace WATickets.Controllers
         {
             try
             {
-                var Clientes = db.Clientes.ToList();
+                var Clientes = db.Clientes.Where(a => (filtro.Codigo1 > 0 ? a.idListaPrecios == filtro.Codigo1 : true)
+                && (filtro.Procesado != null && filtro.Externo == false ? a.ProcesadoSAP == filtro.Procesado : true)
+                && (filtro.Codigo2 > 0 ? a.idGrupo == filtro.Codigo2  : true)
+                && (filtro.Activo ? (!filtro.Externo ? a.Activo == filtro.Activo : true) : true)
+                ).ToList();
+
+
+
                 if (!string.IsNullOrEmpty(filtro.Texto))
                 {
 
                     Clientes = Clientes.Where(a => a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Cedula.ToUpper().Contains(filtro.Texto.ToUpper())
                     || a.Email.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Telefono.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
                 }
+                  
+                //if (filtro.Activo)
+                //{
+                //    if (!filtro.Externo)
+                //    {
+                //        Clientes = Clientes.Where(a => a.Activo == filtro.Activo).ToList();
 
-                if (filtro.Codigo1 > 0) // esto por ser integer
-                {
-                    Clientes = Clientes.Where(a => a.idListaPrecios == filtro.Codigo1).ToList();
-                }
-
-                if (filtro.Procesado != null && filtro.Externo == false)
-                {
-                    Clientes = Clientes.Where(a => a.ProcesadoSAP == filtro.Procesado).ToList();
-                }
-
-                if (filtro.Codigo2 > 0) // esto por ser integer
-                {
-                    Clientes = Clientes.Where(a => a.idGrupo == filtro.Codigo2).ToList();
-                }
-                if (filtro.Activo)
-                {
-                    if (!filtro.Externo)
-                    {
-                        Clientes = Clientes.Where(a => a.Activo == filtro.Activo).ToList();
-
-                    }
-                }
-
-
-
-
+                //    }
+                //}
+                 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Clientes);
             }
             catch (Exception ex)
@@ -998,7 +988,7 @@ namespace WATickets.Controllers
                     Clientes.CorreoPublicitario = clientes.CorreoPublicitario;
                     //Clientes.MAG = clientes.MAG; 
                     db.SaveChanges();
-
+                    t.Commit();
 
                     try
                     {
@@ -1123,7 +1113,7 @@ namespace WATickets.Controllers
                         throw new Exception(ex.Message);
                     }
 
-                    t.Commit();
+                
                 }
                 else
                 {
@@ -1135,7 +1125,16 @@ namespace WATickets.Controllers
             }
             catch (Exception ex)
             {
-                t.Rollback();
+                try
+                {
+                    t.Rollback();
+
+                }
+                catch (Exception)
+                {
+
+                    
+                }
 
                 BitacoraErrores be = new BitacoraErrores();
                 be.Descripcion = ex.Message;

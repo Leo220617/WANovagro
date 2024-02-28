@@ -39,20 +39,14 @@ namespace WATickets.Controllers
                     a.TotalAprobado
                   
 
-                }).Where(a => (filtro.FechaInicial != time ? a.FechaCreacion >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.FechaCreacion <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
+                }).Where(a => (filtro.FechaInicial != time ? a.FechaCreacion >= filtro.FechaInicial : true) 
+                && (filtro.FechaFinal != time ? a.FechaCreacion <= filtro.FechaFinal : true)
+                && (filtro.Activo ? a.Activo == filtro.Activo : true)
+                && (filtro.Codigo1 > 0 ? a.idCliente == filtro.Codigo1 : true)
+                && (!string.IsNullOrEmpty(filtro.Texto) ? a.Status.ToUpper().Contains(filtro.Texto.ToUpper()) : true)
+                ).ToList(); //Traemos el listado de productos
 
-                if (filtro.Activo)
-                {
-                    Aprobaciones = Aprobaciones.Where(a => a.Activo == filtro.Activo).ToList();
-                }
-                if (filtro.Codigo1 > 0) // esto por ser integer
-                {
-                    Aprobaciones = Aprobaciones.Where(a => a.idCliente == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
-                }
-                if (!string.IsNullOrEmpty(filtro.Texto))
-                {
-                    Aprobaciones = Aprobaciones.Where(a => a.Status.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();
-                }
+                
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Aprobaciones);
             }
