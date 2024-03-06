@@ -101,6 +101,26 @@ namespace WATickets.Controllers
                                 Cliente.INT = false;
                             }
 
+                            string CxC = item["CxC"].ToString();
+                            if (CxC == "SI")
+                            {
+                                Cliente.CxC = true;
+                            }
+                            else
+                            {
+                                Cliente.CxC = false;
+                            }
+
+                            string Transitorio = item["Transitorio"].ToString();
+                            if (Transitorio == "SI")
+                            {
+                                Cliente.Transitorio = true;
+                            }
+                            else
+                            {
+                                Cliente.Transitorio = false;
+                            }
+
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CorreoEC = item["CorreoEC"].ToString();
                             Cliente.CodPais = "506";
@@ -236,6 +256,26 @@ namespace WATickets.Controllers
                             else
                             {
                                 Cliente.INT = false;
+                            }
+
+                            string CxC = item["CxC"].ToString();
+                            if (CxC == "SI")
+                            {
+                                Cliente.CxC = true;
+                            }
+                            else
+                            {
+                                Cliente.CxC = false;
+                            }
+
+                            string Transitorio = item["Transitorio"].ToString();
+                            if (Transitorio == "SI")
+                            {
+                                Cliente.Transitorio = true;
+                            }
+                            else
+                            {
+                                Cliente.Transitorio = false;
                             }
                             db.SaveChanges();
                         }
@@ -384,6 +424,25 @@ namespace WATickets.Controllers
                                 Cliente.INT = false;
                             }
 
+                            string CxC = item["CxC"].ToString();
+                            if (CxC == "SI")
+                            {
+                                Cliente.CxC = true;
+                            }
+                            else
+                            {
+                                Cliente.CxC = false;
+                            }
+
+                            string Transitorio = item["Transitorio"].ToString();
+                            if (Transitorio == "SI")
+                            {
+                                Cliente.Transitorio = true;
+                            }
+                            else
+                            {
+                                Cliente.Transitorio = false;
+                            }
                             Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
 
@@ -499,6 +558,25 @@ namespace WATickets.Controllers
                                 Cliente.INT = false;
                             }
 
+                            string CxC = item["CxC"].ToString();
+                            if (CxC == "SI")
+                            {
+                                Cliente.CxC = true;
+                            }
+                            else
+                            {
+                                Cliente.CxC = false;
+                            }
+
+                            string Transitorio = item["Transitorio"].ToString();
+                            if (Transitorio == "SI")
+                            {
+                                Cliente.Transitorio = true;
+                            }
+                            else
+                            {
+                                Cliente.Transitorio = false;
+                            }
                             db.SaveChanges();
                         }
                         catch (Exception ex1)
@@ -647,6 +725,25 @@ namespace WATickets.Controllers
                                 Cliente.INT = false;
                             }
 
+                            string CxC = item["CxC"].ToString();
+                            if (CxC == "SI")
+                            {
+                                Cliente.CxC = true;
+                            }
+                            else
+                            {
+                                Cliente.CxC = false;
+                            }
+
+                            string Transitorio = item["Transitorio"].ToString();
+                            if (Transitorio == "SI")
+                            {
+                                Cliente.Transitorio = true;
+                            }
+                            else
+                            {
+                                Cliente.Transitorio = false;
+                            }
                             Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
 
@@ -762,6 +859,25 @@ namespace WATickets.Controllers
                                 Cliente.INT = false;
                             }
 
+                            string CxC = item["CxC"].ToString();
+                            if (CxC == "SI")
+                            {
+                                Cliente.CxC = true;
+                            }
+                            else
+                            {
+                                Cliente.CxC = false;
+                            }
+
+                            string Transitorio = item["Transitorio"].ToString();
+                            if (Transitorio == "SI")
+                            {
+                                Cliente.Transitorio = true;
+                            }
+                            else
+                            {
+                                Cliente.Transitorio = false;
+                            }
                             db.SaveChanges();
                         }
                         catch (Exception ex1)
@@ -924,6 +1040,8 @@ namespace WATickets.Controllers
                         Cliente.FechaActualizacion = DateTime.Now;
                         Cliente.MAG = false;
                         Cliente.INT = false;
+                        Cliente.CxC = false;
+                        Cliente.Transitorio = false;
                         Cliente.CorreoEC = "";
                         db.Clientes.Add(Cliente);
                         db.SaveChanges();
@@ -1227,6 +1345,22 @@ namespace WATickets.Controllers
                         {
                             client.UserFields.Fields.Item("U_DYD_INT").Value = "NO";
                         }
+                        if (cliente.CxC == true)
+                        {
+                            client.UserFields.Fields.Item("U_DYD_INT").Value = "SI";
+                        }
+                        else if (cliente.CxC == false)
+                        {
+                            client.UserFields.Fields.Item("U_DYD_CxC").Value = "NO";
+                        }
+                        if (cliente.Transitorio == true)
+                        {
+                            client.UserFields.Fields.Item("U_DYD_Transitorio").Value = "SI";
+                        }
+                        else if (cliente.Transitorio == false)
+                        {
+                            client.UserFields.Fields.Item("U_DYD_Transitorio").Value = "NO";
+                        }
                         client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);
                         client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
                         client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
@@ -1373,7 +1507,22 @@ namespace WATickets.Controllers
                     {
                         client.UserFields.Fields.Item("U_DYD_INT").Value = "NO";
                     }
-
+                    if (cliente.CxC == true)
+                    {
+                        client.UserFields.Fields.Item("U_DYD_INT").Value = "SI";
+                    }
+                    else if (cliente.CxC == false)
+                    {
+                        client.UserFields.Fields.Item("U_DYD_CxC").Value = "NO";
+                    }
+                    if (cliente.Transitorio == true)
+                    {
+                        client.UserFields.Fields.Item("U_DYD_Transitorio").Value = "SI";
+                    }
+                    else if (cliente.Transitorio == false)
+                    {
+                        client.UserFields.Fields.Item("U_DYD_Transitorio").Value = "NO";
+                    }
                     client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);
                     client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
                     client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";

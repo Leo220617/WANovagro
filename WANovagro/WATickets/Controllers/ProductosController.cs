@@ -516,22 +516,47 @@ namespace WATickets.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
-        [Route("api/Productos/Eliminar")]
+        [Route("api/Productos/DesactivarProductos")]
         [HttpDelete]
-        public HttpResponseMessage Delete([FromUri] int id)
+        public HttpResponseMessage Delete([FromUri] string code)
         {
             try
             {
-                Productos Productos = db.Productos.Where(a => a.id == id).FirstOrDefault();
-                if (Productos != null)
-                {
-                    db.Productos.Remove(Productos);
-                    db.SaveChanges();
+                var Productos = db.Productos.Where(a => a.Codigo == code).ToList();
 
-                }
-                else
+                foreach (var item in Productos)
                 {
-                    throw new Exception("No existe un producto con este ID");
+
+
+                    if (Productos != null)
+                    {
+
+                        var Producto = db.Productos.Where(a => a.id == item.id).FirstOrDefault();
+                        db.Entry(Producto).State = EntityState.Modified;
+
+
+                        if (Producto.Activo)
+                        {
+
+                            Producto.Activo = false;
+
+                        }
+                        else
+                        {
+
+                            Producto.Activo = true;
+                        }
+
+
+
+
+                        db.SaveChanges();
+
+                    }
+                    else
+                    {
+                        throw new Exception("No existe un producto con este ID");
+                    }
                 }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
