@@ -346,6 +346,7 @@ namespace WATickets.Controllers
                  && (!string.IsNullOrEmpty(filtro.Texto) ? a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper()) : true)
                  && (filtro.Codigo3 > 0 ? a.idCategoria == filtro.Codigo3 : true)
                  && (!string.IsNullOrEmpty(filtro.CardCode) ? !Bodegas.Contains(a.idBodega) : true)
+                 &&  (filtro.Activo ? a.Activo == filtro.Activo : true)
 
                  ).ToList(); //Traemos el listado de productos
 

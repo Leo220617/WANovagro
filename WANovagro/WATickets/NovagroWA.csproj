@@ -296,6 +296,7 @@
     <Compile Include="Controllers\ListaPreciosController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MargenesController.cs" />
+    <Compile Include="Controllers\MetodosPagosAbonosController.cs" />
     <Compile Include="Controllers\MetodosPagosController.cs" />
     <Compile Include="Controllers\MetodosPagosCuentasController.cs" />
     <Compile Include="Controllers\OfertasController.cs" />
@@ -370,6 +371,7 @@
     <Compile Include="Models\Cliente\ListaPrecios.cs" />
     <Compile Include="Models\Cliente\Lotes.cs" />
     <Compile Include="Models\Cliente\MetodosPagos.cs" />
+    <Compile Include="Models\Cliente\MetodosPagosAbonos.cs" />
     <Compile Include="Models\Cliente\MetodosPagosCuentas.cs" />
     <Compile Include="Models\Cliente\ModelCliente.cs" />
     <Compile Include="Models\Cliente\PagoCuentas.cs" />

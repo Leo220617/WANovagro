@@ -27,5 +27,6 @@ namespace WATickets.Models.APIS
         public int idCaja { get; set; }
         public int idUsuarioCreador { get; set; }
         public List<DetPagos> Detalle { get; set; }
+        public List<MetodosPagosAbonos> MetodosPagosAbonos { get; set; }
     }
 }
