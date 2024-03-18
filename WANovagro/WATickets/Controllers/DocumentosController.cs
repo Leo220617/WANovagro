@@ -1039,6 +1039,7 @@ namespace WATickets.Controllers
                 && (filtro.Codigo6 > 0 ? a.idCaja == filtro.Codigo6  : true)
                 && (filtro.Procesado != null && filtro.Activo ? a.ProcesadaSAP == filtro.Procesado : true)
                 && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto  : true)
+                  //&& (filtro.PagoProcesado != null  ? a.PagoProcesadaSAP == filtro.PagoProcesado : true)
                 ).ToList(); //Traemos el listado de productos
 
 
@@ -1905,7 +1906,7 @@ namespace WATickets.Controllers
                         var time = DateTime.Now.Date;
                         var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador).FirstOrDefault();
                         var Asiento = db.Asientos.Where(a => a.Fecha == time && a.idCaja == documento.idCaja && a.idUsuario == Documento.idUsuarioCreador && a.CodSuc == Documento.CodSuc && a.ProcesadoSAP == false).FirstOrDefault();
-                        if (documento.MetodosPagos != null)
+                        if (documento.MetodosPagos != null && documento.MetodosPagos.Count() > 0)
                         {
 
                             foreach (var item in documento.MetodosPagos.Where(a => a.Metodo != "Pago a Cuenta"))

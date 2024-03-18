@@ -1347,7 +1347,7 @@ namespace WATickets.Controllers
                         }
                         if (cliente.CxC == true)
                         {
-                            client.UserFields.Fields.Item("U_DYD_INT").Value = "SI";
+                            client.UserFields.Fields.Item("U_DYD_CxC").Value = "SI";
                         }
                         else if (cliente.CxC == false)
                         {
@@ -1509,7 +1509,7 @@ namespace WATickets.Controllers
                     }
                     if (cliente.CxC == true)
                     {
-                        client.UserFields.Fields.Item("U_DYD_INT").Value = "SI";
+                        client.UserFields.Fields.Item("U_DYD_CxC").Value = "SI";
                     }
                     else if (cliente.CxC == false)
                     {
