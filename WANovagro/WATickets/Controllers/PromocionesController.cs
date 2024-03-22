@@ -270,7 +270,7 @@ namespace WATickets.Controllers
                             db.SaveChanges();
 
 
-                            if (det.Fecha == time && det.FechaVen >= time)
+                            if (det.Fecha <= time && det.FechaVen >= time)
                             {
                                 var ProductoX = db.Productos.Where(a => a.Codigo == det.ItemCode && a.idCategoria == det.idCategoria && a.idListaPrecios == det.idListaPrecio).ToList();
                                 foreach (var item2 in ProductoX)
