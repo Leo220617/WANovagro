@@ -139,7 +139,7 @@ namespace WATickets.Controllers
                                     //documentoSAP.Lines.CostingCode2 = param.CostingCode2;
                                     documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto; //Cambiar progra para Novagro
                                     documentoSAP.Lines.CostingCode3 = param.CostingCode3;
-                                    
+
                                 }
                                 else
                                 {
@@ -349,7 +349,7 @@ namespace WATickets.Controllers
                                     //documentoSAP.Lines.CostingCode2 = param.CostingCode2;
                                     documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto; //Cambiar progra para Novagro
                                     documentoSAP.Lines.CostingCode3 = param.CostingCode3;
-                                  
+
                                 }
                                 else
                                 {
@@ -438,7 +438,7 @@ namespace WATickets.Controllers
                                 //Procesamos el pago
                                 var CondicionPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? db.CondicionesPagos.FirstOrDefault() : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault();
                                 //Procesamos el pago
-                                if (CondicionPago.Dias == 0 )
+                                if (CondicionPago.Dias == 0)
                                 {
                                     if (param.MontosPagosSeparados == true)
                                     {
@@ -1036,10 +1036,10 @@ namespace WATickets.Controllers
                 && (filtro.Codigo3 > 0 ? a.idCaja == filtro.Codigo3 : true)
                 && (filtro.Codigo4 > 0 ? a.idCondPago == filtro.Codigo4 : true)
                 && (filtro.Codigo5 > 0 ? a.idVendedor == filtro.Codigo5 : true)
-                && (filtro.Codigo6 > 0 ? a.idCaja == filtro.Codigo6  : true)
+                && (filtro.Codigo6 > 0 ? a.idCaja == filtro.Codigo6 : true)
                 && (filtro.Procesado != null && filtro.Activo ? a.ProcesadaSAP == filtro.Procesado : true)
-                && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto  : true)
-                  //&& (filtro.PagoProcesado != null  ? a.PagoProcesadaSAP == filtro.PagoProcesado : true)
+                && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto : true)
+                //&& (filtro.PagoProcesado != null  ? a.PagoProcesadaSAP == filtro.PagoProcesado : true)
                 ).ToList(); //Traemos el listado de productos
 
 
@@ -1134,6 +1134,10 @@ namespace WATickets.Controllers
 
                 if (Documento == null)
                 {
+                    if (documento.Detalle == null || documento.Detalle.Count == 0) 
+                    {
+                        return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest, "El detalle del documento está vacío.");
+                    }
                     var t = db.Database.BeginTransaction();
 
                     try
@@ -1187,10 +1191,16 @@ namespace WATickets.Controllers
                             db.SaveChanges();
                             i++;
 
+
+                          
+
+
+
                             if (documento.Lotes == null)
                             {
                                 documento.Lotes = new List<Lotes>();
                             }
+
 
                             foreach (var lote in documento.Lotes.Where(a => a.ItemCode == itemCode))
                             {
@@ -2180,8 +2190,9 @@ namespace WATickets.Controllers
                         db.BitacoraMovimientos.Add(btm);
                         db.SaveChanges();
                         t.Commit();
+
                     }
-                    catch (Exception ex )
+                    catch (Exception ex)
                     {
                         t.Rollback();
                         BitacoraErrores be = new BitacoraErrores();
@@ -2195,7 +2206,7 @@ namespace WATickets.Controllers
                         return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, be);
 
                     }
-                   
+
 
 
                     ////Mandar al api de facturacion
