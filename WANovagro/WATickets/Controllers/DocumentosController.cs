@@ -2194,7 +2194,25 @@ namespace WATickets.Controllers
                     }
                     catch (Exception ex)
                     {
-                        t.Rollback();
+                        try
+                        {
+                            // Attempt to roll back the transaction.
+                            t.Rollback();
+                        }
+                        catch (Exception exRollback)
+                        {
+                            // Throws an InvalidOperationException if the connection
+                            // is closed or the transaction has already been rolled
+                            // back on the server. 
+                            BitacoraErrores be2 = new BitacoraErrores();
+                            be2.Descripcion = "Error en el rollback: " + exRollback.Message;
+                            be2.StrackTrace = exRollback.StackTrace;
+                            be2.Fecha = DateTime.Now;
+                            be2.JSON = JsonConvert.SerializeObject(exRollback);
+                            db.BitacoraErrores.Add(be2);
+                            db.SaveChanges();
+                        }
+                        
                         BitacoraErrores be = new BitacoraErrores();
                         be.Descripcion = ex.Message;
                         be.StrackTrace = ex.StackTrace;

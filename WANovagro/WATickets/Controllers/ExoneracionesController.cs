@@ -23,7 +23,7 @@ namespace WATickets.Controllers
         ModelCliente db = new ModelCliente();
         G G = new G();
 
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace WATickets.Controllers
                     a.Activo,
                     Detalle = db.DetExoneraciones.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).ToList();
+                }).Where(a => filtro.Activo ? a.Activo == filtro.Activo : true).ToList();
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Exoneraciones);
@@ -82,6 +82,7 @@ namespace WATickets.Controllers
 
 
                 }).Where(a => a.id == id).FirstOrDefault();
+
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Exoneraciones);
             }
             catch (Exception ex)
