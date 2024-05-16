@@ -201,6 +201,8 @@ namespace WATickets.Controllers
                     Bodega.id = bodegas.id;
                     Bodega.CodSuc = bodegas.CodSuc;
                     Bodega.Nombre = bodegas.Nombre;
+                    Bodega.Dimension = bodegas.Dimension;
+                    Bodega.NormaReparto = bodegas.NormaReparto;
                     db.Bodegas.Add(Bodega);
                     db.SaveChanges();
 
@@ -236,7 +238,9 @@ namespace WATickets.Controllers
                 {
                     db.Entry(Bodegas).State = System.Data.Entity.EntityState.Modified;
                     Bodegas.CodSuc = bodegas.CodSuc;
-                   //Bodegas.Nombre = bodegas.Nombre;
+                    Bodegas.Dimension = bodegas.Dimension;
+                    Bodegas.NormaReparto = bodegas.NormaReparto;
+                    //Bodegas.Nombre = bodegas.Nombre;
                     db.SaveChanges();
 
                 }

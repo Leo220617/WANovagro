@@ -77,6 +77,8 @@ namespace WATickets.Controllers
 
                             foreach (var item in Detalle)
                             {
+                                var BodProducto = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
+                                var Bodega = db.Bodegas.Where(a => a.id == BodProducto).FirstOrDefault();
                                 documentoSAP.Lines.SetCurrentLine(z);
 
                                 documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
@@ -160,6 +162,37 @@ namespace WATickets.Controllers
                                             }
 
                                     }
+
+                                    switch (Bodega.Dimension)
+                                    {
+                                        case 1:
+                                            {
+                                                documentoSAP.Lines.CostingCode = Bodega.NormaReparto;
+
+                                                break;
+                                            }
+                                        case 2:
+                                            {
+                                                documentoSAP.Lines.CostingCode2 = Bodega.NormaReparto;
+                                                break;
+                                            }
+                                        case 3:
+                                            {
+                                                documentoSAP.Lines.CostingCode3 = Bodega.NormaReparto;
+                                                break;
+                                            }
+                                        case 4:
+                                            {
+                                                documentoSAP.Lines.CostingCode4 = Bodega.NormaReparto;
+                                                break;
+                                            }
+                                        case 5:
+                                            {
+                                                documentoSAP.Lines.CostingCode5 = Bodega.NormaReparto;
+                                                break;
+                                            }
+
+                                    }
                                 }
                                 //documentoSAP.Lines.CostingCode4 = "";
                                 //documentoSAP.Lines.CostingCode5 = "";
@@ -218,7 +251,7 @@ namespace WATickets.Controllers
 
 
 
-
+                                            var contador = 0;
 
 
 
@@ -277,7 +310,15 @@ namespace WATickets.Controllers
                                                         var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                                        pagoProcesado.CreditCards.SetCurrentLine(0);
+                                                        if (contador > 0)
+                                                        {
+                                                            pagoProcesado.CreditCards.Add();
+                                                        }
+                                                        else
+                                                        {
+                                                            pagoProcesado.CreditCards.SetCurrentLine(contador);
+
+                                                        }
                                                         pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
                                                         pagoProcesado.CreditCards.CreditCard = 1;
                                                         pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
@@ -388,7 +429,15 @@ namespace WATickets.Controllers
                                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
-                                                        pagoProcesado.CreditCards.SetCurrentLine(0);
+                                                        if (contador > 0)
+                                                        {
+                                                            pagoProcesado.CreditCards.Add();
+                                                        }
+                                                        else
+                                                        {
+                                                            pagoProcesado.CreditCards.SetCurrentLine(contador);
+
+                                                        }
                                                         pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
                                                         pagoProcesado.CreditCards.CreditCard = 1;
                                                         pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
@@ -832,7 +881,8 @@ namespace WATickets.Controllers
                             {
 
 
-
+                                var BodProducto = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
+                                var Bodega = db.Bodegas.Where(a => a.id == BodProducto).FirstOrDefault();
 
 
 
@@ -912,6 +962,36 @@ namespace WATickets.Controllers
                                         case 5:
                                             {
                                                 documentoSAP.Lines.CostingCode5 = Sucursal.NormaReparto;
+                                                break;
+                                            }
+
+                                    }
+                                    switch (Bodega.Dimension)
+                                    {
+                                        case 1:
+                                            {
+                                                documentoSAP.Lines.CostingCode = Bodega.NormaReparto;
+
+                                                break;
+                                            }
+                                        case 2:
+                                            {
+                                                documentoSAP.Lines.CostingCode2 = Bodega.NormaReparto;
+                                                break;
+                                            }
+                                        case 3:
+                                            {
+                                                documentoSAP.Lines.CostingCode3 = Bodega.NormaReparto;
+                                                break;
+                                            }
+                                        case 4:
+                                            {
+                                                documentoSAP.Lines.CostingCode4 = Bodega.NormaReparto;
+                                                break;
+                                            }
+                                        case 5:
+                                            {
+                                                documentoSAP.Lines.CostingCode5 = Bodega.NormaReparto;
                                                 break;
                                             }
 
@@ -1056,7 +1136,7 @@ namespace WATickets.Controllers
                                         bool pagoDolaresProcesado = false;
 
 
-
+                                        var contador = 0;
 
 
 
@@ -1116,7 +1196,15 @@ namespace WATickets.Controllers
                                                     var idcuenta = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                                     var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                                    pagoProcesado.CreditCards.SetCurrentLine(0);
+                                                    if (contador > 0)
+                                                    {
+                                                        pagoProcesado.CreditCards.Add();
+                                                    }
+                                                    else
+                                                    {
+                                                        pagoProcesado.CreditCards.SetCurrentLine(contador);
+
+                                                    }
                                                     pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
                                                     pagoProcesado.CreditCards.CreditCard = 1;
                                                     pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
@@ -1227,7 +1315,15 @@ namespace WATickets.Controllers
                                                     var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
 
-                                                    pagoProcesado.CreditCards.SetCurrentLine(0);
+                                                    if (contador > 0)
+                                                    {
+                                                        pagoProcesado.CreditCards.Add();
+                                                    }
+                                                    else
+                                                    {
+                                                        pagoProcesado.CreditCards.SetCurrentLine(contador);
+
+                                                    }
                                                     pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
                                                     pagoProcesado.CreditCards.CreditCard = 1;
                                                     pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;

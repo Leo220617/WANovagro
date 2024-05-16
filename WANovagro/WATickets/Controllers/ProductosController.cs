@@ -154,6 +154,15 @@ namespace WATickets.Controllers
                                     }
                                     else if (DetMargenes != null)
                                     {
+                                        var PrecioCob = Producto.Costo / (1 - (DetMargenes.Cobertura / 100));
+                                        var PrecioMin = PrecioCob / (1 - (DetMargenes.MargenMin / 100));
+                                        var PrecioFinal = PrecioCob / (1 - (DetMargenes.Margen / 100));
+
+                                        db.Entry(DetMargenes).State = EntityState.Modified;
+                                        DetMargenes.PrecioCob = PrecioCob;
+                                        DetMargenes.PrecioMin = PrecioMin;
+                                        DetMargenes.PrecioFinal = PrecioFinal;
+                                       // db.SaveChanges();
                                         Producto.PrecioUnitario = DetMargenes.PrecioFinal;
                                     }
                                     else if (Margenes != null)

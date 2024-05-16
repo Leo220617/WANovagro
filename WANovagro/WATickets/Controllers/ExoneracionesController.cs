@@ -36,11 +36,10 @@ namespace WATickets.Controllers
                     a.PorExon,
                     a.idCliente,
                     a.FechaVencimiento,
-                    a.Imagen,
                     a.Activo,
                     Detalle = db.DetExoneraciones.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).Where(a => filtro.Activo ? a.Activo == filtro.Activo : true).ToList();
+                }).Where(a => ( filtro.Activo ? a.Activo == filtro.Activo : true) && (filtro.Codigo3 > 0 ? a.idCliente == filtro.Codigo3 : true) ).ToList();
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Exoneraciones);

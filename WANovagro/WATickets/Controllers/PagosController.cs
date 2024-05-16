@@ -1047,7 +1047,7 @@ namespace WATickets.Controllers
                     var pagoSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
 
                     //Encabezado 
-                    pagoSAP.DocDate = DateTime.Now;
+                    pagoSAP.DocDate = Pago.Fecha;
                     pagoSAP.DueDate = Pago.FechaVencimiento;
                     pagoSAP.TaxDate = Pago.FechaContabilizacion;
                     pagoSAP.VatDate = DateTime.Now;

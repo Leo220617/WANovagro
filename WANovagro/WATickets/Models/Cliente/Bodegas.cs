@@ -18,5 +18,10 @@ namespace WATickets.Models.Cliente
 
         [StringLength(500)]
         public string Nombre { get; set; }
+
+
+        public string NormaReparto { get; set; }
+
+        public int Dimension { get; set; }
     }
 }
