@@ -19,5 +19,7 @@ namespace WATickets.Models.Cliente
         public decimal MontoAperturaColones { get; set; }
 
         public decimal MontoAperturaDolares { get; set; }
+
+        public int idUsuario { get; set; }
     }
 }

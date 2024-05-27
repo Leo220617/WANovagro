@@ -116,7 +116,10 @@ namespace WATickets.Controllers
                     {
                         throw new Exception("Usuario o clave incorrecta");
                     }
-
+                    if(Usuario.id != Caja.idUsuario)
+                    {
+                        throw new Exception("Usuario no esta asignado a esta caja");
+                    }
                     if (!BCrypt.Net.BCrypt.Verify(clave, Usuario.Clave))
                     {
                         throw new Exception("Clave o Usuario incorrectos");

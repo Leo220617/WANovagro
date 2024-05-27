@@ -308,6 +308,7 @@
     <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="Controllers\ProductosWEBController.cs" />
     <Compile Include="Controllers\PromocionesController.cs" />
+    <Compile Include="Controllers\ReportesController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SeguridadModulosController.cs" />
     <Compile Include="Controllers\SeguridadRolesModulosController.cs" />
@@ -332,6 +333,7 @@
     <Compile Include="Models\APIS\Pagos.cs" />
     <Compile Include="Models\APIS\Promocion.cs" />
     <Compile Include="Models\APIS\RecibidoFacturacion.cs" />
+    <Compile Include="Models\APIS\ReporteVentas.cs" />
     <Compile Include="Models\APIS\RespuestaTipoCambio.cs" />
     <Compile Include="Models\APIS\SucursalesViewModel.cs" />
     <Compile Include="Models\Cliente\AprobacionesCreditos.cs" />

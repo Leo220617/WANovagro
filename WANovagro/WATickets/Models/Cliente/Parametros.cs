@@ -78,5 +78,7 @@
 
         public bool PrecioDescuento { get; set; }
 
+        public string SQLReporteVentas { get; set; }
+
     }
 }
