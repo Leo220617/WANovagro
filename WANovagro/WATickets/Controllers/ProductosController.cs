@@ -83,6 +83,8 @@ namespace WATickets.Controllers
                                     Producto.Costo = Convert.ToDecimal(item["Costo"]);
                                     Producto.Stock = Convert.ToDecimal(item["StockReal"]);
                                     Producto.Moneda = item["Moneda"].ToString();
+                                    Producto.Dimension = Convert.ToInt32(item["Dimension"]);
+                                    Producto.NormaReparto = item["Norma"].ToString();
                                     Producto.Activo = true;
                                     Producto.FechaActualizacion = DateTime.Now;
                                     Producto.ProcesadoSAP = true;
@@ -138,6 +140,8 @@ namespace WATickets.Controllers
                                     Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
 
                                     Producto.Nombre = item["Nombre"].ToString();
+                                    Producto.Dimension = Convert.ToInt32(item["Dimension"]);
+                                    Producto.NormaReparto = item["Norma"].ToString();
                                     decimal Porcentaje = 0;
                                     Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
                                     Producto.Moneda = item["Moneda"].ToString();

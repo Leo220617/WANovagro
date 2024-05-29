@@ -58,5 +58,10 @@ namespace WATickets.Models.Cliente
         public bool Editable { get; set; }
 
         public bool Serie { get; set; }
+
+        public string NormaReparto { get; set; }
+
+        public int Dimension { get; set; }
+
     }
 }

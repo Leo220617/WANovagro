@@ -101,7 +101,7 @@ namespace WATickets.Controllers
                                 var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
                                 var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
                                 var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
-
+                                var Producto = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
                                 var ProductoCabys = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Cabys;
                                 var DetExoneracion = db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault() == null ? 0 : db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault().id;
                                 if (ClienteMAG == true && ProductoMAG == true && DetExoneracion == 0)
@@ -174,32 +174,32 @@ namespace WATickets.Controllers
 
                                     }
 
-                                    switch (Bodega.Dimension)
+                                    switch (Producto.Dimension)
                                     {
                                         case 1:
                                             {
-                                                documentoSAP.Lines.CostingCode = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode = Producto.NormaReparto;
 
                                                 break;
                                             }
                                         case 2:
                                             {
-                                                documentoSAP.Lines.CostingCode2 = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode2 = Producto.NormaReparto;
                                                 break;
                                             }
                                         case 3:
                                             {
-                                                documentoSAP.Lines.CostingCode3 = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode3 = Producto.NormaReparto;
                                                 break;
                                             }
                                         case 4:
                                             {
-                                                documentoSAP.Lines.CostingCode4 = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode4 = Producto.NormaReparto;
                                                 break;
                                             }
                                         case 5:
                                             {
-                                                documentoSAP.Lines.CostingCode5 = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode5 = Producto.NormaReparto;
                                                 break;
                                             }
 
@@ -346,7 +346,7 @@ namespace WATickets.Controllers
                                 var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
                                 var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
                                 var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
-
+                                var Producto = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
 
                                 var ProductoCabys = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Cabys;
                                 var DetExoneracion = db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault() == null ? 0 : db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault().id;
@@ -416,32 +416,32 @@ namespace WATickets.Controllers
                                             }
 
                                     }
-                                    switch (Bodega.Dimension)
+                                    switch (Producto.Dimension)
                                     {
                                         case 1:
                                             {
-                                                documentoSAP.Lines.CostingCode = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode = Producto.NormaReparto;
 
                                                 break;
                                             }
                                         case 2:
                                             {
-                                                documentoSAP.Lines.CostingCode2 = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode2 = Producto.NormaReparto;
                                                 break;
                                             }
                                         case 3:
                                             {
-                                                documentoSAP.Lines.CostingCode3 = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode3 = Producto.NormaReparto;
                                                 break;
                                             }
                                         case 4:
                                             {
-                                                documentoSAP.Lines.CostingCode4 = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode4 = Producto.NormaReparto;
                                                 break;
                                             }
                                         case 5:
                                             {
-                                                documentoSAP.Lines.CostingCode5 = Bodega.NormaReparto;
+                                                documentoSAP.Lines.CostingCode5 = Producto.NormaReparto;
                                                 break;
                                             }
 
@@ -910,7 +910,7 @@ namespace WATickets.Controllers
                                                 {
                                                     var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                                     pagoProcesado.DocType = BoRcptTypes.rCustomer;
-                                                    pagoProcesado.PayToBankAccountNo = "Y";
+                                                   // pagoProcesado.PayToBankAccountNo = "N";
                                                     pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
                                                     pagoProcesado.DocDate = Documento.Fecha;
                                                     pagoProcesado.DueDate = DateTime.Now;
@@ -920,6 +920,7 @@ namespace WATickets.Controllers
                                                     pagoProcesado.CounterReference = "APP FAC" + Documento.id;
                                                     pagoProcesado.DocCurrency = "USD";
                                                     pagoProcesado.HandWritten = BoYesNoEnum.tNO;
+                                                    pagoProcesado.LocalCurrency = BoYesNoEnum.tNO;
                                                     //ligar la factura con el pago 
 
                                                     pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
@@ -930,7 +931,10 @@ namespace WATickets.Controllers
                                                     //    SumatoriaPagoColones = SumatoriaPagoColones / TipoCambio.TipoCambio;
                                                     //}
                                                     pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
+                                                   
 
+                                                    pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares * TipoCambio.TipoCambio);
+                                                    pagoProcesado.Invoices.Add();
 
 
                                                     //var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Documento.CodSuc && a.Moneda == "USD").FirstOrDefault().CuentaSAP;
@@ -939,6 +943,10 @@ namespace WATickets.Controllers
                                                     pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
                                                     pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoDolares);
                                                     pagoProcesado.CashAccount = Cuenta;
+                                                    
+
+                                                    
+
                                                     var respuestaPago = pagoProcesado.Add();
                                                     if (respuestaPago == 0)
                                                     {
