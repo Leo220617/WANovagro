@@ -36,7 +36,9 @@ namespace WATickets.Models.APIS
 
         public string ClaveHacienda { get; set; }
         public string ConsecutivoHacienda { get; set; }
+        public decimal Redondeo { get; set; }
         public List<MetodosPagos> MetodosPagos { get; set; }
         public List<DetDocumento> Detalle { get; set; }
+        public List<Lotes> Lotes { get; set; }
     }
 }

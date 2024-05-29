@@ -23,7 +23,7 @@ namespace WATickets.Controllers
         ModelCliente db = new ModelCliente();
         G G = new G();
 
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {
             try
             {
@@ -36,11 +36,10 @@ namespace WATickets.Controllers
                     a.PorExon,
                     a.idCliente,
                     a.FechaVencimiento,
-                    a.Imagen,
                     a.Activo,
                     Detalle = db.DetExoneraciones.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).ToList();
+                }).Where(a => ( filtro.Activo ? a.Activo == filtro.Activo : true) && (filtro.Codigo3 > 0 ? a.idCliente == filtro.Codigo3 : true) ).ToList();
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Exoneraciones);
@@ -82,6 +81,7 @@ namespace WATickets.Controllers
 
 
                 }).Where(a => a.id == id).FirstOrDefault();
+
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Exoneraciones);
             }
             catch (Exception ex)
@@ -129,7 +129,7 @@ namespace WATickets.Controllers
                     db.SaveChanges();
 
                     var i = 0;
-                    foreach (var item in exoneraciones.Detalle)
+                    foreach (var item in exoneraciones.Detalle.Where(a => a.CodCabys != "0"))
                     {
                         DetExoneraciones det = new DetExoneraciones();
                         det.idEncabezado = Exoneracion.id;
@@ -200,7 +200,7 @@ namespace WATickets.Controllers
 
 
                     var i = 0;
-                    foreach (var item in exoneraciones.Detalle)
+                    foreach (var item in exoneraciones.Detalle.Where(a => a.CodCabys != "0"))
                     {
                         DetExoneraciones det = new DetExoneraciones();
                         det.idEncabezado = Exoneraciones.id;

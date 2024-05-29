@@ -29,24 +29,12 @@ namespace WATickets.Controllers
                     filtro.FechaInicial = filtro.FechaInicial.Date;
                     filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
                 }
-                var Cierre = db.CierreCajas.ToList().Where(a => (filtro.FechaInicial != time ? a.FechaCaja >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.FechaCaja <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos;
-
-
-                if (filtro.Codigo1 > 0) // esto por ser integer
-                {
-                    Cierre = Cierre.Where(a => a.idUsuario == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
-                }
-                if (filtro.Codigo2 > 0) // esto por ser integer
-                {
-                    Cierre = Cierre.Where(a => a.idCaja == filtro.Codigo2).ToList();
-                }
-                if (filtro.Externo)
-                {
-                    Cierre = Cierre.Where(a => a.Activo == filtro.Activo).ToList();
-                }
-
-           
-             
+                var Cierre = db.CierreCajas.Where(a => (filtro.FechaInicial != time ? a.FechaCaja >= filtro.FechaInicial : true) 
+                && (filtro.FechaFinal != time ? a.FechaCaja <= filtro.FechaFinal : true)
+                && (filtro.Codigo1 > 0 ? a.idUsuario == filtro.Codigo1 : true) 
+                && (filtro.Codigo2 > 0 ? a.idCaja == filtro.Codigo2  : true)
+                && (filtro.Externo ? a.Activo == filtro.Activo : true)
+                ).ToList(); //Traemos el listado de productos;
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Cierre);
             }

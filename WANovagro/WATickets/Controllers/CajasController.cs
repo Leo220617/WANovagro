@@ -87,6 +87,7 @@ namespace WATickets.Controllers
                     Caja.Nombre = cajas.Nombre;
                     Caja.MontoAperturaColones = cajas.MontoAperturaColones;
                     Caja.MontoAperturaDolares = cajas.MontoAperturaDolares;
+                    Caja.idUsuario = cajas.idUsuario;
                     db.Cajas.Add(Caja);
                     db.SaveChanges();
 
@@ -125,6 +126,7 @@ namespace WATickets.Controllers
                     Cajas.Nombre = cajas.Nombre;
                     Cajas.MontoAperturaColones = cajas.MontoAperturaColones;
                     Cajas.MontoAperturaDolares = cajas.MontoAperturaDolares;
+                    Cajas.idUsuario = cajas.idUsuario;
                     db.SaveChanges();
 
                 }

@@ -19,6 +19,8 @@ namespace WATickets.Models.Cliente
 
         public int idListaPrecios { get; set; }
 
+        public int idCategoria { get; set; }
+
         [StringLength(500)]
         public string Nombre { get; set; }
 
@@ -52,6 +54,14 @@ namespace WATickets.Models.Cliente
         public DateTime FechaActualizacion { get; set; }
 
         public bool MAG { get; set; }
+
         public bool Editable { get; set; }
+
+        public bool Serie { get; set; }
+
+        public string NormaReparto { get; set; }
+
+        public int Dimension { get; set; }
+
     }
 }

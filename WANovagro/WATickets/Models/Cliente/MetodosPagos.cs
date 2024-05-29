@@ -19,6 +19,8 @@ namespace WATickets.Models.Cliente
         public int idCaja { get; set; }
         public int idCajero { get; set; }
         public DateTime Fecha { get; set; }
+        public string MonedaVuelto { get; set; }
+        public decimal PagadoCon { get; set; }
 
     }
 }

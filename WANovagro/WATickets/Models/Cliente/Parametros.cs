@@ -57,5 +57,28 @@
 
         public string CampoConsecutivo { get; set; }
 
+        public bool NumeroSerie { get; set; }
+
+        public bool MontosPagosSeparados { get; set; }
+
+
+        public string SQLSeriesProductos { get; set; }
+        public string SQLProductosWEB { get; set; }
+
+        public string SQLCategorias { get; set; }
+
+        public string SQLEstadoCuenta { get; set; }
+
+        public string HTMLEstadoCuenta { get; set; }
+        public string HTMLInyectadoEstadoCuenta { get; set; }
+
+        public string SQLEstadoCuentaMasivo { get; set; }
+
+        public string NombreEmpresa { get; set; }
+
+        public bool PrecioDescuento { get; set; }
+
+        public string SQLReporteVentas { get; set; }
+
     }
 }

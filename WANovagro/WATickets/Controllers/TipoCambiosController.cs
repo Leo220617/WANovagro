@@ -147,7 +147,7 @@ namespace WATickets.Controllers
                 {
                     HttpResponseMessage response3 = await clienteProd.GetAsync(url);
                     if (response3.IsSuccessStatusCode)
-                    { 
+                    {
                         var res = await response3.Content.ReadAsStringAsync();
 
 
@@ -165,17 +165,29 @@ namespace WATickets.Controllers
                             tp.SetCurrencyRate("USD", DateTime.Now, Convert.ToDouble(respZoho.venta));
 
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex.Message;
+                            be.StrackTrace = ex.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
 
                         }
 
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    BitacoraErrores be = new BitacoraErrores();
+                    be.Descripcion = ex.Message;
+                    be.StrackTrace = ex.StackTrace;
+                    be.Fecha = DateTime.Now;
+                    be.JSON = JsonConvert.SerializeObject(ex);
+                    db.BitacoraErrores.Add(be);
+                    db.SaveChanges();
 
                 }
 
@@ -198,6 +210,7 @@ namespace WATickets.Controllers
 
 
         }
+
 
         public HttpResponseMessage GetAll([FromUri] Filtros filtro)
         {

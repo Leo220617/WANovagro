@@ -71,6 +71,15 @@ namespace WATickets.Models.Cliente
 
         public decimal LimiteCredito { get; set; }
 
+        public decimal Descuento { get; set; }
+
+       
+        public string CorreoEC { get; set; }
+
+        public bool CxC { get; set; }
+
+        public bool Transitorio { get; set; }
+
     }
        
 }

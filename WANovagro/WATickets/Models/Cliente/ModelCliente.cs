@@ -44,6 +44,8 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<EncDocumento> EncDocumento { get; set; }
         public virtual DbSet<DetDocumento> DetDocumento { get; set; }
         public virtual DbSet<MetodosPagos> MetodosPagos { get; set; }
+        public virtual DbSet<MetodosPagosCuentas> MetodosPagosCuentas { get; set; }
+        public virtual DbSet<MetodosPagosAbonos> MetodosPagosAbonos { get; set; }
         public virtual DbSet<CuentasBancarias> CuentasBancarias { get; set; }
         public virtual DbSet<Vendedores> Vendedores { get; set; }
         public virtual DbSet<EncDocumentoCredito> EncDocumentoCredito { get; set; }
@@ -53,7 +55,16 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<FECXDia> FECXDia { get; set; }
         public virtual DbSet<Depositos> Depositos { get; set; }
         public virtual DbSet<PagoCuentas> PagoCuentas { get; set; }
-
+        public virtual DbSet<Lotes> Lotes { get; set; }
+        public virtual DbSet<PreCierres> PreCierres { get; set; }
+        public virtual DbSet<Asientos> Asientos { get; set; }
+        public virtual DbSet<PrecioXLista> PrecioXLista { get; set; }
+        public virtual DbSet<Categorias> Categorias { get; set; }
+        public virtual DbSet<Promociones> Promociones { get; set; }
+        public virtual DbSet<EncPromociones> EncPromociones { get; set; }
+        public virtual DbSet<EncMargenes> EncMargenes { get; set; }
+        public virtual DbSet<DetMargenes> DetMargenes { get; set; }
+        public virtual DbSet<AprobacionesCreditos> AprobacionesCreditos { get; set; }
 
 
 
@@ -388,6 +399,8 @@ namespace WATickets.Models.Cliente
             modelBuilder.Entity<UsuariosSucursales>()
                 .Property(e => e.CodSuc)
                 .IsUnicode(false);
+
+           
         }
     }
 }
