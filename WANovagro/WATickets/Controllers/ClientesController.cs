@@ -927,11 +927,12 @@ namespace WATickets.Controllers
         {
             try
             {
-                var Clientes = db.Clientes.Where(a => (filtro.Codigo1 > 0 ? a.idListaPrecios == filtro.Codigo1 : true)
+                var Clientes = db.Clientes.AsQueryable();
+                  Clientes = Clientes.Where(a => (filtro.Codigo1 > 0 ? a.idListaPrecios == filtro.Codigo1 : true)
                 && (filtro.Procesado != null && filtro.Externo == false ? a.ProcesadoSAP == filtro.Procesado : true)
                 && (filtro.Codigo2 > 0 ? a.idGrupo == filtro.Codigo2  : true)
                 && (filtro.Activo ? (!filtro.Externo ? a.Activo == filtro.Activo : true) : true)
-                ).ToList();
+                );
 
 
 
@@ -939,7 +940,7 @@ namespace WATickets.Controllers
                 {
 
                     Clientes = Clientes.Where(a => a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Cedula.ToUpper().Contains(filtro.Texto.ToUpper())
-                    || a.Email.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Telefono.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
+                    || a.Email.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Telefono.ToUpper().Contains(filtro.Texto.ToUpper()));// filtramos por lo que trae texto
                 }
                   
                 //if (filtro.Activo)
@@ -951,7 +952,7 @@ namespace WATickets.Controllers
                 //    }
                 //}
                  
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Clientes);
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Clientes.ToList());
             }
             catch (Exception ex)
             {

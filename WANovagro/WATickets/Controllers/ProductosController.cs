@@ -354,14 +354,15 @@ namespace WATickets.Controllers
                 if (!string.IsNullOrEmpty(filtro.CardCode))
                 {
                     var Bodegas = db.Bodegas.Where(a => a.CodSuc != filtro.CardCode).Select(a => a.id).ToList();
-                    var Productos = db.Productos.Where(a => (filtro.Codigo2 > 0 ? a.idListaPrecios == filtro.Codigo2 : true)
+                    var Productos = db.Productos.AsQueryable();
+                     Productos = Productos.Where(a => (filtro.Codigo2 > 0 ? a.idListaPrecios == filtro.Codigo2 : true)
                  && (filtro.Codigo1 > 0 ? a.idBodega == filtro.Codigo1 : true)
                  && (!string.IsNullOrEmpty(filtro.Texto) ? a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper()) : true)
                  && (filtro.Codigo3 > 0 ? a.idCategoria == filtro.Codigo3 : true)
                  && (!string.IsNullOrEmpty(filtro.CardCode) ? !Bodegas.Contains(a.idBodega) : true)
                  &&  (filtro.Activo ? a.Activo == filtro.Activo : true)
 
-                 ).ToList(); //Traemos el listado de productos
+                 ); //Traemos el listado de productos
 
                     //if (!string.IsNullOrEmpty(filtro.CardCode)) // este no
                     //{
@@ -374,19 +375,20 @@ namespace WATickets.Controllers
                     //}
 
 
-                    return Request.CreateResponse(System.Net.HttpStatusCode.OK, Productos);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK, Productos.ToList());
                 }
                 else
                 {
-                    var Productos = db.Productos.Where(a => (filtro.Codigo2 > 0 ? a.idListaPrecios == filtro.Codigo2 : true)
+                    var Productos = db.Productos.AsQueryable();
+                    Productos = Productos.Where(a => (filtro.Codigo2 > 0 ? a.idListaPrecios == filtro.Codigo2 : true)
                 && (filtro.Codigo1 > 0 ? a.idBodega == filtro.Codigo1 : true)
                 && (!string.IsNullOrEmpty(filtro.Texto) ? a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.CodBarras.ToUpper().Contains(filtro.Texto.ToUpper()) : true)
                 && (filtro.Codigo3 > 0 ? a.idCategoria == filtro.Codigo3 : true)
 
 
-                ).ToList(); //Traemos el listado de productos
+                ); //Traemos el listado de productos
 
-                    return Request.CreateResponse(System.Net.HttpStatusCode.OK, Productos);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK, Productos.ToList());
                 }
 
             }
