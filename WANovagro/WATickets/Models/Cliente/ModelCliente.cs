@@ -65,7 +65,7 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<EncMargenes> EncMargenes { get; set; }
         public virtual DbSet<DetMargenes> DetMargenes { get; set; }
         public virtual DbSet<AprobacionesCreditos> AprobacionesCreditos { get; set; }
-
+        public virtual DbSet<BitacoraMargenes> BitacoraMargenes { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

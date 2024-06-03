@@ -285,9 +285,9 @@ namespace WATickets.Controllers
                             var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time).FirstOrDefault();
                             var Margenes = db.EncMargenes.Where(a => a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
                             var DetMargenes = db.DetMargenes.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
-                            //var TablaNueva = new TablaNueva();
-                            //TablaNueva.idProducto = Producto.id;
-                            //TablaNueva.PrecioAnterior = Producto.PrecioUnitario;
+                            var BitacoraMargenes = new BitacoraMargenes();
+                            BitacoraMargenes.idProducto = Producto.id;
+                            BitacoraMargenes.PrecioAnterior = Producto.PrecioUnitario;
                             if (Promocion != null)
                             {
                                 Producto.PrecioUnitario = Promocion.PrecioFinal;
@@ -303,9 +303,9 @@ namespace WATickets.Controllers
                                 var PrecioFinal = PrecioCob / (1 - (Margenes.Margen / 100));
                                 Producto.PrecioUnitario = PrecioFinal;
                             }
-                            //TablaNueva.PrecioNuevo = Producto.PrecioUnitario;
-                            //TablaNueva.Fecha = DateTime.Now;
-                            //db.tablanueva.add(Tablanueva);
+                            BitacoraMargenes.PrecioNuevo = Producto.PrecioUnitario;
+                            BitacoraMargenes.Fecha = DateTime.Now;
+                            db.BitacoraMargenes.Add(BitacoraMargenes);
                             db.SaveChanges();
 
                             db.SaveChanges();
