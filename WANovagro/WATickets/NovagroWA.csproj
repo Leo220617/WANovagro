@@ -340,6 +340,7 @@
     <Compile Include="Models\Cliente\Asientos.cs" />
     <Compile Include="Models\Cliente\Barrios.cs" />
     <Compile Include="Models\Cliente\BitacoraErrores.cs" />
+    <Compile Include="Models\Cliente\BitacoraMargenes.cs" />
     <Compile Include="Models\Cliente\BitacoraMovimientos.cs" />
     <Compile Include="Models\Cliente\Bodegas.cs" />
     <Compile Include="Models\Cliente\Cabys.cs" />
