@@ -575,15 +575,15 @@ namespace WATickets.Controllers
 
                                                     }
 
-                                                    
-                                                    foreach(var item in PagosTarjetas)
+
+                                                    foreach (var item in PagosTarjetas)
                                                     {
 
                                                         if (item.Monto > 0)
                                                         {
                                                             var idcuenta = item.idCuentaBancaria;
                                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
-                                                            if(contador > 0)
+                                                            if (contador > 0)
                                                             {
                                                                 pagoProcesado.CreditCards.Add();
                                                             }
@@ -604,7 +604,7 @@ namespace WATickets.Controllers
 
                                                         }
                                                     }
-                                                    
+
 
                                                     if (SumatoriaTransferencia > 0)
                                                     {
@@ -698,7 +698,7 @@ namespace WATickets.Controllers
 
                                                     }
 
-                                                 
+
                                                     foreach (var item in PagosTarjetas)
                                                     {
 
@@ -714,7 +714,7 @@ namespace WATickets.Controllers
                                                             {
                                                                 pagoProcesado.CreditCards.SetCurrentLine(contador);
 
-                                                            } 
+                                                            }
                                                             pagoProcesado.CreditCards.CardValidUntil = new DateTime(Documento.Fecha.Year, Documento.Fecha.Month, 28); //Fecha en la que se mete el pago 
                                                             pagoProcesado.CreditCards.CreditCard = 1;
                                                             pagoProcesado.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
@@ -728,7 +728,7 @@ namespace WATickets.Controllers
                                                         }
                                                     }
 
-                                                     
+
 
                                                     if (SumatoriaTransferencia > 0)
                                                     {
@@ -910,7 +910,7 @@ namespace WATickets.Controllers
                                                 {
                                                     var pagoProcesado = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                                     pagoProcesado.DocType = BoRcptTypes.rCustomer;
-                                                   // pagoProcesado.PayToBankAccountNo = "N";
+                                                    // pagoProcesado.PayToBankAccountNo = "N";
                                                     pagoProcesado.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
                                                     pagoProcesado.DocDate = Documento.Fecha;
                                                     pagoProcesado.DueDate = DateTime.Now;
@@ -931,7 +931,7 @@ namespace WATickets.Controllers
                                                     //    SumatoriaPagoColones = SumatoriaPagoColones / TipoCambio.TipoCambio;
                                                     //}
                                                     pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
-                                                   
+
 
                                                     pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares * TipoCambio.TipoCambio);
                                                     pagoProcesado.Invoices.Add();
@@ -943,9 +943,9 @@ namespace WATickets.Controllers
                                                     pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
                                                     pagoProcesado.CashSum = Convert.ToDouble(SumatoriaPagoDolares);
                                                     pagoProcesado.CashAccount = Cuenta;
-                                                    
 
-                                                    
+
+
 
                                                     var respuestaPago = pagoProcesado.Add();
                                                     if (respuestaPago == 0)
@@ -1233,7 +1233,7 @@ namespace WATickets.Controllers
 
                 if (Documento == null)
                 {
-                    if (documento.Detalle == null || documento.Detalle.Count == 0) 
+                    if (documento.Detalle == null || documento.Detalle.Count == 0)
                     {
                         return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest, "El detalle del documento está vacío.");
                     }
@@ -1291,7 +1291,7 @@ namespace WATickets.Controllers
                             i++;
 
 
-                          
+
 
 
 
@@ -2311,7 +2311,7 @@ namespace WATickets.Controllers
                             db.BitacoraErrores.Add(be2);
                             db.SaveChanges();
                         }
-                        
+
                         BitacoraErrores be = new BitacoraErrores();
                         be.Descripcion = ex.Message;
                         be.StrackTrace = ex.StackTrace;
@@ -2735,6 +2735,42 @@ namespace WATickets.Controllers
         }
 
 
+        [Route("api/Documentos/ActualizarConsecutivos")]
+        public HttpResponseMessage GetActualizarConsecutivos()
+        {
+            try
+            {
+                Parametros parametros = db.Parametros.FirstOrDefault();
+                var conexion = G.DevuelveCadena(db);
 
+                var Datos = db.ConexionSAP.FirstOrDefault();
+
+
+
+
+                var SQL = "EXEC dbo.SincronizaNOVAAPPFEHACIENDA";
+
+                db.Database.ExecuteSqlCommand(SQL);
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+
+            }
+
+            catch (Exception ex)
+            {
+                ModelCliente db2 = new ModelCliente();
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db2.BitacoraErrores.Add(be);
+                db2.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+
+            }
+
+        }
     }
 }
