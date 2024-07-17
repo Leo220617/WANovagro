@@ -25,8 +25,8 @@ namespace WATickets.Controllers
             try
             {
                 var Margenes = db.EncMargenes.Where(a => (filtro.Codigo1 > 0 ? a.idListaPrecio == filtro.Codigo1 : true)
-                && (filtro.Codigo2 > 0 ? a.idCategoria == filtro.Codigo1 : true)
-                && (!string.IsNullOrEmpty(filtro.Texto) ? a.Moneda.ToUpper().Contains(filtro.Texto.ToUpper())  : true)
+                && (filtro.Codigo2 > 0 ? a.idCategoria == filtro.Codigo2 : true)
+                && (!string.IsNullOrEmpty(filtro.Texto) ? a.Moneda.ToUpper().Contains(filtro.Texto.ToUpper()) : true)
                 ).ToList();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Margenes);
@@ -264,7 +264,7 @@ namespace WATickets.Controllers
         {
             try
             {
-           
+
 
                 var ProductosSP = db.Productos.Where(a => a.idListaPrecios == idListaPrecio && a.idCategoria == idCategoria && a.Moneda == Moneda).ToList();
 
@@ -273,40 +273,74 @@ namespace WATickets.Controllers
 
 
                     var Producto = item;
-                 
-                    if(Producto != null)
+
+                    if (Producto != null)
                     {
                         try
                         {
                             db.Entry(Producto).State = EntityState.Modified;
-                      
+
 
                             var time = DateTime.Now.Date;
                             var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time).FirstOrDefault();
                             var Margenes = db.EncMargenes.Where(a => a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
                             var DetMargenes = db.DetMargenes.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
-                            var BitacoraMargenes = new BitacoraMargenes();
-                            BitacoraMargenes.idProducto = Producto.id;
-                            BitacoraMargenes.PrecioAnterior = Producto.PrecioUnitario;
+
                             if (Promocion != null)
                             {
+                                if (Producto.PrecioUnitario != Promocion.PrecioFinal)
+                                {
+                                    var BitacoraMargenes = new BitacoraMargenes();
+                                    BitacoraMargenes.ItemCode = Promocion.ItemCode;
+                                    BitacoraMargenes.idCategoria = Promocion.idCategoria;
+                                    BitacoraMargenes.idListaPrecio = Promocion.idListaPrecio;
+                                    BitacoraMargenes.PrecioAnterior = Producto.PrecioUnitario;
+                                    BitacoraMargenes.PrecioNuevo = Promocion.PrecioFinal;
+                                    BitacoraMargenes.Fecha = DateTime.Now;
+                                    db.BitacoraMargenes.Add(BitacoraMargenes);
+                                    db.SaveChanges();
+                                }
                                 Producto.PrecioUnitario = Promocion.PrecioFinal;
+
 
                             }
                             else if (DetMargenes != null)
                             {
+                                if (Producto.PrecioUnitario != DetMargenes.PrecioFinal)
+                                {
+                                    var BitacoraMargenes = new BitacoraMargenes();
+                                    BitacoraMargenes.ItemCode = Producto.Codigo;
+                                    BitacoraMargenes.idCategoria = DetMargenes.idCategoria;
+                                    BitacoraMargenes.idListaPrecio = DetMargenes.idListaPrecio;
+                                    BitacoraMargenes.PrecioAnterior = Producto.PrecioUnitario;
+                                    BitacoraMargenes.PrecioNuevo = DetMargenes.PrecioFinal;
+                                    BitacoraMargenes.Fecha = DateTime.Now;
+                                    db.BitacoraMargenes.Add(BitacoraMargenes);
+                                    db.SaveChanges();
+                                }
                                 Producto.PrecioUnitario = DetMargenes.PrecioFinal;
                             }
                             else if (Margenes != null)
                             {
                                 var PrecioCob = Producto.Costo / (1 - (Margenes.Cobertura / 100));
                                 var PrecioFinal = PrecioCob / (1 - (Margenes.Margen / 100));
+                                if (Producto.PrecioUnitario != PrecioFinal)
+                                {
+                                    var BitacoraMargenes = new BitacoraMargenes();
+                                    BitacoraMargenes.ItemCode = Producto.Codigo;
+                                    BitacoraMargenes.idCategoria = Margenes.idCategoria;
+                                    BitacoraMargenes.idListaPrecio = Margenes.idListaPrecio;
+                                    BitacoraMargenes.PrecioAnterior = Producto.PrecioUnitario;
+                                    BitacoraMargenes.PrecioNuevo = PrecioFinal;
+                                    BitacoraMargenes.Fecha = DateTime.Now;
+                                    db.BitacoraMargenes.Add(BitacoraMargenes);
+                                    db.SaveChanges();
+                                }
+
                                 Producto.PrecioUnitario = PrecioFinal;
                             }
-                            BitacoraMargenes.PrecioNuevo = Producto.PrecioUnitario;
-                            BitacoraMargenes.Fecha = DateTime.Now;
-                            db.BitacoraMargenes.Add(BitacoraMargenes);
-                            db.SaveChanges();
+
+
 
                             db.SaveChanges();
                         }

@@ -1042,7 +1042,7 @@ namespace WATickets.Controllers
                         Cliente.MAG = false;
                         Cliente.INT = false;
                         Cliente.CxC = false;
-                        Cliente.Transitorio = false;
+                        Cliente.Transitorio = false; //Cambiar
                         Cliente.CorreoEC = "";
                         db.Clientes.Add(Cliente);
                         db.SaveChanges();

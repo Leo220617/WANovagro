@@ -264,9 +264,11 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AprobacionesCreditosController.cs" />
+    <Compile Include="Controllers\ArqueosController.cs" />
     <Compile Include="Controllers\AsientosController.cs" />
     <Compile Include="Controllers\BarriosController.cs" />
     <Compile Include="Controllers\BitacoraController.cs" />
+    <Compile Include="Controllers\BitacoraMargenesController.cs" />
     <Compile Include="Controllers\BitacoraMovimientosController.cs" />
     <Compile Include="Controllers\BodegasController.cs" />
     <Compile Include="Controllers\CabysController.cs" />
@@ -323,6 +325,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\APIS\Arqueos.cs" />
     <Compile Include="Models\APIS\Documentos.cs" />
     <Compile Include="Models\APIS\DocumentosCredito.cs" />
     <Compile Include="Models\APIS\ExoneracionesViewModel.cs" />
@@ -354,6 +357,7 @@
     <Compile Include="Models\Cliente\CorreoEnvio.cs" />
     <Compile Include="Models\Cliente\CuentasBancarias.cs" />
     <Compile Include="Models\Cliente\Depositos.cs" />
+    <Compile Include="Models\Cliente\DetArqueos.cs" />
     <Compile Include="Models\Cliente\DetDocumento.cs" />
     <Compile Include="Models\Cliente\DetDocumentoCredito.cs" />
     <Compile Include="Models\Cliente\DetExoneraciones.cs" />
@@ -361,6 +365,7 @@
     <Compile Include="Models\Cliente\DetOferta.cs" />
     <Compile Include="Models\Cliente\DetPagos.cs" />
     <Compile Include="Models\Cliente\Distritos.cs" />
+    <Compile Include="Models\Cliente\EncArqueos.cs" />
     <Compile Include="Models\Cliente\EncDocumento.cs" />
     <Compile Include="Models\Cliente\EncDocumentoCredito.cs" />
     <Compile Include="Models\Cliente\EncMargenes.cs" />
