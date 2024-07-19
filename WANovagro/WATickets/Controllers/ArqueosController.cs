@@ -44,10 +44,11 @@ namespace WATickets.Controllers
                     a.FechaActualizacion,
                     Detalle = db.DetArqueos.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).Where(a => (filtro.FechaInicial != time ? a.FechaCreacion >= filtro.FechaInicial : true)
+                }).Where(a => (filtro.pendientes == true ? a.Status == "P" : false) || (filtro.espera == true ? a.Status == "E" : false) || (filtro.contabilizado == true ? a.Status == "C" : false)
+                && (filtro.FechaInicial != time ? a.FechaCreacion >= filtro.FechaInicial : true)
                 && (filtro.FechaFinal != time ? a.FechaCreacion <= filtro.FechaFinal : true)
                 && (filtro.Codigo1 > 0 ? a.idUsuarioCreador == filtro.Codigo1 : true)
-                && (!string.IsNullOrEmpty(filtro.ItemCode) ? a.Status == filtro.ItemCode : true)
+
                 && (filtro.Codigo2 > 0 ? a.idCategoria == filtro.Codigo2 : true)
                 && (filtro.Codigo3 > 0 ? a.idBodega == filtro.Codigo3 : true)
 
@@ -82,7 +83,7 @@ namespace WATickets.Controllers
                 var Arqueo = db.EncArqueos.Select(a => new
                 {
                     a.id,
-                    a.idCategoria,            
+                    a.idCategoria,
                     a.idBodega,
                     a.CodSuc,
                     a.idUsuarioCreador,
@@ -139,21 +140,24 @@ namespace WATickets.Controllers
 
 
 
-  
+
                     foreach (var item in arqueo.Detalle)
                     {
                         DetArqueos det = new DetArqueos();
                         det.idEncabezado = Arqueo.id;
-                        det.idEncabezado = item.idEncabezado;
                         det.idProducto = item.idProducto;
+
                         det.Stock = item.Stock;
                         det.Total = item.Total;
                         det.Diferencia = item.Diferencia;
-                        det.Contado = item.Contado; 
+                        det.Contado = item.Contado;
                         db.DetArqueos.Add(det);
-                        db.SaveChanges();     
+                        db.SaveChanges();
 
-              
+                        var Producto = db.Productos.Where(a => a.id == det.idProducto).FirstOrDefault();
+                        db.Entry(Producto).State = EntityState.Modified;
+                        Producto.FechaConteo = DateTime.Now;
+                        db.SaveChanges();
 
                     }
 
@@ -195,45 +199,60 @@ namespace WATickets.Controllers
                 if (Arqueo != null)
                 {
                     db.Entry(Arqueo).State = EntityState.Modified;
-                    Arqueo.idCategoria = arqueo.idCategoria;           
-                    Arqueo.idBodega = arqueo.idBodega;
-                    Arqueo.CodSuc = arqueo.CodSuc;
-                    Arqueo.idUsuarioCreador = arqueo.idUsuarioCreador;
-                    //Arqueo.FechaCreacion = DateTime.Now;
-                    Arqueo.Validado = arqueo.Validado;
-                    Arqueo.Status = arqueo.Status;
-                    Arqueo.FechaActualizacion = DateTime.Now;
-
-                    db.SaveChanges();
-
-
-                    var Detalles = db.DetArqueos.Where(a => a.idEncabezado == Arqueo.id).ToList();
-
-                    foreach (var item in Detalles)
+                    if (arqueo.Status == "C")
                     {
-                        db.DetArqueos.Remove(item);
+                        Arqueo.Status = arqueo.Status;
+
                         db.SaveChanges();
+                    }
+                    else
+                    {
+                        Arqueo.idCategoria = arqueo.idCategoria;
+                        Arqueo.idBodega = arqueo.idBodega;
+                        Arqueo.CodSuc = arqueo.CodSuc;
+                        Arqueo.idUsuarioCreador = arqueo.idUsuarioCreador;
+                        //Arqueo.FechaCreacion = DateTime.Now;
+                        Arqueo.Validado = arqueo.Validado;
+                        Arqueo.Status = arqueo.Status;
+                        Arqueo.FechaActualizacion = DateTime.Now;
+
+                        db.SaveChanges();
+
+                        var Detalles = db.DetArqueos.Where(a => a.idEncabezado == Arqueo.id).ToList();
+
+                        foreach (var item in Detalles)
+                        {
+                            db.DetArqueos.Remove(item);
+                            db.SaveChanges();
+                        }
+
+
+
+                        foreach (var item in arqueo.Detalle)
+                        {
+                            DetArqueos det = new DetArqueos();
+                            det.idEncabezado = Arqueo.id;
+                            det.idProducto = item.idProducto;
+                            det.Stock = item.Stock;
+                            det.Total = item.Total;
+                            det.Diferencia = item.Diferencia;
+                            det.Contado = item.Contado;
+                            db.DetArqueos.Add(det);
+                            db.SaveChanges();
+
+                            var Producto = db.Productos.Where(a => a.id == det.idProducto).FirstOrDefault();
+                            db.Entry(Producto).State = EntityState.Modified;
+                            Producto.FechaConteo = DateTime.Now;
+                            db.SaveChanges();
+                        }
                     }
 
 
-                
-                    foreach (var item in arqueo.Detalle)
-                    {
-                        DetArqueos det = new DetArqueos();
-                        det.idEncabezado = Arqueo.id;
-                        det.idEncabezado = item.idEncabezado;
-                        det.idProducto = item.idProducto;
-                        det.Stock = item.Stock;
-                        det.Total = item.Total;
-                        det.Diferencia = item.Diferencia;
-                        det.Contado = item.Contado;
-                        db.DetArqueos.Add(det);
-                        db.SaveChanges();
-                     
-                    }
 
 
-           
+
+
+
                     t.Commit();
                 }
                 else

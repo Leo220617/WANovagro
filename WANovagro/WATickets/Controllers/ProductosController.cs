@@ -87,6 +87,7 @@ namespace WATickets.Controllers
                                     Producto.NormaReparto = item["Norma"].ToString();
                                     Producto.Activo = true;
                                     Producto.FechaActualizacion = DateTime.Now;
+                                    Producto.FechaConteo = DateTime.Now;
                                     Producto.ProcesadoSAP = true;
                                     var MAG = Convert.ToInt32(item["MAG"]);
                                     if (MAG == 1)
@@ -188,6 +189,7 @@ namespace WATickets.Controllers
 
                                     Producto.Activo = true;
                                     Producto.FechaActualizacion = DateTime.Now;
+                                    Producto.FechaConteo = DateTime.Now;
                                     Producto.ProcesadoSAP = true;
                                     var MAG = Convert.ToInt32(item["MAG"]);
                                     if (MAG == 1)
