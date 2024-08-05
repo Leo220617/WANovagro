@@ -35,7 +35,7 @@ namespace WATickets.Controllers
                 {
                     a.id,
                     a.idCategoria,
-                    a.idBodega,
+                    a.PalabraClave,
                     a.CodSuc,
                     a.idUsuarioCreador,
                     a.FechaCreacion,
@@ -45,12 +45,13 @@ namespace WATickets.Controllers
                     Detalle = db.DetArqueos.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => (filtro.pendientes == true ? a.Status == "P" : false) || (filtro.espera == true ? a.Status == "E" : false) || (filtro.contabilizado == true ? a.Status == "C" : false)
+                || (filtro.rechazados == true ? a.Status == "R" : false)
                 && (filtro.FechaInicial != time ? a.FechaCreacion >= filtro.FechaInicial : true)
                 && (filtro.FechaFinal != time ? a.FechaCreacion <= filtro.FechaFinal : true)
                 && (filtro.Codigo1 > 0 ? a.idUsuarioCreador == filtro.Codigo1 : true)
 
                 && (filtro.Codigo2 > 0 ? a.idCategoria == filtro.Codigo2 : true)
-                && (filtro.Codigo3 > 0 ? a.idBodega == filtro.Codigo3 : true)
+
 
                 && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto : true)
 
@@ -84,7 +85,7 @@ namespace WATickets.Controllers
                 {
                     a.id,
                     a.idCategoria,
-                    a.idBodega,
+                    a.PalabraClave,
                     a.CodSuc,
                     a.idUsuarioCreador,
                     a.FechaCreacion,
@@ -127,7 +128,7 @@ namespace WATickets.Controllers
                 {
                     Arqueo = new EncArqueos();
                     Arqueo.idCategoria = arqueo.idCategoria;
-                    Arqueo.idBodega = arqueo.idBodega;
+                    Arqueo.PalabraClave = arqueo.PalabraClave;
                     Arqueo.CodSuc = arqueo.CodSuc;
                     Arqueo.idUsuarioCreador = arqueo.idUsuarioCreador;
                     Arqueo.FechaCreacion = DateTime.Now;
@@ -199,7 +200,7 @@ namespace WATickets.Controllers
                 if (Arqueo != null)
                 {
                     db.Entry(Arqueo).State = EntityState.Modified;
-                    if (arqueo.Status == "C")
+                    if (arqueo.Status == "C" || arqueo.Status == "R")
                     {
                         Arqueo.Status = arqueo.Status;
 
@@ -208,7 +209,7 @@ namespace WATickets.Controllers
                     else
                     {
                         Arqueo.idCategoria = arqueo.idCategoria;
-                        Arqueo.idBodega = arqueo.idBodega;
+                        Arqueo.PalabraClave = arqueo.PalabraClave;
                         Arqueo.CodSuc = arqueo.CodSuc;
                         Arqueo.idUsuarioCreador = arqueo.idUsuarioCreador;
                         //Arqueo.FechaCreacion = DateTime.Now;
@@ -274,6 +275,52 @@ namespace WATickets.Controllers
                 db.SaveChanges();
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, be);
+            }
+        }
+
+        [Route("api/Arqueos/Eliminar")]
+        [HttpDelete]
+        public HttpResponseMessage Delete([FromUri] int id)
+        {
+            try
+            {
+                EncArqueos Arqueos = db.EncArqueos.Where(a => a.id == id).FirstOrDefault();
+                if (Arqueos != null)
+                {
+                    db.Entry(Arqueos).State = EntityState.Modified;
+
+
+                    if (Arqueos.Status == "R")
+                    {
+
+                        Arqueos.Status = "P";
+
+                    }
+                  
+
+
+
+
+                    db.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("No existe un arqueo con este ID");
+                }
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
             }
         }
     }
