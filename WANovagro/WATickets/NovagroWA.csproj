@@ -304,6 +304,7 @@
     <Compile Include="Controllers\OfertasController.cs" />
     <Compile Include="Controllers\PagoCuentasController.cs" />
     <Compile Include="Controllers\PagosController.cs" />
+    <Compile Include="Controllers\PalabrasClavesController.cs" />
     <Compile Include="Controllers\ParametrosController.cs" />
     <Compile Include="Controllers\PreCierresController.cs" />
     <Compile Include="Controllers\PrecioXListaController.cs" />
@@ -383,6 +384,7 @@
     <Compile Include="Models\Cliente\MetodosPagosCuentas.cs" />
     <Compile Include="Models\Cliente\ModelCliente.cs" />
     <Compile Include="Models\Cliente\PagoCuentas.cs" />
+    <Compile Include="Models\Cliente\PalabrasClaves.cs" />
     <Compile Include="Models\Cliente\Parametros.cs" />
     <Compile Include="Models\Cliente\PreCierres.cs" />
     <Compile Include="Models\Cliente\PrecioXLista.cs" />

@@ -42,6 +42,8 @@ namespace WATickets.Controllers
                     a.Validado,
                     a.Status,
                     a.FechaActualizacion,
+                    a.TotalCosto,
+                    a.TotalCostoDiferencia,
                     Detalle = db.DetArqueos.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => (filtro.pendientes == true ? a.Status == "P" : false) || (filtro.espera == true ? a.Status == "E" : false) || (filtro.contabilizado == true ? a.Status == "C" : false)
@@ -92,6 +94,8 @@ namespace WATickets.Controllers
                     a.Validado,
                     a.Status,
                     a.FechaActualizacion,
+                    a.TotalCosto,
+                    a.TotalCostoDiferencia,
                     Detalle = db.DetArqueos.Where(b => b.idEncabezado == a.id).ToList()
 
                 }).Where(a => a.id == id).FirstOrDefault();
@@ -129,12 +133,23 @@ namespace WATickets.Controllers
                     Arqueo = new EncArqueos();
                     Arqueo.idCategoria = arqueo.idCategoria;
                     Arqueo.PalabraClave = arqueo.PalabraClave;
+                    var Palabra = db.PalabrasClaves.Where(a => a.Nombre.ToLower().Contains(arqueo.PalabraClave)).FirstOrDefault();
+
+                    if (Palabra == null)
+                    {
+                        PalabrasClaves palabra = new PalabrasClaves();
+                        palabra.Nombre = arqueo.PalabraClave;
+                        db.PalabrasClaves.Add(palabra);
+                        db.SaveChanges();
+                    }
                     Arqueo.CodSuc = arqueo.CodSuc;
                     Arqueo.idUsuarioCreador = arqueo.idUsuarioCreador;
                     Arqueo.FechaCreacion = DateTime.Now;
                     Arqueo.Validado = arqueo.Validado;
                     Arqueo.Status = arqueo.Status;
                     Arqueo.FechaActualizacion = DateTime.Now;
+                    Arqueo.TotalCosto = 0;
+                    Arqueo.TotalCostoDiferencia = 0;
                     db.EncArqueos.Add(Arqueo);
                     db.SaveChanges();
 
@@ -151,6 +166,8 @@ namespace WATickets.Controllers
                         det.Stock = item.Stock;
                         det.Total = item.Total;
                         det.Diferencia = item.Diferencia;
+                        det.Costo = item.Costo;
+                        det.CostoDiferencia = item.CostoDiferencia;
                         det.Contado = item.Contado;
                         db.DetArqueos.Add(det);
                         db.SaveChanges();
@@ -216,6 +233,8 @@ namespace WATickets.Controllers
                         Arqueo.Validado = arqueo.Validado;
                         Arqueo.Status = arqueo.Status;
                         Arqueo.FechaActualizacion = DateTime.Now;
+                        Arqueo.TotalCosto = arqueo.TotalCosto;
+                        Arqueo.TotalCostoDiferencia = arqueo.TotalCostoDiferencia;
 
                         db.SaveChanges();
 
@@ -238,6 +257,8 @@ namespace WATickets.Controllers
                             det.Total = item.Total;
                             det.Diferencia = item.Diferencia;
                             det.Contado = item.Contado;
+                            det.Costo = item.Costo;
+                            det.CostoDiferencia = item.CostoDiferencia;
                             db.DetArqueos.Add(det);
                             db.SaveChanges();
 

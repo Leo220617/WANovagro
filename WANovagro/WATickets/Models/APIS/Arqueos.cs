@@ -27,6 +27,10 @@ namespace WATickets.Models.APIS
 
         public DateTime FechaActualizacion { get; set; }
 
+        public decimal TotalCosto { get; set; }
+
+        public decimal TotalCostoDiferencia { get; set; }
+
         public List<DetArqueos> Detalle { get; set; }
     }
 }

@@ -26,6 +26,10 @@ namespace WATickets.Models.Cliente
 
         public string Status { get; set; }
 
+        public decimal TotalCosto { get; set; }
+
+        public decimal TotalCostoDiferencia { get; set; }
+
         public DateTime FechaActualizacion { get; set; }
     }
 }
