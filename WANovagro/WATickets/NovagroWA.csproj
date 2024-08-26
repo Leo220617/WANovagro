@@ -277,6 +277,7 @@
     <Compile Include="Controllers\CategoriasController.cs" />
     <Compile Include="Controllers\CierreCajasController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
+    <Compile Include="Controllers\ClientesPromocionesController.cs" />
     <Compile Include="Controllers\CondicionesPagosController.cs" />
     <Compile Include="Controllers\Conexion.cs" />
     <Compile Include="Controllers\CorreoEnvioController.cs" />
@@ -353,6 +354,7 @@
     <Compile Include="Models\Cliente\Categorias.cs" />
     <Compile Include="Models\Cliente\CierreCajas.cs" />
     <Compile Include="Models\Cliente\Clientes.cs" />
+    <Compile Include="Models\Cliente\ClientesPromociones.cs" />
     <Compile Include="Models\Cliente\CondicionesPagos.cs" />
     <Compile Include="Models\Cliente\ConexionSAP.cs" />
     <Compile Include="Models\Cliente\CorreoEnvio.cs" />

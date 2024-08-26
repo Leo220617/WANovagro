@@ -28,8 +28,7 @@ namespace WATickets.Controllers
                 }
 
                 var Bitacora = db.BitacoraMargenes.Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)
-                 && (filtro.Codigo3 > 0 ? a.idCategoria == filtro.Codigo3 : true)
-                  && (filtro.Codigo2 > 0 ? a.idListaPrecio == filtro.Codigo2 : true)
+    
                 ).ToList();
                 
 

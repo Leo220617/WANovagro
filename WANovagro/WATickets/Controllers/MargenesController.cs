@@ -291,9 +291,7 @@ namespace WATickets.Controllers
                                 if (Producto.PrecioUnitario != Promocion.PrecioFinal)
                                 {
                                     var BitacoraMargenes = new BitacoraMargenes();
-                                    BitacoraMargenes.ItemCode = Promocion.ItemCode;
-                                    BitacoraMargenes.idCategoria = Promocion.idCategoria;
-                                    BitacoraMargenes.idListaPrecio = Promocion.idListaPrecio;
+                                    BitacoraMargenes.idProducto = Producto.id;
                                     BitacoraMargenes.PrecioAnterior = Producto.PrecioUnitario;
                                     BitacoraMargenes.PrecioNuevo = Promocion.PrecioFinal;
                                     BitacoraMargenes.Fecha = DateTime.Now;
@@ -309,9 +307,7 @@ namespace WATickets.Controllers
                                 if (Producto.PrecioUnitario != DetMargenes.PrecioFinal)
                                 {
                                     var BitacoraMargenes = new BitacoraMargenes();
-                                    BitacoraMargenes.ItemCode = Producto.Codigo;
-                                    BitacoraMargenes.idCategoria = DetMargenes.idCategoria;
-                                    BitacoraMargenes.idListaPrecio = DetMargenes.idListaPrecio;
+                                    BitacoraMargenes.idProducto = Producto.id;
                                     BitacoraMargenes.PrecioAnterior = Producto.PrecioUnitario;
                                     BitacoraMargenes.PrecioNuevo = DetMargenes.PrecioFinal;
                                     BitacoraMargenes.Fecha = DateTime.Now;
@@ -327,9 +323,7 @@ namespace WATickets.Controllers
                                 if (Producto.PrecioUnitario != PrecioFinal)
                                 {
                                     var BitacoraMargenes = new BitacoraMargenes();
-                                    BitacoraMargenes.ItemCode = Producto.Codigo;
-                                    BitacoraMargenes.idCategoria = Margenes.idCategoria;
-                                    BitacoraMargenes.idListaPrecio = Margenes.idListaPrecio;
+                                    BitacoraMargenes.idProducto = Producto.id;
                                     BitacoraMargenes.PrecioAnterior = Producto.PrecioUnitario;
                                     BitacoraMargenes.PrecioNuevo = PrecioFinal;
                                     BitacoraMargenes.Fecha = DateTime.Now;

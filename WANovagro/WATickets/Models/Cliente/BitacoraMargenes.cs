@@ -9,11 +9,7 @@ namespace WATickets.Models.Cliente
     {
         public int id { get; set; }
 
-        public string ItemCode { get; set; }
-
-        public int idCategoria { get; set; }
-
-        public int idListaPrecio { get; set; }
+        public int idProducto { get; set; }
 
         public decimal PrecioAnterior { get; set; }
 
