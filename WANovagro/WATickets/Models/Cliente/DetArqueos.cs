@@ -16,5 +16,8 @@ namespace WATickets.Models.Cliente
         public bool Contado { get; set; }
         public decimal Costo { get; set; }
         public decimal CostoDiferencia { get; set; }
+        public decimal Cantidad1 { get; set; }
+        public decimal Cantidad2 { get; set; }
+        public decimal Cantidad3 { get; set; }
     }
 }

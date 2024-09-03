@@ -169,6 +169,9 @@ namespace WATickets.Controllers
                         det.Costo = item.Costo;
                         det.CostoDiferencia = item.CostoDiferencia;
                         det.Contado = item.Contado;
+                        det.Cantidad1 = item.Cantidad1;
+                        det.Cantidad2 = item.Cantidad2;
+                        det.Cantidad3 = item.Cantidad3;
                         db.DetArqueos.Add(det);
                         db.SaveChanges();
 
@@ -259,6 +262,9 @@ namespace WATickets.Controllers
                             det.Contado = item.Contado;
                             det.Costo = item.Costo;
                             det.CostoDiferencia = item.CostoDiferencia;
+                            det.Cantidad1 = item.Cantidad1;
+                            det.Cantidad2 = item.Cantidad2;
+                            det.Cantidad3 = item.Cantidad3;
                             db.DetArqueos.Add(det);
                             db.SaveChanges();
 
