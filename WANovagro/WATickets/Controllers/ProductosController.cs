@@ -824,7 +824,7 @@ namespace WATickets.Controllers
                     throw new Exception("El codigo del producto no es valido");
                 }
 
-                var SQL = parametros.SQLProductos + " and t0.ItemCode = '" + code + "'"; //Preparo el query
+                var SQL = parametros.SQLProductosActualizar + " and t0.ItemCode = '" + code + "'"; //Preparo el query
 
                 SqlConnection Cn = new SqlConnection(conexion);
                 SqlCommand Cmd = new SqlCommand(SQL, Cn);

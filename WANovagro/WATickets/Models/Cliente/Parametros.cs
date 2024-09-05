@@ -80,5 +80,7 @@
 
         public string SQLReporteVentas { get; set; }
 
+        public string SQLProductosActualizar { get; set; }
+
     }
 }
