@@ -12,6 +12,7 @@ namespace WATickets.Models.APIS
         public int idListaPrecio { get; set; }
         public int idUsuarioCreador { get; set; }
         public string Nombre { get; set; }
+        public string Moneda { get; set; }
         public DateTime Fecha { get; set; }
         public DateTime FechaVencimiento { get; set; }
         public DateTime FechaCreacion { get; set; }
