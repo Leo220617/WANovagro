@@ -1100,7 +1100,7 @@ namespace WATickets.Controllers
                     Clientes.Barrio = clientes.Barrio;
                     Clientes.Sennas = clientes.Sennas;
                     Clientes.Saldo = clientes.Saldo;
-                    Clientes.LimiteCredito = clientes.LimiteCredito;
+                  
                     Clientes.Descuento = clientes.Descuento;
                     Clientes.idGrupo = clientes.idGrupo;
                     //Clientes.ProcesadoSAP = clientes.ProcesadoSAP;
