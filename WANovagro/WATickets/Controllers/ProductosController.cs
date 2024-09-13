@@ -315,7 +315,7 @@ namespace WATickets.Controllers
 
 
                             Producto.FechaActualizacion = DateTime.Now;
-
+                            Producto.FechaConteo = DateTime.Now;
                             var MAG = Convert.ToInt32(item["MAG"]);
                             if (MAG == 1)
                             {
@@ -679,7 +679,7 @@ namespace WATickets.Controllers
                                 Producto.MAG = false;
                             }
                             Producto.Editable = Convert.ToBoolean(Convert.ToInt32(item["Editable"]));
-
+                            Producto.FechaConteo = DateTime.Now;
                             var Serie = Convert.ToInt32(item["Serie"]);
                             if (Serie == 1)
                             {
