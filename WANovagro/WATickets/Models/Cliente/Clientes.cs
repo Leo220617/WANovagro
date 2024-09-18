@@ -80,6 +80,9 @@ namespace WATickets.Models.Cliente
 
         public bool Transitorio { get; set; }
 
+
+        public string DV { get; set; }
+
     }
        
 }

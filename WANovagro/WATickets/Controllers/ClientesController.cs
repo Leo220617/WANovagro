@@ -53,6 +53,10 @@ namespace WATickets.Controllers
                         try
                         {
                             Cliente = new Clientes();
+                            if(parametros.Pais == "P")
+                            {
+                                Cliente.DV = item["DV"].ToString();
+                            }
                             Cliente.Codigo = item["id"].ToString();
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
@@ -181,6 +185,10 @@ namespace WATickets.Controllers
                         try
                         {
                             db.Entry(Cliente).State = EntityState.Modified;
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.DV = item["DV"].ToString();
+                            }
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
@@ -353,6 +361,10 @@ namespace WATickets.Controllers
                         try
                         {
                             Cliente = new Clientes();
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.DV = item["DV"].ToString();
+                            }
                             Cliente.Codigo = item["id"].ToString();
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
@@ -482,6 +494,10 @@ namespace WATickets.Controllers
                             db.Entry(Cliente).State = EntityState.Modified;
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.DV = item["DV"].ToString();
+                            }
                             Cliente.Nombre = item["Nombre"].ToString();
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
 
@@ -654,6 +670,10 @@ namespace WATickets.Controllers
                         try
                         {
                             Cliente = new Clientes();
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.DV = item["DV"].ToString();
+                            }
                             Cliente.Codigo = item["id"].ToString();
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
@@ -783,6 +803,10 @@ namespace WATickets.Controllers
                             db.Entry(Cliente).State = EntityState.Modified;
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.DV = item["DV"].ToString();
+                            }
                             Cliente.Nombre = item["Nombre"].ToString();
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
 
@@ -999,6 +1023,7 @@ namespace WATickets.Controllers
         {
             try
             {
+                Parametros param = db.Parametros.FirstOrDefault();
                 Clientes Cliente = db.Clientes.Where(a => a.id == clientes.id).FirstOrDefault();
                 if (Cliente == null)
                 {
@@ -1043,6 +1068,11 @@ namespace WATickets.Controllers
                         Cliente.CxC = false;
                         Cliente.Transitorio = false;
                         Cliente.CorreoEC = "";
+                        if(param.Pais == "P")
+                        {
+                            clientes.DV = clientes.DV;
+                        }
+                       
                         db.Clientes.Add(Cliente);
                         db.SaveChanges();
                     }
@@ -1320,6 +1350,14 @@ namespace WATickets.Controllers
                         client.CardForeignName = cliente.Cedula;
                         client.FederalTaxID = cliente.Cedula;
                         client.AdditionalID = cliente.Cedula;
+                        if (param.Pais == "P")
+                        {
+                            client.AdditionalID = cliente.DV;
+                        }
+                        else
+                        {
+                            client.AdditionalID = cliente.Cedula;
+                        }
                         client.GroupCode = db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault() == null ? Convert.ToInt32(db.GruposClientes.FirstOrDefault()) : Convert.ToInt32(db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault().CodSAP);
                         client.Currency = "##";
                         client.Phone1 = cliente.Telefono;
@@ -1481,7 +1519,14 @@ namespace WATickets.Controllers
                     client.Series = param.SerieCliente; //Serie para clientes 70
                     client.CardForeignName = cliente.Cedula;
                     client.FederalTaxID = cliente.Cedula;
-                    client.AdditionalID = cliente.Cedula;
+                    if (param.Pais == "P")
+                    {
+                        client.AdditionalID = cliente.DV;
+                    }
+                    else
+                    {
+                        client.AdditionalID = cliente.Cedula;
+                    }
                     client.GroupCode = db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault() == null ? Convert.ToInt32(db.GruposClientes.FirstOrDefault()) : Convert.ToInt32(db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault().CodSAP);
                     client.Currency = "##";
                     client.Phone1 = cliente.Telefono;

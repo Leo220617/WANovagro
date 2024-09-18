@@ -80,5 +80,8 @@
 
         public string SQLReporteVentas { get; set; }
 
+
+        public string Pais { get; set; }
+
     }
 }

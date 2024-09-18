@@ -103,10 +103,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/10/2024 15:30:59</publishTime>
     </File>
     <File Include="bin/es/Microsoft.VisualStudio.Shell.15.0.resources.dll">
-      <publishTime>09/10/2024 15:30:18</publishTime>
+      <publishTime>09/12/2024 17:04:40</publishTime>
     </File>
     <File Include="bin/es/Microsoft.VisualStudio.Shell.Design.resources.dll">
-      <publishTime>09/10/2024 15:31:12</publishTime>
+      <publishTime>09/12/2024 17:04:40</publishTime>
     </File>
     <File Include="bin/es/StreamJsonRpc.resources.dll">
       <publishTime>09/10/2024 15:30:28</publishTime>
@@ -157,7 +157,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/10/2024 15:54:45</publishTime>
     </File>
     <File Include="bin/Microsoft.Bcl.AsyncInterfaces.dll">
-      <publishTime>09/10/2024 16:05:36</publishTime>
+      <publishTime>09/12/2024 17:04:16</publishTime>
     </File>
     <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
       <publishTime>09/10/2024 16:05:37</publishTime>
@@ -205,10 +205,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/10/2024 15:30:59</publishTime>
     </File>
     <File Include="bin/Microsoft.VisualStudio.ImageCatalog.dll">
-      <publishTime>09/10/2024 16:45:20</publishTime>
+      <publishTime>09/12/2024 17:04:40</publishTime>
     </File>
     <File Include="bin/Microsoft.VisualStudio.Imaging.dll">
-      <publishTime>09/10/2024 16:45:20</publishTime>
+      <publishTime>09/12/2024 17:04:40</publishTime>
     </File>
     <File Include="bin/Microsoft.VisualStudio.OLE.Interop.dll">
       <publishTime>09/10/2024 15:30:29</publishTime>
@@ -217,13 +217,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/10/2024 15:30:29</publishTime>
     </File>
     <File Include="bin/Microsoft.VisualStudio.Shell.15.0.dll">
-      <publishTime>09/10/2024 15:30:28</publishTime>
+      <publishTime>09/12/2024 17:04:40</publishTime>
     </File>
     <File Include="bin/Microsoft.VisualStudio.Shell.Design.dll">
-      <publishTime>09/10/2024 15:31:13</publishTime>
+      <publishTime>09/12/2024 17:04:40</publishTime>
     </File>
     <File Include="bin/Microsoft.VisualStudio.Shell.Framework.dll">
-      <publishTime>09/10/2024 15:30:28</publishTime>
+      <publishTime>09/12/2024 17:04:40</publishTime>
     </File>
     <File Include="bin/Microsoft.VisualStudio.Shell.Interop.8.0.dll">
       <publishTime>09/10/2024 15:30:29</publishTime>
@@ -262,7 +262,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/10/2024 16:45:23</publishTime>
     </File>
     <File Include="bin/Microsoft.VisualStudio.Utilities.dll">
-      <publishTime>09/10/2024 16:45:23</publishTime>
+      <publishTime>09/12/2024 17:04:40</publishTime>
     </File>
     <File Include="bin/Microsoft.VisualStudio.Validation.dll">
       <publishTime>09/10/2024 16:45:23</publishTime>
@@ -433,37 +433,37 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/10/2024 15:30:28</publishTime>
     </File>
     <File Include="bin/System.Buffers.dll">
-      <publishTime>09/10/2024 16:05:49</publishTime>
+      <publishTime>09/12/2024 17:04:16</publishTime>
     </File>
     <File Include="bin/System.IdentityModel.Tokens.Jwt.dll">
       <publishTime>09/10/2024 16:05:50</publishTime>
     </File>
     <File Include="bin/System.Memory.dll">
-      <publishTime>09/10/2024 16:05:50</publishTime>
+      <publishTime>09/12/2024 17:04:16</publishTime>
     </File>
     <File Include="bin/System.Net.Http.Formatting.dll">
       <publishTime>09/10/2024 16:05:32</publishTime>
     </File>
     <File Include="bin/System.Numerics.Vectors.dll">
-      <publishTime>09/10/2024 16:05:50</publishTime>
+      <publishTime>09/12/2024 17:04:16</publishTime>
     </File>
     <File Include="bin/System.Runtime.CompilerServices.Unsafe.dll">
-      <publishTime>09/10/2024 16:05:51</publishTime>
+      <publishTime>09/12/2024 17:04:16</publishTime>
     </File>
     <File Include="bin/System.Text.Encodings.Web.dll">
-      <publishTime>09/10/2024 16:05:52</publishTime>
+      <publishTime>09/12/2024 17:04:16</publishTime>
     </File>
     <File Include="bin/System.Text.Json.dll">
-      <publishTime>09/10/2024 16:05:54</publishTime>
+      <publishTime>09/12/2024 17:04:16</publishTime>
     </File>
     <File Include="bin/System.Threading.Tasks.Dataflow.dll">
       <publishTime>09/10/2024 15:30:56</publishTime>
     </File>
     <File Include="bin/System.Threading.Tasks.Extensions.dll">
-      <publishTime>09/10/2024 16:05:55</publishTime>
+      <publishTime>09/12/2024 17:04:16</publishTime>
     </File>
     <File Include="bin/System.ValueTuple.dll">
-      <publishTime>09/10/2024 16:05:55</publishTime>
+      <publishTime>09/12/2024 17:04:16</publishTime>
     </File>
     <File Include="bin/System.Web.Cors.dll">
       <publishTime>09/10/2024 16:05:30</publishTime>
@@ -502,10 +502,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/10/2024 15:30:29</publishTime>
     </File>
     <File Include="bin/WATickets.dll">
-      <publishTime>09/12/2024 11:58:58</publishTime>
+      <publishTime>09/18/2024 14:20:59</publishTime>
     </File>
     <File Include="bin/WATickets.pdb">
-      <publishTime>09/12/2024 11:58:58</publishTime>
+      <publishTime>09/18/2024 14:20:59</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>09/10/2024 16:05:56</publishTime>
@@ -601,7 +601,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/10/2024 16:04:55</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>09/12/2024 09:08:06</publishTime>
+      <publishTime>09/18/2024 11:23:58</publishTime>
     </File>
   </ItemGroup>
 </Project>

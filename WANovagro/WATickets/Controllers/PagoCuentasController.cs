@@ -877,12 +877,12 @@ namespace WATickets.Controllers
                                     pagocuentaSAP.VatDate = DateTime.Now;
                                     pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
                                     pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
-
+                                    var contador = 0;
                                     pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
                                     pagocuentaSAP.DocCurrency = param.MonedaLocal;
                                     pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                     pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
-                                    pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
+                                    //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
                                     if (PagoCuenta.Moneda != "CRC")
                                     {
@@ -919,7 +919,15 @@ namespace WATickets.Controllers
                                         var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                         var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                        pagocuentaSAP.CreditCards.SetCurrentLine(0);
+                                        if (contador > 0)
+                                        {
+                                            pagocuentaSAP.CreditCards.Add();
+                                        }
+                                        else
+                                        {
+                                            pagocuentaSAP.CreditCards.SetCurrentLine(contador);
+
+                                        }
                                         pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
                                         pagocuentaSAP.CreditCards.CreditCard = 1;
                                         pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
@@ -1263,7 +1271,7 @@ namespace WATickets.Controllers
                                 bool pagoColonesProcesado = false;
                                 bool pagoDolaresProcesado = false;
 
-
+                                var contador = 0;
 
 
 
@@ -1320,13 +1328,20 @@ namespace WATickets.Controllers
                                             pagocuentaSAP.CashSum = Convert.ToDouble(SumatoriaEfectivo);
 
                                         }
-
                                         if (SumatoriaTarjeta > 0)
                                         {
                                             var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
                                             var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                            pagocuentaSAP.CreditCards.SetCurrentLine(0);
+                                            if (contador > 0)
+                                            {
+                                                pagocuentaSAP.CreditCards.Add();
+                                            }
+                                            else
+                                            {
+                                                pagocuentaSAP.CreditCards.SetCurrentLine(contador);
+
+                                            }
                                             pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
                                             pagocuentaSAP.CreditCards.CreditCard = 1;
                                             pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
@@ -1338,6 +1353,7 @@ namespace WATickets.Controllers
 
 
                                         }
+
 
                                         if (SumatoriaTransferencia > 0)
                                         {

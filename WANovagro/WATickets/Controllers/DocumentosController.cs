@@ -1229,7 +1229,7 @@ namespace WATickets.Controllers
             try
             {
                 Parametros param = db.Parametros.FirstOrDefault();
-                EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id || (a.BaseEntry  == documento.BaseEntry && a.TipoDocumento != "03" && documento.TipoDocumento != "03")).FirstOrDefault();
+                EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id || (a.BaseEntry  == documento.BaseEntry && a.BaseEntry != 0 && a.TipoDocumento != "03" && documento.TipoDocumento != "03")).FirstOrDefault();
 
                 if (Documento == null)
                 {
