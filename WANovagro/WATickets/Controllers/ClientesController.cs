@@ -951,11 +951,12 @@ namespace WATickets.Controllers
         {
             try
             {
-                var Clientes = db.Clientes.Where(a => (filtro.Codigo1 > 0 ? a.idListaPrecios == filtro.Codigo1 : true)
-                && (filtro.Procesado != null && filtro.Externo == false ? a.ProcesadoSAP == filtro.Procesado : true)
-                && (filtro.Codigo2 > 0 ? a.idGrupo == filtro.Codigo2  : true)
-                && (filtro.Activo ? (!filtro.Externo ? a.Activo == filtro.Activo : true) : true)
-                ).ToList();
+                var Clientes = db.Clientes.AsQueryable();
+                Clientes = Clientes.Where(a => (filtro.Codigo1 > 0 ? a.idListaPrecios == filtro.Codigo1 : true)
+              && (filtro.Procesado != null && filtro.Externo == false ? a.ProcesadoSAP == filtro.Procesado : true)
+              && (filtro.Codigo2 > 0 ? a.idGrupo == filtro.Codigo2 : true)
+              && (filtro.Activo ? (!filtro.Externo ? a.Activo == filtro.Activo : true) : true)
+              );
 
 
 
@@ -963,9 +964,9 @@ namespace WATickets.Controllers
                 {
 
                     Clientes = Clientes.Where(a => a.Nombre.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Cedula.ToUpper().Contains(filtro.Texto.ToUpper())
-                    || a.Email.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Telefono.ToUpper().Contains(filtro.Texto.ToUpper())).ToList();// filtramos por lo que trae texto
+                    || a.Email.ToUpper().Contains(filtro.Texto.ToUpper()) || a.Telefono.ToUpper().Contains(filtro.Texto.ToUpper()));// filtramos por lo que trae texto
                 }
-                  
+
                 //if (filtro.Activo)
                 //{
                 //    if (!filtro.Externo)
@@ -974,8 +975,8 @@ namespace WATickets.Controllers
 
                 //    }
                 //}
-                 
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Clientes);
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Clientes.ToList());
             }
             catch (Exception ex)
             {
@@ -1066,7 +1067,7 @@ namespace WATickets.Controllers
                         Cliente.MAG = false;
                         Cliente.INT = false;
                         Cliente.CxC = false;
-                        Cliente.Transitorio = false;
+                        Cliente.Transitorio = false; //Cambiar
                         Cliente.CorreoEC = "";
                         if(param.Pais == "P")
                         {
@@ -1265,7 +1266,7 @@ namespace WATickets.Controllers
                         throw new Exception(ex.Message);
                     }
 
-                
+
                 }
                 else
                 {
@@ -1285,7 +1286,7 @@ namespace WATickets.Controllers
                 catch (Exception)
                 {
 
-                    
+
                 }
 
                 BitacoraErrores be = new BitacoraErrores();
@@ -1344,9 +1345,9 @@ namespace WATickets.Controllers
                 Parametros param = db.Parametros.FirstOrDefault();
                 foreach (var item in clientes)
                 {
-                    var cliente = item;
-                    if (cliente != null)
+                    try
                     {
+<<<<<<< HEAD
                         var client = (SAPbobsCOM.BusinessPartners)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oBusinessPartners);
                         client.CardName = cliente.Nombre;
                         client.EmailAddress = cliente.Email;
@@ -1368,123 +1369,156 @@ namespace WATickets.Controllers
                         client.CardType = BoCardTypes.cCustomer;
                         client.CreditLimit = Convert.ToDouble(cliente.LimiteCredito);
                         client.DiscountPercent = Convert.ToDouble(cliente.Descuento);
+=======
+                        var cliente = item;
+                        if (cliente != null)
+                        {
+>>>>>>> rama5
 
-                        //Campos de usuario
-                        if (cliente.MAG == true)
-                        {
-                            client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";
-                        }
-                        else if (cliente.MAG == false)
-                        {
-                            client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
-                        }
 
-                        if (cliente.INT == true)
-                        {
-                            client.UserFields.Fields.Item("U_DYD_INT").Value = "SI";
-                        }
-                        else if (cliente.INT == false)
-                        {
-                            client.UserFields.Fields.Item("U_DYD_INT").Value = "NO";
-                        }
-                        if (cliente.CxC == true)
-                        {
-                            client.UserFields.Fields.Item("U_DYD_CxC").Value = "SI";
-                        }
-                        else if (cliente.CxC == false)
-                        {
-                            client.UserFields.Fields.Item("U_DYD_CxC").Value = "NO";
-                        }
-                        if (cliente.Transitorio == true)
-                        {
-                            client.UserFields.Fields.Item("U_DYD_Transitorio").Value = "SI";
-                        }
-                        else if (cliente.Transitorio == false)
-                        {
-                            client.UserFields.Fields.Item("U_DYD_Transitorio").Value = "NO";
-                        }
-                        client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);
-                        client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
-                        client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
-                        client.UserFields.Fields.Item("U_LDT_State").Value = cliente.Provincia.ToString();
-                        switch (cliente.Provincia)
-                        {
-                            case 1:
-                                {
-                                    client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "San Jose";
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Alajuela";
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Cartago";
-                                    break;
-                                }
-                            case 4:
-                                {
-                                    client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Heredia";
-                                    break;
-                                }
-                            case 5:
-                                {
-                                    client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Guanacaste";
-                                    break;
-                                }
-                            case 6:
-                                {
-                                    client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Puntarenas";
-                                    break;
-                                }
-                            case 7:
-                                {
-                                    client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Limon";
-                                    break;
-                                }
-                        }
-                        client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia.ToString() + "-" + cliente.Canton;
-                        var canton = Convert.ToInt32(cliente.Canton);
-                        client.UserFields.Fields.Item("U_LDT_Nom_County").Value = db.Cantones.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton).FirstOrDefault().NomCanton;
-                        //client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia + "-" + cliente.Canton;
-                        client.UserFields.Fields.Item("U_LDT_District").Value = cliente.Provincia.ToString() + "-" + cliente.Canton + "-" + cliente.Distrito;
-                        var distrito = Convert.ToInt32(cliente.Distrito);
-                        client.UserFields.Fields.Item("U_LDT_Nom_District").Value = db.Distritos.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito).FirstOrDefault().NomDistrito;
-                        client.UserFields.Fields.Item("U_LDT_NeighB").Value = cliente.Provincia.ToString() + "-" + cliente.Canton + "-" + cliente.Distrito + "-" + cliente.Barrio;
-                        var barrio = Convert.ToInt32(cliente.Barrio);
-                        client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
-                        client.UserFields.Fields.Item("U_LDT_Direccion").Value = cliente.Sennas;
+                            var client = (SAPbobsCOM.BusinessPartners)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oBusinessPartners);
+                            client.CardName = cliente.Nombre;
+                            client.EmailAddress = cliente.Email;
+                            client.Series = param.SerieCliente; //Serie para clientes70
+                            client.CardForeignName = cliente.Cedula;
+                            client.FederalTaxID = cliente.Cedula;
+                            client.AdditionalID = cliente.Cedula;
+                            client.GroupCode = db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault() == null ? Convert.ToInt32(db.GruposClientes.FirstOrDefault()) : Convert.ToInt32(db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault().CodSAP);
+                            client.Currency = "##";
+                            client.Phone1 = cliente.Telefono;
+                            client.CardType = BoCardTypes.cCustomer;
+                            client.CreditLimit = Convert.ToDouble(cliente.LimiteCredito);
+                            client.DiscountPercent = Convert.ToDouble(cliente.Descuento);
 
-                        var respuesta = client.Add();
+                            //Campos de usuario
+                            if (cliente.MAG == true)
+                            {
+                                client.UserFields.Fields.Item("U_DYD_MAG").Value = "SI";
+                            }
+                            else if (cliente.MAG == false)
+                            {
+                                client.UserFields.Fields.Item("U_DYD_MAG").Value = "NO";
+                            }
 
-                        if (respuesta == 0)
-                        {
-                            db.Entry(cliente).State = EntityState.Modified;
-                            cliente.Codigo = Conexion.Company.GetNewObjectKey();
-                            cliente.ProcesadoSAP = true;
-                            db.SaveChanges();
-                            Conexion.Desconectar();
+                            if (cliente.INT == true)
+                            {
+                                client.UserFields.Fields.Item("U_DYD_INT").Value = "SI";
+                            }
+                            else if (cliente.INT == false)
+                            {
+                                client.UserFields.Fields.Item("U_DYD_INT").Value = "NO";
+                            }
+                            if (cliente.CxC == true)
+                            {
+                                client.UserFields.Fields.Item("U_DYD_CxC").Value = "SI";
+                            }
+                            else if (cliente.CxC == false)
+                            {
+                                client.UserFields.Fields.Item("U_DYD_CxC").Value = "NO";
+                            }
+                            if (cliente.Transitorio == true)
+                            {
+                                client.UserFields.Fields.Item("U_DYD_Transitorio").Value = "SI";
+                            }
+                            else if (cliente.Transitorio == false)
+                            {
+                                client.UserFields.Fields.Item("U_DYD_Transitorio").Value = "NO";
+                            }
+                            client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);
+                            client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
+                            client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
+                            client.UserFields.Fields.Item("U_LDT_State").Value = cliente.Provincia.ToString();
+                            switch (cliente.Provincia)
+                            {
+                                case 1:
+                                    {
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "San Jose";
+                                        break;
+                                    }
+                                case 2:
+                                    {
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Alajuela";
+                                        break;
+                                    }
+                                case 3:
+                                    {
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Cartago";
+                                        break;
+                                    }
+                                case 4:
+                                    {
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Heredia";
+                                        break;
+                                    }
+                                case 5:
+                                    {
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Guanacaste";
+                                        break;
+                                    }
+                                case 6:
+                                    {
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Puntarenas";
+                                        break;
+                                    }
+                                case 7:
+                                    {
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Limon";
+                                        break;
+                                    }
+                            }
+                            client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia.ToString() + "-" + cliente.Canton;
+                            var canton = Convert.ToInt32(cliente.Canton);
+                            client.UserFields.Fields.Item("U_LDT_Nom_County").Value = db.Cantones.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton).FirstOrDefault().NomCanton;
+                            //client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia + "-" + cliente.Canton;
+                            client.UserFields.Fields.Item("U_LDT_District").Value = cliente.Provincia.ToString() + "-" + cliente.Canton + "-" + cliente.Distrito;
+                            var distrito = Convert.ToInt32(cliente.Distrito);
+                            client.UserFields.Fields.Item("U_LDT_Nom_District").Value = db.Distritos.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito).FirstOrDefault().NomDistrito;
+                            client.UserFields.Fields.Item("U_LDT_NeighB").Value = cliente.Provincia.ToString() + "-" + cliente.Canton + "-" + cliente.Distrito + "-" + cliente.Barrio;
+                            var barrio = Convert.ToInt32(cliente.Barrio);
+                            client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
+                            client.UserFields.Fields.Item("U_LDT_Direccion").Value = cliente.Sennas;
+
+                            var respuesta = client.Add();
+
+                            if (respuesta == 0)
+                            {
+                                db.Entry(cliente).State = EntityState.Modified;
+                                cliente.Codigo = Conexion.Company.GetNewObjectKey();
+                                cliente.ProcesadoSAP = true;
+                                db.SaveChanges();
+                                Conexion.Desconectar();
+                            }
+                            else
+                            {
+                                BitacoraErrores be = new BitacoraErrores();
+
+                                be.Descripcion = Conexion.Company.GetLastErrorDescription();
+                                be.StrackTrace = "Crear Cliente";
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(cliente);
+                                db.BitacoraErrores.Add(be);
+                                db.SaveChanges();
+                                Conexion.Desconectar();
+                            }
                         }
                         else
                         {
-                            BitacoraErrores be = new BitacoraErrores();
-
-                            be.Descripcion = Conexion.Company.GetLastErrorDescription();
-                            be.StrackTrace = "Crear Cliente";
-                            be.Fecha = DateTime.Now;
-                            be.JSON = JsonConvert.SerializeObject(cliente);
-                            db.BitacoraErrores.Add(be);
-                            db.SaveChanges();
-                            Conexion.Desconectar();
+                            throw new Exception("El cliente no existe");
                         }
-
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        throw new Exception("El cliente no existe");
+
+                        BitacoraErrores be = new BitacoraErrores();
+                        be.Descripcion = ex.Message;
+                        be.StrackTrace = ex.StackTrace;
+                        be.Fecha = DateTime.Now;
+                        be.JSON = JsonConvert.SerializeObject(ex);
+                        db.BitacoraErrores.Add(be);
+                        db.SaveChanges();
                     }
+
+
                 }
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
@@ -1717,7 +1751,7 @@ namespace WATickets.Controllers
                     throw new Exception("El codigo del cliente no es valido");
                 }
 
-                
+
 
 
 
@@ -1756,7 +1790,7 @@ namespace WATickets.Controllers
                         Cn.Open(); //se abre la conexion
                         Da.Fill(Ds, "Detalle");
 
-                      
+
                         var htmlDetalle = "";
                         foreach (DataRow itemDetalle in Ds.Tables["Detalle"].Rows)
                         {
@@ -1768,7 +1802,7 @@ namespace WATickets.Controllers
                             DateTime fechaVen = DateTime.Parse(fechaVenString);
                             string fechaVenFormateada = fechaVen.ToString("dd/MM/yyyy");
 
-                            var totalDet = Convert.ToDecimal(itemDetalle["TotalDet"]); 
+                            var totalDet = Convert.ToDecimal(itemDetalle["TotalDet"]);
                             var totalDetFormateado = totalDet.ToString("N2");
 
                             var saldo = Convert.ToDecimal(itemDetalle["Saldo"]);
@@ -1778,7 +1812,7 @@ namespace WATickets.Controllers
                             var sinVenFormateado = sinVen.ToString("N2");
 
                             var Moneda = itemDetalle["MonedaDet"].ToString();
-                            if(Moneda == "USD")
+                            if (Moneda == "USD")
                             {
                                 var saldoFC = Convert.ToDecimal(itemDetalle["Saldo"]);
                                 var sinVenFC = Convert.ToDecimal(itemDetalle["SinVen"]);
@@ -1883,9 +1917,9 @@ namespace WATickets.Controllers
                 foreach (DataRow code in Ds2.Tables["Clientes"].Rows)
                 {
                     var codigoCliente = code["CardCode"].ToString();
-                    var Cliente = db.Clientes.Where(a => a.Codigo == codigoCliente ).FirstOrDefault();
+                    var Cliente = db.Clientes.Where(a => a.Codigo == codigoCliente).FirstOrDefault();
 
-                    if(Cliente != null)
+                    if (Cliente != null)
                     {
                         ////Enviar Correo
                         ///
@@ -2019,11 +2053,11 @@ namespace WATickets.Controllers
                         db.BitacoraErrores.Add(be);
                         db.SaveChanges();
                     }
-                  
+
                 }
 
 
-                 
+
                 Cn2.Close(); //se cierra la conexion
                 Cn2.Dispose();
 

@@ -117,7 +117,9 @@ namespace WATickets.Controllers
                     Exoneracion.id = exoneraciones.id;
                     Exoneracion.TipoDoc = exoneraciones.TipoDoc;
                     Exoneracion.NumDoc = exoneraciones.NumDoc;
-                    byte[] hex = Convert.FromBase64String(exoneraciones.Imagen.Replace("data:image/jpeg;base64,", "").Replace("data:image/png;base64,", ""));
+                    //byte[] hex = Convert.FromBase64String(exoneraciones.Imagen.Replace("data:image/jpeg;base64,", "").Replace("data:image/png;base64,", ""));
+
+                    byte[] hex = Convert.FromBase64String(exoneraciones.Imagen.Replace("data:application/pdf;base64,", ""));
                     Exoneracion.Imagen = hex;
                     Exoneracion.NomInst = exoneraciones.NomInst;
                     Exoneracion.FechaEmision = exoneraciones.FechaEmision;

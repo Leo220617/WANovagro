@@ -63,5 +63,7 @@ namespace WATickets.Models.Cliente
 
         public int Dimension { get; set; }
 
+        public DateTime FechaConteo { get; set; }
+
     }
 }

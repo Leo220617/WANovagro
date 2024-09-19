@@ -35,6 +35,7 @@ namespace WATickets.Controllers
                     a.Nombre,
                     a.Fecha,
                     a.FechaVencimiento,
+                    a.Moneda,
                     
                     Detalle = db.Promociones.Where(b => b.idEncabezado == a.id).ToList()
 
@@ -78,6 +79,7 @@ namespace WATickets.Controllers
                     a.Nombre,
                     a.Fecha,
                     a.FechaVencimiento,
+                    a.Moneda,
 
                     Detalle = db.Promociones.Where(b => b.idEncabezado == a.id).ToList()
             
@@ -116,6 +118,7 @@ namespace WATickets.Controllers
             {
                 Parametros param = db.Parametros.FirstOrDefault();
                 var time = DateTime.Now.Date;
+                var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == time).FirstOrDefault();
                 EncPromociones Promo = db.EncPromociones.Where(a => a.id == promocion.id).FirstOrDefault();
                 if (Promo == null)
                 {
@@ -126,6 +129,7 @@ namespace WATickets.Controllers
                     Promo.FechaVencimiento = promocion.FechaVencimiento.Date;
                     Promo.FechaCreacion = DateTime.Now;
                     Promo.idUsuarioCreador = promocion.idUsuarioCreador;
+                    Promo.Moneda = promocion.Moneda;
                     db.EncPromociones.Add(Promo);
                     db.SaveChanges();
 
@@ -157,7 +161,14 @@ namespace WATickets.Controllers
                                 foreach(var item2 in ProductoX)
                                 {
                                     db.Entry(item2).State = EntityState.Modified;
-                                    item2.PrecioUnitario = det.PrecioFinal;
+                                    if (Promo.Moneda == "CRC"){
+                                        item2.PrecioUnitario = det.PrecioFinal;
+                                    }
+                                    else
+                                    {
+                                        item2.PrecioUnitario = det.PrecioFinal * TipoCambio.TipoCambio;
+                                    }
+                                   
                                     item2.FechaActualizacion = DateTime.Now;
                                     db.SaveChanges();
 
@@ -235,6 +246,7 @@ namespace WATickets.Controllers
                     Promo.FechaVencimiento = promocion.FechaVencimiento.Date;
                     Promo.FechaCreacion = DateTime.Now;
                     Promo.idUsuarioCreador = promocion.idUsuarioCreador;
+                    Promo.Moneda = promocion.Moneda;
                  
                     db.SaveChanges();
 

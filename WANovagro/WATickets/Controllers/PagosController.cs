@@ -216,7 +216,7 @@ namespace WATickets.Controllers
                         {
                             var Usuario = db.Usuarios.Where(a => a.id == pago.idUsuarioCreador).FirstOrDefault() == null ? "0" : db.Usuarios.Where(a => a.id == pago.idUsuarioCreador).FirstOrDefault().Nombre;
                             BitacoraMovimientos bm = new BitacoraMovimientos();
-                            bm.Descripcion = "El usuario " + Usuario + " ha pagado a cuenta del abono #" + pago.id + " con el saldo " + item.Monto + ", favor conciliar en SAP";
+                            bm.Descripcion = "El usuario " + Usuario + " ha pagado a cuenta del abono #" + Pago.id + " con el saldo " + item.Monto + ", favor conciliar en SAP";
                             bm.idUsuario = pago.idUsuarioCreador;
                             bm.Fecha = DateTime.Now;
                             bm.Metodo = "Insercion de Pago a Cuenta de Abono";

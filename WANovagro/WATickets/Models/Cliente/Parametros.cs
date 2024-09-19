@@ -80,8 +80,12 @@
 
         public string SQLReporteVentas { get; set; }
 
+<<<<<<< HEAD
 
         public string Pais { get; set; }
+=======
+        public string SQLProductosActualizar { get; set; }
+>>>>>>> rama5
 
     }
 }
