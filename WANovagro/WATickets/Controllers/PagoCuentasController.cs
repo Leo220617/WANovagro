@@ -181,7 +181,7 @@ namespace WATickets.Controllers
                     db.PagoCuentas.Add(PagoCuenta);
                     db.SaveChanges();
 
-                    // Se guarda metodo de pago para despues contabilizarlo en el cierre de cajas
+                    // Se guarda metodo de pago pardoa despues contabilizarlo en el cierre de cajas
                     var time = DateTime.Now.Date;
                     var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == time && a.idCaja == cuenta.idCaja && a.idUsuario == cuenta.idUsuarioCreador).FirstOrDefault();
                     var Asiento = db.Asientos.Where(a => a.Fecha == time && a.idCaja == PagoCuenta.idCaja && a.idUsuario == PagoCuenta.idUsuarioCreador && a.CodSuc == PagoCuenta.CodSuc && a.ProcesadoSAP == false).FirstOrDefault();
@@ -442,7 +442,7 @@ namespace WATickets.Controllers
                                 bool pagoColonesProcesado = false;
                                 bool pagoDolaresProcesado = false;
 
-
+                                var contador = 0;
 
 
 
@@ -468,7 +468,7 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.DocCurrency = param.MonedaLocal;
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                         pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
-                                        pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
+                                        //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
                                         if (PagoCuenta.Moneda != "CRC")
                                         {
@@ -487,6 +487,7 @@ namespace WATickets.Controllers
 
                                         var SumatoriaEfectivo = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
                                         var SumatoriaTarjeta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                        var PagosTarjetas = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).ToList(); //.Sum(a => a.Monto);
                                         var SumatoriaTransferencia = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
 
                                         if (SumatoriaEfectivo > 0)
@@ -500,22 +501,33 @@ namespace WATickets.Controllers
 
                                         }
 
-                                        if (SumatoriaTarjeta > 0)
+                                        foreach (var item in PagosTarjetas)
                                         {
-                                            var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
-                                            var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                            pagocuentaSAP.CreditCards.SetCurrentLine(0);
-                                            pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
-                                            pagocuentaSAP.CreditCards.CreditCard = 1;
-                                            pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
-                                            pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
-                                            pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
-                                            pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
+                                            if (item.Monto > 0)
+                                            {
+                                                var idcuenta = item.idCuentaBancaria;
+                                                var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+                                                if (contador > 0)
+                                                {
+                                                    pagocuentaSAP.CreditCards.Add();
+                                                }
+                                                else
+                                                {
+                                                    pagocuentaSAP.CreditCards.SetCurrentLine(contador);
 
+                                                }
+                                                pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
+                                                pagocuentaSAP.CreditCards.CreditCard = 1;
+                                                pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
+                                                pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
+                                                pagocuentaSAP.CreditCards.CreditCardNumber = item.BIN; // Ultimos 4 digitos
+                                                pagocuentaSAP.CreditCards.VoucherNum = item.NumReferencia;// 
+                                                pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
+                                                pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(item.Monto);
+                                                contador++;
 
+                                            }
                                         }
 
                                         if (SumatoriaTransferencia > 0)
@@ -587,7 +599,7 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.DocCurrency = "USD";
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                         pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
-                                        pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
+                                        //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
 
                                         var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
@@ -597,6 +609,7 @@ namespace WATickets.Controllers
 
                                         var SumatoriaEfectivo = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
                                         var SumatoriaTarjeta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
+                                        var PagosTarjetas = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).ToList();//.Sum(a => a.Monto);
                                         var SumatoriaTransferencia = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
 
                                         if (SumatoriaEfectivo > 0)
@@ -610,25 +623,34 @@ namespace WATickets.Controllers
 
                                         }
 
-                                        if (SumatoriaTarjeta > 0)
+                                        foreach (var item in PagosTarjetas)
                                         {
-                                            var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
-                                            var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
+                                            if (item.Monto > 0)
+                                            {
+                                                var idcuenta = item.idCuentaBancaria;
+                                                var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+                                                if (contador > 0)
+                                                {
+                                                    pagocuentaSAP.CreditCards.Add();
+                                                }
+                                                else
+                                                {
+                                                    pagocuentaSAP.CreditCards.SetCurrentLine(contador);
 
-                                            pagocuentaSAP.CreditCards.SetCurrentLine(0);
-                                            pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
-                                            pagocuentaSAP.CreditCards.CreditCard = 1;
-                                            pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
-                                            pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
-                                            pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
-                                            pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
+                                                }
+                                                pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
+                                                pagocuentaSAP.CreditCards.CreditCard = 1;
+                                                pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
+                                                pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
+                                                pagocuentaSAP.CreditCards.CreditCardNumber = item.BIN; // Ultimos 4 digitos
+                                                pagocuentaSAP.CreditCards.VoucherNum = item.NumReferencia;// 
+                                                pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
+                                                pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(item.Monto);
 
-
+                                                contador++;
+                                            }
                                         }
-
                                         if (SumatoriaTransferencia > 0)
                                         {
                                             var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "transferencia".ToUpper()).FirstOrDefault().idCuentaBancaria;
@@ -858,7 +880,7 @@ namespace WATickets.Controllers
 
 
 
-
+                            var contador = 0;
 
 
 
@@ -868,40 +890,39 @@ namespace WATickets.Controllers
                                 {
 
 
-                                    var pagocuentaSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
-                                    pagocuentaSAP.DocType = BoRcptTypes.rCustomer;
-                                    pagocuentaSAP.CardCode = db.Clientes.Where(a => a.id == PagoCuenta.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == PagoCuenta.idCliente).FirstOrDefault().Codigo;
-                                    pagocuentaSAP.DocDate = PagoCuenta.Fecha;
-                                    pagocuentaSAP.DueDate = DateTime.Now;
-                                    pagocuentaSAP.TaxDate = DateTime.Now;
-                                    pagocuentaSAP.VatDate = DateTime.Now;
-                                    pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                                    pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
-                                    var contador = 0;
-                                    pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
-                                    pagocuentaSAP.DocCurrency = param.MonedaLocal;
-                                    pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
-                                    pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
-                                    //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
+                            
 
-                                    if (PagoCuenta.Moneda != "CRC")
+                                    var ClienteI = db.Clientes.Where(a => a.id == PagoCuenta.idCliente).FirstOrDefault();
+                                    var pagocuentaSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
+                                    pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
+                                    pagocuentaSAP.DocDate = PagoCuenta.Fecha;
+                                    pagocuentaSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
+                                    pagocuentaSAP.CardCode = ClienteI.Codigo;
+                                    pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                    if (param.MontosPagosSeparados)
                                     {
-                                        var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
-                                        pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones);
+                                        pagocuentaSAP.CashAccount = db.CuentasBancarias.Where(a => a.id == PagoCuenta.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == PagoCuenta.idCuentaBancaria).FirstOrDefault().CuentaSAP;
                                     }
                                     else
                                     {
-                                        var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto);
-
-                                        pagocuentaSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
-
+                                        var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault().CuentaSAP;
+                                        pagocuentaSAP.CashAccount = CuentaI;
                                     }
-                                    pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
+
+
+                                    pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
+                                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : PagoCuenta.Moneda;
+                                    pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
+                                    pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
+                                    pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
+
+
 
 
                                     var SumatoriaEfectivo = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
                                     var SumatoriaTarjeta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
                                     var SumatoriaTransferencia = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+                                    var PagosTarjetas = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).ToList(); //.Sum(a => a.Monto);
 
                                     if (SumatoriaEfectivo > 0)
                                     {
@@ -914,30 +935,33 @@ namespace WATickets.Controllers
 
                                     }
 
-                                    if (SumatoriaTarjeta > 0)
+                                    foreach (var item in PagosTarjetas)
                                     {
-                                        var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
-                                        var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                        if (contador > 0)
+                                        if (item.Monto > 0)
                                         {
-                                            pagocuentaSAP.CreditCards.Add();
-                                        }
-                                        else
-                                        {
-                                            pagocuentaSAP.CreditCards.SetCurrentLine(contador);
+                                            var idcuenta = item.idCuentaBancaria;
+                                            var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+                                            if (contador > 0)
+                                            {
+                                                pagocuentaSAP.CreditCards.Add();
+                                            }
+                                            else
+                                            {
+                                                pagocuentaSAP.CreditCards.SetCurrentLine(contador);
+
+                                            }
+                                            pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
+                                            pagocuentaSAP.CreditCards.CreditCard = 1;
+                                            pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
+                                            pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
+                                            pagocuentaSAP.CreditCards.CreditCardNumber = item.BIN; // Ultimos 4 digitos
+                                            pagocuentaSAP.CreditCards.VoucherNum = item.NumReferencia;// 
+                                            pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
+                                            pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(item.Monto);
+                                            contador++;
 
                                         }
-                                        pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
-                                        pagocuentaSAP.CreditCards.CreditCard = 1;
-                                        pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
-                                        pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                        pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                        pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
-                                        pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
-                                        pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
-
-
                                     }
 
                                     if (SumatoriaTransferencia > 0)
@@ -1009,7 +1033,7 @@ namespace WATickets.Controllers
                                     pagocuentaSAP.DocCurrency = "USD";
                                     pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                     pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
-                                    pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
+                                    //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
 
                                     var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
@@ -1020,7 +1044,7 @@ namespace WATickets.Controllers
                                     var SumatoriaEfectivo = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
                                     var SumatoriaTarjeta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
                                     var SumatoriaTransferencia = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
-
+                                    var PagosTarjetas = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).ToList();//.Sum(a => a.Monto);
                                     if (SumatoriaEfectivo > 0)
                                     {
                                         var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "efectivo".ToUpper()).FirstOrDefault().idCuentaBancaria;
@@ -1032,23 +1056,33 @@ namespace WATickets.Controllers
 
                                     }
 
-                                    if (SumatoriaTarjeta > 0)
+                                    foreach (var item in PagosTarjetas)
                                     {
-                                        var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
-                                        var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
+                                        if (item.Monto > 0)
+                                        {
+                                            var idcuenta = item.idCuentaBancaria;
+                                            var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+                                            if (contador > 0)
+                                            {
+                                                pagocuentaSAP.CreditCards.Add();
+                                            }
+                                            else
+                                            {
+                                                pagocuentaSAP.CreditCards.SetCurrentLine(contador);
 
-                                        pagocuentaSAP.CreditCards.SetCurrentLine(0);
-                                        pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
-                                        pagocuentaSAP.CreditCards.CreditCard = 1;
-                                        pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
-                                        pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                        pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                        pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
-                                        pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
-                                        pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
+                                            }
+                                            pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
+                                            pagocuentaSAP.CreditCards.CreditCard = 1;
+                                            pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
+                                            pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
+                                            pagocuentaSAP.CreditCards.CreditCardNumber = item.BIN; // Ultimos 4 digitos
+                                            pagocuentaSAP.CreditCards.VoucherNum = item.NumReferencia;// 
+                                            pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
+                                            pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(item.Monto);
 
-
+                                            contador++;
+                                        }
                                     }
 
                                     if (SumatoriaTransferencia > 0)
@@ -1297,7 +1331,7 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.DocCurrency = param.MonedaLocal;
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                         pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
-                                        pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
+                                        //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
                                         if (PagoCuenta.Moneda != "CRC")
                                         {
@@ -1317,6 +1351,7 @@ namespace WATickets.Controllers
                                         var SumatoriaEfectivo = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
                                         var SumatoriaTarjeta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
                                         var SumatoriaTransferencia = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+                                        var PagosTarjetas = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).ToList(); //.Sum(a => a.Monto);
 
                                         if (SumatoriaEfectivo > 0)
                                         {
@@ -1328,30 +1363,33 @@ namespace WATickets.Controllers
                                             pagocuentaSAP.CashSum = Convert.ToDouble(SumatoriaEfectivo);
 
                                         }
-                                        if (SumatoriaTarjeta > 0)
+                                        foreach (var item in PagosTarjetas)
                                         {
-                                            var idcuenta = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
-                                            var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
-                                            if (contador > 0)
+                                            if (item.Monto > 0)
                                             {
-                                                pagocuentaSAP.CreditCards.Add();
-                                            }
-                                            else
-                                            {
-                                                pagocuentaSAP.CreditCards.SetCurrentLine(contador);
+                                                var idcuenta = item.idCuentaBancaria;
+                                                var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+                                                if (contador > 0)
+                                                {
+                                                    pagocuentaSAP.CreditCards.Add();
+                                                }
+                                                else
+                                                {
+                                                    pagocuentaSAP.CreditCards.SetCurrentLine(contador);
+
+                                                }
+                                                pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
+                                                pagocuentaSAP.CreditCards.CreditCard = 1;
+                                                pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
+                                                pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
+                                                pagocuentaSAP.CreditCards.CreditCardNumber = item.BIN; // Ultimos 4 digitos
+                                                pagocuentaSAP.CreditCards.VoucherNum = item.NumReferencia;// 
+                                                pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
+                                                pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(item.Monto);
+                                                contador++;
 
                                             }
-                                            pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
-                                            pagocuentaSAP.CreditCards.CreditCard = 1;
-                                            pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
-                                            pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
-                                            pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
-                                            pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
-
-
                                         }
 
 
@@ -1424,7 +1462,7 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.DocCurrency = "USD";
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                         pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
-                                        pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
+                                        //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
 
                                         var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
@@ -1435,6 +1473,7 @@ namespace WATickets.Controllers
                                         var SumatoriaEfectivo = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
                                         var SumatoriaTarjeta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).Sum(a => a.Monto);
                                         var SumatoriaTransferencia = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
+                                        var PagosTarjetas = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).ToList();//.Sum(a => a.Monto);
 
                                         if (SumatoriaEfectivo > 0)
                                         {
@@ -1446,24 +1485,33 @@ namespace WATickets.Controllers
                                             pagocuentaSAP.CashSum = Convert.ToDouble(SumatoriaEfectivo);
 
                                         }
-
-                                        if (SumatoriaTarjeta > 0)
+                                        foreach (var item in PagosTarjetas)
                                         {
-                                            var idcuenta = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "tarjeta".ToUpper()).FirstOrDefault().idCuentaBancaria;
-                                            var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
 
+                                            if (item.Monto > 0)
+                                            {
+                                                var idcuenta = item.idCuentaBancaria;
+                                                var Cuenta = db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == idcuenta).FirstOrDefault().CuentaSAP;
+                                                if (contador > 0)
+                                                {
+                                                    pagocuentaSAP.CreditCards.Add();
+                                                }
+                                                else
+                                                {
+                                                    pagocuentaSAP.CreditCards.SetCurrentLine(contador);
 
-                                            pagocuentaSAP.CreditCards.SetCurrentLine(0);
-                                            pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
-                                            pagocuentaSAP.CreditCards.CreditCard = 1;
-                                            pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
-                                            pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
-                                            pagocuentaSAP.CreditCards.CreditCardNumber = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().BIN; // Ultimos 4 digitos
-                                            pagocuentaSAP.CreditCards.VoucherNum = MetodosPagosCuentasDolares.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).FirstOrDefault().NumReferencia;// 
-                                            pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
-                                            pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(SumatoriaTarjeta);
+                                                }
+                                                pagocuentaSAP.CreditCards.CardValidUntil = new DateTime(PagoCuenta.Fecha.Year, PagoCuenta.Fecha.Month, 28); //Fecha en la que se mete el pago 
+                                                pagocuentaSAP.CreditCards.CreditCard = 1;
+                                                pagocuentaSAP.CreditCards.CreditType = BoRcptCredTypes.cr_Regular;
+                                                pagocuentaSAP.CreditCards.PaymentMethodCode = 1; //Quemado
+                                                pagocuentaSAP.CreditCards.CreditCardNumber = item.BIN; // Ultimos 4 digitos
+                                                pagocuentaSAP.CreditCards.VoucherNum = item.NumReferencia;// 
+                                                pagocuentaSAP.CreditCards.CreditAcct = Cuenta;
+                                                pagocuentaSAP.CreditCards.CreditSum = Convert.ToDouble(item.Monto);
 
-
+                                                contador++;
+                                            }
                                         }
 
                                         if (SumatoriaTransferencia > 0)

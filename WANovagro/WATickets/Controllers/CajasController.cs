@@ -79,13 +79,23 @@ namespace WATickets.Controllers
             try
             {
                 Cajas Caja = db.Cajas.Where(a => a.id == cajas.id).FirstOrDefault();
+                Parametros parametros = db.Parametros.FirstOrDefault();
                 if (Caja == null)
                 {
                     Caja = new Cajas();
                     Caja.id = cajas.id;
                     Caja.CodSuc = cajas.CodSuc;
                     Caja.Nombre = cajas.Nombre;
-                    Caja.MontoAperturaColones = cajas.MontoAperturaColones;
+                    if (parametros.Pais == "P")
+                    {
+                        Caja.MontoAperturaColones = 0;
+                    }
+                    else
+                    {
+                        Caja.MontoAperturaColones = cajas.MontoAperturaColones;
+                    }
+                    
+                  
                     Caja.MontoAperturaDolares = cajas.MontoAperturaDolares;
                     Caja.idUsuario = cajas.idUsuario;
                     db.Cajas.Add(Caja);
@@ -119,12 +129,21 @@ namespace WATickets.Controllers
             try
             {
                 Cajas Cajas = db.Cajas.Where(a => a.id == cajas.id).FirstOrDefault();
+                Parametros parametros = db.Parametros.FirstOrDefault();
                 if (Cajas != null)
                 {
                     db.Entry(Cajas).State = System.Data.Entity.EntityState.Modified;
                     Cajas.CodSuc = cajas.CodSuc;
                     Cajas.Nombre = cajas.Nombre;
-                    Cajas.MontoAperturaColones = cajas.MontoAperturaColones;
+                    if (parametros.Pais == "P")
+                    {
+                        Cajas.MontoAperturaColones = 0;
+                    }
+                    else
+                    {
+                        Cajas.MontoAperturaColones = cajas.MontoAperturaColones;
+                    }
+
                     Cajas.MontoAperturaDolares = cajas.MontoAperturaDolares;
                     Cajas.idUsuario = cajas.idUsuario;
                     db.SaveChanges();
