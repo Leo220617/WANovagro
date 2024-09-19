@@ -22,7 +22,6 @@ namespace WATickets.Models.Cliente
         [StringLength(2)]
         public string TipoCedula { get; set; }
 
-        [StringLength(12)]
         public string Cedula { get; set; }
 
         [StringLength(100)]

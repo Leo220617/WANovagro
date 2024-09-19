@@ -1070,7 +1070,7 @@ namespace WATickets.Controllers
                         Cliente.CorreoEC = "";
                         if(param.Pais == "P")
                         {
-                            clientes.DV = clientes.DV;
+                            Cliente.DV = clientes.DV;
                         }
                        
                         db.Clientes.Add(Cliente);
@@ -1111,7 +1111,7 @@ namespace WATickets.Controllers
             var t = db.Database.BeginTransaction();
             try
             {
-
+                Parametros param = db.Parametros.FirstOrDefault();
                 Clientes Clientes = db.Clientes.Where(a => a.id == clientes.id).FirstOrDefault();
                 if (Clientes != null)
                 {
@@ -1132,6 +1132,10 @@ namespace WATickets.Controllers
                   
                     Clientes.Descuento = clientes.Descuento;
                     Clientes.idGrupo = clientes.idGrupo;
+                    if (param.Pais == "P")
+                    {
+                        Clientes.DV = clientes.DV;
+                    }
                     //Clientes.ProcesadoSAP = clientes.ProcesadoSAP;
                     Clientes.CorreoPublicitario = clientes.CorreoPublicitario;
                     //Clientes.MAG = clientes.MAG; 
