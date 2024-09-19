@@ -1347,36 +1347,34 @@ namespace WATickets.Controllers
                 {
                     try
                     {
-<<<<<<< HEAD
-                        var client = (SAPbobsCOM.BusinessPartners)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oBusinessPartners);
-                        client.CardName = cliente.Nombre;
-                        client.EmailAddress = cliente.Email;
-                        client.Series = param.SerieCliente; //Serie para clientes70
-                        client.CardForeignName = cliente.Cedula;
-                        client.FederalTaxID = cliente.Cedula;
-                        client.AdditionalID = cliente.Cedula;
-                        if (param.Pais == "P")
-                        {
-                            client.AdditionalID = cliente.DV;
-                        }
-                        else
-                        {
-                            client.AdditionalID = cliente.Cedula;
-                        }
-                        client.GroupCode = db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault() == null ? Convert.ToInt32(db.GruposClientes.FirstOrDefault()) : Convert.ToInt32(db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault().CodSAP);
-                        client.Currency = "##";
-                        client.Phone1 = cliente.Telefono;
-                        client.CardType = BoCardTypes.cCustomer;
-                        client.CreditLimit = Convert.ToDouble(cliente.LimiteCredito);
-                        client.DiscountPercent = Convert.ToDouble(cliente.Descuento);
-=======
+
+                      
                         var cliente = item;
                         if (cliente != null)
                         {
->>>>>>> rama5
 
 
                             var client = (SAPbobsCOM.BusinessPartners)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oBusinessPartners);
+                            client.CardName = cliente.Nombre;
+                            client.EmailAddress = cliente.Email;
+                            client.Series = param.SerieCliente; //Serie para clientes70
+                            client.CardForeignName = cliente.Cedula;
+                            client.FederalTaxID = cliente.Cedula;
+                            client.AdditionalID = cliente.Cedula;
+                            if (param.Pais == "P")
+                            {
+                                client.AdditionalID = cliente.DV;
+                            }
+                            else
+                            {
+                                client.AdditionalID = cliente.Cedula;
+                            }
+                            client.GroupCode = db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault() == null ? Convert.ToInt32(db.GruposClientes.FirstOrDefault()) : Convert.ToInt32(db.GruposClientes.Where(a => a.id == cliente.idGrupo).FirstOrDefault().CodSAP);
+                            client.Currency = "##";
+                            client.Phone1 = cliente.Telefono;
+                            client.CardType = BoCardTypes.cCustomer;
+                            client.CreditLimit = Convert.ToDouble(cliente.LimiteCredito);
+                            client.DiscountPercent = Convert.ToDouble(cliente.Descuento);
                             client.CardName = cliente.Nombre;
                             client.EmailAddress = cliente.Email;
                             client.Series = param.SerieCliente; //Serie para clientes70
