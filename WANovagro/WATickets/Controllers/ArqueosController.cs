@@ -46,8 +46,8 @@ namespace WATickets.Controllers
                     a.TotalCostoDiferencia,
                     Detalle = db.DetArqueos.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).Where(a => (filtro.pendientes == true ? a.Status == "P" : false) || (filtro.espera == true ? a.Status == "E" : false) || (filtro.contabilizado == true ? a.Status == "C" : false)
-                || (filtro.rechazados == true ? a.Status == "R" : false)
+                }).Where(a => ((filtro.pendientes == true ? a.Status == "P" : false) || (filtro.espera == true ? a.Status == "E" : false) || (filtro.contabilizado == true ? a.Status == "C" : false)
+                || (filtro.rechazados == true ? a.Status == "R" : false))
                 && (filtro.FechaInicial != time ? a.FechaCreacion >= filtro.FechaInicial : true)
                 && (filtro.FechaFinal != time ? a.FechaCreacion <= filtro.FechaFinal : true)
                 && (filtro.Codigo1 > 0 ? a.idUsuarioCreador == filtro.Codigo1 : true)
@@ -55,7 +55,7 @@ namespace WATickets.Controllers
                 && (filtro.Codigo2 > 0 ? a.idCategoria == filtro.Codigo2 : true)
 
 
-                && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto : true)
+                && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc.Contains(filtro.Texto) : true)
 
                 ).ToList();
 

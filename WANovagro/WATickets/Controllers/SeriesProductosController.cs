@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -25,10 +26,22 @@ namespace WATickets.Controllers
             try
             {
 
-               
+                var Bodegas = db.Bodegas.Where(a => a.CodSuc == filtro.Texto).Select(a => a.CodSAP).ToList();
+                var BodegasIN = new StringBuilder();
+
+                for (int i = 0; i < Bodegas.Count; i++)
+                {
+                    BodegasIN.Append($"'{Bodegas[i]}'"); // Añade cada elemento con comillas simples.
+
+                    if (i < Bodegas.Count - 1)
+                    {
+                        BodegasIN.Append(","); // Añade una coma solo si no es el último elemento.
+                    }
+                } 
+
                 var Parametros = db.Parametros.FirstOrDefault();
                 var conexion = G.DevuelveCadena(db);
-                var SQL = Parametros.SQLSeriesProductos;
+                var SQL = Parametros.SQLSeriesProductos + " and t2.WhsCode in (" + BodegasIN.ToString() + ") ";
                 SqlConnection Cn = new SqlConnection(conexion);
                 SqlCommand Cmd = new SqlCommand(SQL, Cn);
                 SqlDataAdapter Da = new SqlDataAdapter(Cmd);
