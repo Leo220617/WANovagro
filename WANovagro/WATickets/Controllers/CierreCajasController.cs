@@ -93,6 +93,7 @@ namespace WATickets.Controllers
             try
             {
                 CierreCajas CierreCajas = db.CierreCajas.Where(a => a.idCaja == cierreCajas.idCaja && a.FechaCaja == cierreCajas.FechaCaja && a.idUsuario == cierreCajas.idUsuario).FirstOrDefault();
+                var param = db.Parametros.FirstOrDefault();
                 if (CierreCajas != null)
                 {
                     var TipoCambio = db.TipoCambios.Where(a => a.Fecha == cierreCajas.FechaCaja && a.Moneda == "USD").FirstOrDefault();
@@ -106,7 +107,7 @@ namespace WATickets.Controllers
                     //CierreCajas.TarjetasColones = cierreCajas.TarjetasColones;
                     //CierreCajas.OtrosMediosColones = cierreCajas.OtrosMediosColones;
                     //CierreCajas.TotalVendidoColones = cierreCajas.TotalVendidoColones;
-                    CierreCajas.TotalRegistradoColones = cierreCajas.TotalRegistradoColones;
+                  
                     CierreCajas.TotalAperturaColones = db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault() == null ? 0 : db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault().MontoAperturaColones;
                     //CierreCajas.TransferenciasColones = cierreCajas.TransferenciasColones;
 
@@ -119,14 +120,25 @@ namespace WATickets.Controllers
                     CierreCajas.TotalAperturaFC = db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault() == null ? 0 : db.Cajas.Where(a => a.id == cierreCajas.idCaja).FirstOrDefault().MontoAperturaDolares;
                     // CierreCajas.TransferenciasDolares = cierreCajas.TransferenciasDolares;
 
-
-                    CierreCajas.EfectivoColonesC = cierreCajas.EfectivoColonesC;
-                    CierreCajas.ChequesColonesC = cierreCajas.ChequesColonesC;
-                    CierreCajas.TarjetasColonesC = cierreCajas.TarjetasColonesC;
-                    CierreCajas.OtrosMediosColonesC = cierreCajas.OtrosMediosColonesC;
-
-
-                    CierreCajas.TransferenciasColonesC = cierreCajas.TransferenciasColonesC;
+                    if(param.Pais == "C" || param.Pais == "")
+                    {
+                        CierreCajas.EfectivoColonesC = cierreCajas.EfectivoColonesC;
+                        CierreCajas.ChequesColonesC = cierreCajas.ChequesColonesC;
+                        CierreCajas.TarjetasColonesC = cierreCajas.TarjetasColonesC;
+                        CierreCajas.OtrosMediosColonesC = cierreCajas.OtrosMediosColonesC;
+                        CierreCajas.TransferenciasColonesC = cierreCajas.TransferenciasColonesC;
+                        CierreCajas.TotalRegistradoColones = cierreCajas.TotalRegistradoColones;
+                    }
+                    else
+                    {
+                        CierreCajas.EfectivoColonesC = 0;
+                        CierreCajas.ChequesColonesC = 0;
+                        CierreCajas.TarjetasColonesC = 0;
+                        CierreCajas.OtrosMediosColonesC = 0;
+                        CierreCajas.TransferenciasColonesC = 0;
+                        CierreCajas.TotalRegistradoColones = 0;
+                    }
+              
 
                     CierreCajas.EfectivoFCC = cierreCajas.EfectivoFCC;
                     CierreCajas.ChequesFCC = cierreCajas.ChequesFCC;
@@ -138,7 +150,15 @@ namespace WATickets.Controllers
 
                     CierreCajas.Activo = false;
                     CierreCajas.HoraCierre = DateTime.Now;
-                    CierreCajas.TotalizadoMonedas = cierreCajas.TotalRegistradoColones + (cierreCajas.TotalRegistradoFC * TipoCambio.TipoCambio);
+                    if (param.Pais == "C" || param.Pais == "")
+                    {
+                        CierreCajas.TotalizadoMonedas = cierreCajas.TotalRegistradoFC;
+                    }
+                    else
+                    {
+                        CierreCajas.TotalizadoMonedas = cierreCajas.TotalRegistradoColones + (cierreCajas.TotalRegistradoFC * TipoCambio.TipoCambio);
+
+                    }
                     db.SaveChanges();
 
 

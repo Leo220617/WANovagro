@@ -100,7 +100,7 @@ namespace WATickets.Controllers
         {
             try
             {
-
+                var param = db.Parametros.FirstOrDefault();
                 PreCierres PreCierre = db.PreCierres.Where(a => a.id == cierres.id).FirstOrDefault();
                 var time = DateTime.Now.Date;
                 var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == cierres.FechaCaja && a.idCaja == cierres.idCaja && a.idUsuario == cierres.idUsuario).FirstOrDefault();
@@ -109,6 +109,24 @@ namespace WATickets.Controllers
 
                 if (PreCierre == null)
                 {
+
+                    if (param.Pais == "C" || param.Pais == "")
+                    {
+                        PreCierre.EfectivoColonesC = cierres.EfectivoColonesC;
+                        PreCierre.ChequesColonesC = cierres.ChequesColonesC;
+                        PreCierre.TarjetasColonesC = cierres.TarjetasColonesC;
+                        PreCierre.OtrosMediosColonesC = cierres.OtrosMediosColonesC;
+                        PreCierre.TransferenciasColonesC = cierres.TransferenciasColonesC;
+                  
+                    }
+                    else
+                    {
+                        PreCierre.EfectivoColonesC = 0;
+                        PreCierre.ChequesColonesC = 0;
+                        PreCierre.TarjetasColonesC = 0;
+                        PreCierre.OtrosMediosColonesC = 0;
+                        PreCierre.TransferenciasColonesC = 0;
+                    }
 
 
                     PreCierre = new PreCierres();
@@ -119,7 +137,7 @@ namespace WATickets.Controllers
                     PreCierre.FecUltAct = DateTime.Now;
                     PreCierre.HoraCierre = DateTime.Now;
                     PreCierre.IP = CierreCaja.IP;
-                    PreCierre.EfectivoColones = CierreCaja.EfectivoColones;
+
                     PreCierre.EfectivoFC = CierreCaja.EfectivoFC;
                     PreCierre.ChequesColones = CierreCaja.ChequesColones;
                     PreCierre.ChequesFC = CierreCaja.ChequesFC;
@@ -138,17 +156,17 @@ namespace WATickets.Controllers
                     PreCierre.NotasCreditoColones = CierreCaja.NotasCreditoColones;
                     PreCierre.NotasCreditoFC = CierreCaja.NotasCreditoFC;
 
-                    PreCierre.EfectivoColonesC = cierres.EfectivoColonesC;
+
                     PreCierre.EfectivoFCC = cierres.EfectivoFCC;
-                    PreCierre.ChequesColonesC = cierres.ChequesColonesC;
+
                     PreCierre.ChequesFCC = cierres.ChequesFCC;
-                    PreCierre.TarjetasColonesC = cierres.TarjetasColonesC;
+
                     PreCierre.TarjetasFCC = cierres.TarjetasFCC;
-                    PreCierre.OtrosMediosColonesC = cierres.OtrosMediosColonesC;
+
                     PreCierre.OtrosMediosFCC = cierres.OtrosMediosFCC;
 
 
-                    PreCierre.TransferenciasColonesC = cierres.TransferenciasColonesC;
+
                     PreCierre.TransferenciasDolaresC = cierres.TransferenciasDolaresC;
 
                     PreCierre.Activo = false;
