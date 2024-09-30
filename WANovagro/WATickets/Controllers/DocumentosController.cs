@@ -2328,74 +2328,81 @@ namespace WATickets.Controllers
 
                     ////Mandar al api de facturacion
                     ///
-
-                    var Parametros = db.Parametros.FirstOrDefault();
-                    HttpClient cliente = new HttpClient();
-
-                    try
+                    if(param.Pais != "P")
                     {
+                        var Parametros = db.Parametros.FirstOrDefault();
+                        HttpClient cliente = new HttpClient();
 
-                        var Url = Parametros.UrlFacturaElectronica.Replace("@DocNumR", Documento.id.ToString()).Replace("@ObjTypeR", (Documento.TipoDocumento != "03" ? "13" : "14")).Replace("@SucursalR", "099");
-
-                        cliente.Timeout = TimeSpan.FromMinutes(30);
-                        HttpResponseMessage response = await cliente.GetAsync(Url);
-                        if (response.IsSuccessStatusCode)
+                        try
                         {
-                            response.Content.Headers.ContentType.MediaType = "application/json";
-                            var res = await response.Content.ReadAsAsync<RecibidoFacturacion>();
 
-                            db.Entry(Documento).State = EntityState.Modified;
-                            Documento.ClaveHacienda = res.ClaveHacienda;
-                            Documento.ConsecutivoHacienda = res.ConsecutivoHacienda;
+                            var Url = Parametros.UrlFacturaElectronica.Replace("@DocNumR", Documento.id.ToString()).Replace("@ObjTypeR", (Documento.TipoDocumento != "03" ? "13" : "14")).Replace("@SucursalR", "099");
 
-                            documento.ClaveHacienda = res.ClaveHacienda;
-                            documento.ConsecutivoHacienda = res.ConsecutivoHacienda;
-                            db.SaveChanges();
-
-
-                            try
+                            cliente.Timeout = TimeSpan.FromMinutes(30);
+                            HttpResponseMessage response = await cliente.GetAsync(Url);
+                            if (response.IsSuccessStatusCode)
                             {
-                                HttpClient cliente2 = new HttpClient();
+                                response.Content.Headers.ContentType.MediaType = "application/json";
+                                var res = await response.Content.ReadAsAsync<RecibidoFacturacion>();
 
-                                var Url2 = Parametros.UrlConsultaFacturas.Replace("@ClaveR", Documento.ClaveHacienda.ToString()).Replace("@SucursalR", "099");
+                                db.Entry(Documento).State = EntityState.Modified;
+                                Documento.ClaveHacienda = res.ClaveHacienda;
+                                Documento.ConsecutivoHacienda = res.ConsecutivoHacienda;
 
-                                HttpResponseMessage response2 = await cliente2.GetAsync(Url2);
-                                if (response2.IsSuccessStatusCode)
+                                documento.ClaveHacienda = res.ClaveHacienda;
+                                documento.ConsecutivoHacienda = res.ConsecutivoHacienda;
+                                db.SaveChanges();
+
+
+                                try
                                 {
-                                    response2.Content.Headers.ContentType.MediaType = "application/json";
-                                    var res2 = await response2.Content.ReadAsStringAsync();
+                                    HttpClient cliente2 = new HttpClient();
+
+                                    var Url2 = Parametros.UrlConsultaFacturas.Replace("@ClaveR", Documento.ClaveHacienda.ToString()).Replace("@SucursalR", "099");
+
+                                    HttpResponseMessage response2 = await cliente2.GetAsync(Url2);
+                                    if (response2.IsSuccessStatusCode)
+                                    {
+                                        response2.Content.Headers.ContentType.MediaType = "application/json";
+                                        var res2 = await response2.Content.ReadAsStringAsync();
+                                    }
+
+                                }
+                                catch (Exception ex)
+                                {
+
+                                    BitacoraErrores be = new BitacoraErrores();
+                                    be.Descripcion = ex.Message;
+                                    be.StrackTrace = ex.StackTrace;
+                                    be.Fecha = DateTime.Now;
+                                    be.JSON = JsonConvert.SerializeObject(ex);
+                                    db.BitacoraErrores.Add(be);
+                                    db.SaveChanges();
                                 }
 
                             }
-                            catch (Exception ex)
-                            {
-
-                                BitacoraErrores be = new BitacoraErrores();
-                                be.Descripcion = ex.Message;
-                                be.StrackTrace = ex.StackTrace;
-                                be.Fecha = DateTime.Now;
-                                be.JSON = JsonConvert.SerializeObject(ex);
-                                db.BitacoraErrores.Add(be);
-                                db.SaveChanges();
-                            }
 
                         }
+                        catch (Exception ex)
+                        {
+
+                            BitacoraErrores be = new BitacoraErrores();
+                            be.Descripcion = ex.Message;
+                            be.StrackTrace = ex.StackTrace;
+                            be.Fecha = DateTime.Now;
+                            be.JSON = JsonConvert.SerializeObject(ex);
+                            db.BitacoraErrores.Add(be);
+                            db.SaveChanges();
+                        }
+
+
+                        //Se termina el api de facturacion 
 
                     }
-                    catch (Exception ex)
+                    else  //Aca se llamaria al api de facturacion  Panama
                     {
 
-                        BitacoraErrores be = new BitacoraErrores();
-                        be.Descripcion = ex.Message;
-                        be.StrackTrace = ex.StackTrace;
-                        be.Fecha = DateTime.Now;
-                        be.JSON = JsonConvert.SerializeObject(ex);
-                        db.BitacoraErrores.Add(be);
-                        db.SaveChanges();
                     }
-
-
-                    //Se termina el api de facturacion 
 
 
 
