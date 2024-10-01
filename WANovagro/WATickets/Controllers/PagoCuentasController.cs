@@ -467,19 +467,19 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
                                         pagocuentaSAP.DocCurrency = param.MonedaLocal;
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
-                                        pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
+                                        //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                         //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
                                         if (PagoCuenta.Moneda != "CRC")
                                         {
                                             var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
-                                            pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones);
+                                            //pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones);
                                         }
                                         else
                                         {
                                             var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto);
 
-                                            pagocuentaSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
+                                            //pagocuentaSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
 
                                         }
                                         pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
@@ -598,12 +598,12 @@ namespace WATickets.Controllers
                                          pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
                                         pagocuentaSAP.DocCurrency = "USD";
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
-                                        pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
+                                        //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                         //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
 
                                         var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
-                                        pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                        //pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
                                         pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
 
 
@@ -1032,12 +1032,12 @@ namespace WATickets.Controllers
                                     pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
                                     pagocuentaSAP.DocCurrency = "USD";
                                     pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
-                                    pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
+                                    //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                     //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
 
                                     var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
-                                    pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                    //pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
                                     pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
 
 
@@ -1330,19 +1330,19 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
                                         pagocuentaSAP.DocCurrency = param.MonedaLocal;
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
-                                        pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
+                                        //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                         //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
                                         if (PagoCuenta.Moneda != "CRC")
                                         {
                                             var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
-                                            pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones);
+                                            //pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoColones);
                                         }
                                         else
                                         {
                                             var SumatoriaPagoColones = MetodosPagosCuentasColones.Sum(a => a.Monto);
 
-                                            pagocuentaSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
+                                            //pagocuentaSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
 
                                         }
                                         pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
@@ -1461,12 +1461,12 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
                                         pagocuentaSAP.DocCurrency = "USD";
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
-                                        pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
+                                        //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                         //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
 
 
                                         var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
-                                        pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                        //pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
                                         pagocuentaSAP.Series = Sucursal.SeriePago;//154; 161;
 
 

@@ -86,6 +86,6 @@
 
         public string SQLProductosActualizar { get; set; }
 
-
+        public string SQLProductosDomingos { get; set; }
     }
 }
