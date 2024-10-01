@@ -106,10 +106,10 @@ namespace WATickets.Controllers
                 var CierreCaja = db.CierreCajas.Where(a => a.FechaCaja == cierres.FechaCaja && a.idCaja == cierres.idCaja && a.idUsuario == cierres.idUsuario).FirstOrDefault();
                 var FechaActual = DateTime.Now.Date;
                 var TipoCambio = db.TipoCambios.Where(a => a.Fecha == CierreCaja.FechaCaja && a.Moneda == "USD").FirstOrDefault();
-
+        
                 if (PreCierre == null)
                 {
-
+                    PreCierre = new PreCierres();
                     if (param.Pais == "C" || param.Pais == "")
                     {
                         PreCierre.EfectivoColonesC = cierres.EfectivoColonesC;
@@ -129,7 +129,7 @@ namespace WATickets.Controllers
                     }
 
 
-                    PreCierre = new PreCierres();
+                 
                     PreCierre.id = cierres.id;
                     PreCierre.idCaja = CierreCaja.idCaja;
                     PreCierre.idUsuario = CierreCaja.idUsuario;
