@@ -29,5 +29,7 @@ namespace WATickets.Models.Cliente
         public DateTime FechaVen { get; set; }
 
         public DateTime Fecha { get; set; }
+
+        public bool Cliente { get; set; }
     }
 }

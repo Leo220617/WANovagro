@@ -17,5 +17,6 @@ namespace WATickets.Models.APIS
         public DateTime FechaVencimiento { get; set; }
         public DateTime FechaCreacion { get; set; }
         public List<Promociones> Detalle { get; set; }
+        public List<ClientesPromociones> Clientes { get; set; }
     }
 }

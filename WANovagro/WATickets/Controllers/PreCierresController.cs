@@ -169,9 +169,18 @@ namespace WATickets.Controllers
 
                     PreCierre.TransferenciasDolaresC = cierres.TransferenciasDolaresC;
 
-                    PreCierre.Activo = false;
+                    PreCierre.Activo = true;
                     PreCierre.HoraCierre = DateTime.Now;
-                    PreCierre.TotalizadoMonedas = cierres.TotalRegistradoColones + (cierres.TotalRegistradoFC * TipoCambio.TipoCambio);
+                   
+                    if (param.Pais == "C" || param.Pais == "")
+                    {
+
+                        PreCierre.TotalizadoMonedas = cierres.TotalRegistradoColones + (cierres.TotalRegistradoFC * TipoCambio.TipoCambio);
+                    }
+                    else
+                    {
+                        PreCierre.TotalizadoMonedas = cierres.TotalRegistradoFC;
+                    }
                     db.PreCierres.Add(PreCierre);
                     db.SaveChanges();
 

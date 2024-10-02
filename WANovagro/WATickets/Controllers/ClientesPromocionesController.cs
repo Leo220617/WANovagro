@@ -22,12 +22,24 @@ namespace WATickets.Controllers
         {
             try
             {
-                var Clientes = db.ClientesPromociones.ToList();
+                var time = DateTime.Now.Date;
+                var Detalles = db.Promociones.ToList();
+
+                var Promocion = db.EncPromociones.Where(a => a.Fecha <= time && a.FechaVencimiento >= time).ToList();
+                var ClientesPromociones = db.ClientesPromociones.ToList();
+
+   
+
+                if (filtro.Activo)
+                {
+                    var promocionesIds = Promocion.Select(p => p.id).ToList();
+                    ClientesPromociones = ClientesPromociones
+                        .Where(a => promocionesIds.Contains(a.idPromocion))
+                        .ToList();
+                }
 
 
-           
-
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Clientes);
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, ClientesPromociones);
             }
             catch (Exception ex)
             {

@@ -20,12 +20,23 @@ namespace WATickets.Controllers
             try
             {
                 var time = DateTime.Now.Date;
-                var Detalles = db.Promociones.ToList();
+                var Detalles = db.Promociones.Select(a => new {
+                    a.id,
+                    a.idEncabezado,
+                    a.ItemCode,
+                    a.idCategoria,
+                    a.idListaPrecio,
+                    a.PrecioFinal,
+                    a.Moneda,
+                    a.FechaVen,
+                    a.Fecha,
+                    a.PrecioAnterior,
+                    a.Cliente,
+                    ClientesPromociones = db.ClientesPromociones.Where(b => b.idPromocion == a.idEncabezado).ToList()
 
-                if (filtros.Activo) 
-                {
-                    Detalles = Detalles.Where(a => a.Fecha <= time && a.FechaVen >= time).ToList();
-                }
+                }).Where(a => (filtros.Activo ? a.Fecha <= time && a.FechaVen >= time : true)).ToList();
+           
+               
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Detalles);
