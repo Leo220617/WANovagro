@@ -1360,6 +1360,13 @@ namespace WATickets.Controllers
                                     {
                                         var Fecha = DocumentoG.Fecha.Date;
                                         var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                        if (param.Pais == "P")
+                                        {
+                                            TipoCambio = new TipoCambios(); // Inicializa el objeto para evitar nulos
+                                            TipoCambio.TipoCambio = 1;      // Asigna el tipo de cambio en 1
+                                            TipoCambio.Moneda = "USD";      
+                                        }
+
                                         var PagadoMismaMoneda = item.Where(a => a.Moneda == documento.Moneda).Sum(a => a.Monto);
                                         var PagadoOtraMoneda = item.Where(a => a.Moneda != documento.Moneda).Sum(a => a.Monto);
                                         var PagadoMismaMonedaConvertido = documento.Moneda != "CRC" ? PagadoOtraMoneda / TipoCambio.TipoCambio : PagadoOtraMoneda * TipoCambio.TipoCambio;
