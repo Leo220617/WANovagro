@@ -2762,6 +2762,44 @@ namespace WATickets.Controllers
 
 
 
+                var SQL = "EXEC dbo.SincronizaNOVAAPPFE";
+
+                db.Database.ExecuteSqlCommand(SQL);
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+
+            }
+
+            catch (Exception ex)
+            {
+                ModelCliente db2 = new ModelCliente();
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db2.BitacoraErrores.Add(be);
+                db2.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+
+            }
+
+        }
+
+        [Route("api/Documentos/EnviarConsecutivos")]
+        public HttpResponseMessage GetEnviarConsecutivos()
+        {
+            try
+            {
+                Parametros parametros = db.Parametros.FirstOrDefault();
+                var conexion = G.DevuelveCadena(db);
+
+                var Datos = db.ConexionSAP.FirstOrDefault();
+
+
+
+
                 var SQL = "EXEC dbo.SincronizaNOVAAPPFEHACIENDA";
 
                 db.Database.ExecuteSqlCommand(SQL);

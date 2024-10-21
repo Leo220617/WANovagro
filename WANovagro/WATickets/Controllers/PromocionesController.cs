@@ -138,41 +138,42 @@ namespace WATickets.Controllers
 
 
 
-                    var x = 0;
-                    foreach (var item in promocion.Clientes)
+                    var x = 0; if (promocion.Clientes != null)
                     {
-
-                        var ClientePromocion = db.ClientesPromociones.Where(a => a.idPromocion == item.idPromocion && a.idCliente == item.idCliente).FirstOrDefault();
-                        if (ClientePromocion == null)
+                        foreach (var item in promocion.Clientes)
                         {
-                            var Objetos = new ClientesPromociones();
-                            Objetos.idPromocion = Promo.id;
-                            Objetos.idCliente = item.idCliente;
+
+                            var ClientePromocion = db.ClientesPromociones.Where(a => a.idPromocion == item.idPromocion && a.idCliente == item.idCliente).FirstOrDefault();
+                            if (ClientePromocion == null)
+                            {
+                                var Objetos = new ClientesPromociones();
+                                Objetos.idPromocion = Promo.id;
+                                Objetos.idCliente = item.idCliente;
 
 
-                            db.ClientesPromociones.Add(Objetos);
-                            db.SaveChanges();
+                                db.ClientesPromociones.Add(Objetos);
+                                db.SaveChanges();
 
 
 
 
 
-                            x++;
+                                x++;
+                            }
+                            else
+                            {
+                                var Client = db.Clientes.Where(a => a.id == item.idCliente).FirstOrDefault();
+                                throw new Exception("Ya el Cliente" + Client.Codigo + "-" + Client.Nombre + " esta asignado a la promocion #" + Promo.id);
+                            }
+
+
+
+
+
+
+
                         }
-                        else
-                        {
-                            var Client = db.Clientes.Where(a => a.id == item.idCliente).FirstOrDefault();
-                            throw new Exception("Ya el Cliente" + Client.Codigo + "-" + Client.Nombre + " esta asignado a la promocion #" + Promo.id);
-                        }
-
-
-
-
-
-
-
                     }
-
                     var i = 0;
                     foreach (var item in promocion.Detalle)
                     {
@@ -211,7 +212,15 @@ namespace WATickets.Controllers
                                     }
                                     else
                                     {
-                                        item2.PrecioUnitario = det.PrecioFinal * TipoCambio.TipoCambio;
+                                        if(param.Pais == "C")
+                                        {
+                                            item2.PrecioUnitario = det.PrecioFinal * TipoCambio.TipoCambio;
+                                        }
+                                        else
+                                        {
+                                            item2.PrecioUnitario = det.PrecioFinal;
+                                        }
+                              
                                     }
                                    
                                     item2.FechaActualizacion = DateTime.Now;
@@ -281,6 +290,8 @@ namespace WATickets.Controllers
             {
                 EncPromociones Promo = db.EncPromociones.Where(a => a.id == promocion.id).FirstOrDefault();
                 var time = DateTime.Now.Date;
+                var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == time).FirstOrDefault();
+                Parametros param = db.Parametros.FirstOrDefault();
                 if (Promo != null)
                 {
                     db.Entry(Promo).State = EntityState.Modified;
@@ -313,6 +324,7 @@ namespace WATickets.Controllers
                         db.ClientesPromociones.Remove(item);
                         db.SaveChanges();
                     }
+                    if(promocion.Clientes != null) { 
                     foreach (var item in promocion.Clientes)
                     {
 
@@ -345,6 +357,7 @@ namespace WATickets.Controllers
 
 
 
+                    }
                     }
                     var i = 0;
                     foreach (var item in promocion.Detalle)
@@ -384,7 +397,14 @@ namespace WATickets.Controllers
                                 foreach (var item2 in ProductoX)
                                 {
                                     db.Entry(item2).State = EntityState.Modified;
-                                    item2.PrecioUnitario = det.PrecioFinal;
+                                    if (param.Pais == "C")
+                                    {
+                                        item2.PrecioUnitario = det.PrecioFinal * TipoCambio.TipoCambio;
+                                    }
+                                    else
+                                    {
+                                        item2.PrecioUnitario = det.PrecioFinal;
+                                    }
                                     item2.FechaActualizacion = DateTime.Now;
                                     db.SaveChanges();
 
