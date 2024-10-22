@@ -22,35 +22,59 @@ namespace WATickets.Controllers
         {
             try
             {
-                var time = DateTime.Now; // 01-01-0001
-                if (filtro.FechaFinal != time)
+                if (!string.IsNullOrEmpty(filtro.CardName))
                 {
-                    filtro.FechaInicial = filtro.FechaInicial.Date;
-                    filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
+                    var EncPromociones = db.EncPromociones.Select(a => new
+                    {
+                        a.id,
+                        a.idListaPrecio,
+                        a.Nombre,
+                        a.Fecha,
+                        a.FechaVencimiento,
+                        a.Moneda,
+                        Detalle = db.Promociones.Where(b => b.idEncabezado == a.id).ToList(),
+                        Clientes = db.ClientesPromociones.Where(c => c.idPromocion == a.id).ToList()
+                    }).ToList();
+
+           
+                    EncPromociones = EncPromociones.Where(b => b.Detalle.Any(c => !string.IsNullOrEmpty(filtro.CardName) ? c.ItemCode.ToUpper().Contains(filtro.CardName.ToUpper()) : true)).ToList();
+
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK, EncPromociones);
                 }
-                var Promociones = db.EncPromociones.Select(a => new
+
+                else
                 {
-                    a.id,
-                    a.idListaPrecio,
-                    a.Nombre,
-                    a.Fecha,
-                    a.FechaVencimiento,
-                    a.Moneda,
-                    
-                    Detalle = db.Promociones.Where(b => b.idEncabezado == a.id).ToList(),
-                    Clientes = db.ClientesPromociones.Where(c => c.idPromocion == a.id).ToList()
 
-                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
+                    var time = DateTime.Now; // 01-01-0001
+                    if (filtro.FechaFinal != time)
+                    {
+                        filtro.FechaInicial = filtro.FechaInicial.Date;
+                        filtro.FechaFinal = filtro.FechaFinal.AddDays(1);
+                    }
+                    var Promociones = db.EncPromociones.Select(a => new
+                    {
+                        a.id,
+                        a.idListaPrecio,
+                        a.Nombre,
+                        a.Fecha,
+                        a.FechaVencimiento,
+                        a.Moneda,
 
-              
+                        Detalle = db.Promociones.Where(b => b.idEncabezado == a.id).ToList(),
+                        Clientes = db.ClientesPromociones.Where(c => c.idPromocion == a.id).ToList()
 
-                if (filtro.Codigo1 > 0) // esto por ser integer
-                {
-                    Promociones = Promociones.Where(a => a.idListaPrecio == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
+                    }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)).ToList(); //Traemos el listado de productos
+
+
+
+                    if (filtro.Codigo1 > 0) // esto por ser integer
+                    {
+                        Promociones = Promociones.Where(a => a.idListaPrecio == filtro.Codigo1).ToList(); // filtramos por lo que traiga el codigo1 
+                    }
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK, Promociones);
                 }
-             
 
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, Promociones);
+
             }
             catch (Exception ex)
             {
@@ -179,7 +203,8 @@ namespace WATickets.Controllers
                     {
                         var ClientePromo = db.ClientesPromociones.Where(a => a.idPromocion == Promo.id).FirstOrDefault();
                         var PromoVieja = db.Promociones.Where(a => a.ItemCode == item.ItemCode && a.idListaPrecio == item.idListaPrecio && a.idCategoria == item.idCategoria && item.FechaVen > time).FirstOrDefault();
-                        if(PromoVieja == null) {
+                        if (PromoVieja == null)
+                        {
                             Promociones det = new Promociones();
                             det.idEncabezado = Promo.id;
                             det.ItemCode = item.ItemCode;
@@ -198,21 +223,23 @@ namespace WATickets.Controllers
                             {
                                 det.Cliente = false;
                             }
-                          
+
                             db.Promociones.Add(det);
                             db.SaveChanges();
 
-                            if(det.Fecha == time && det.FechaVen >= time && det.Cliente == false) {
+                            if (det.Fecha == time && det.FechaVen >= time && det.Cliente == false)
+                            {
                                 var ProductoX = db.Productos.Where(a => a.Codigo == det.ItemCode && a.idCategoria == det.idCategoria && a.idListaPrecios == det.idListaPrecio).ToList();
-                                foreach(var item2 in ProductoX)
+                                foreach (var item2 in ProductoX)
                                 {
                                     db.Entry(item2).State = EntityState.Modified;
-                                    if (Promo.Moneda == "CRC"){
+                                    if (Promo.Moneda == "CRC")
+                                    {
                                         item2.PrecioUnitario = det.PrecioFinal;
                                     }
                                     else
                                     {
-                                        if(param.Pais == "C")
+                                        if (param.Pais == "C")
                                         {
                                             item2.PrecioUnitario = det.PrecioFinal * TipoCambio.TipoCambio;
                                         }
@@ -220,18 +247,18 @@ namespace WATickets.Controllers
                                         {
                                             item2.PrecioUnitario = det.PrecioFinal;
                                         }
-                              
+
                                     }
-                                   
+
                                     item2.FechaActualizacion = DateTime.Now;
                                     db.SaveChanges();
 
                                 }
 
                             }
-                           
-                            
-                            
+
+
+
                             i++;
                         }
                         else
@@ -245,16 +272,16 @@ namespace WATickets.Controllers
 
                         }
 
-                        
-                        
 
-                    
+
+
+
 
                     }
 
 
 
-                
+
                     t.Commit();
 
                 }
@@ -302,10 +329,10 @@ namespace WATickets.Controllers
                     Promo.FechaCreacion = DateTime.Now;
                     Promo.idUsuarioCreador = promocion.idUsuarioCreador;
                     Promo.Moneda = promocion.Moneda;
-                 
+
                     db.SaveChanges();
 
-                   
+
 
                     var Detalles = db.Promociones.Where(a => a.idEncabezado == Promo.id).ToList();
 
@@ -324,40 +351,41 @@ namespace WATickets.Controllers
                         db.ClientesPromociones.Remove(item);
                         db.SaveChanges();
                     }
-                    if(promocion.Clientes != null) { 
-                    foreach (var item in promocion.Clientes)
+                    if (promocion.Clientes != null)
                     {
-
-                        var ClientePromocion = db.ClientesPromociones.Where(a => a.idPromocion == item.idPromocion && a.idCliente == item.idCliente).FirstOrDefault();
-                        if (ClientePromocion == null)
+                        foreach (var item in promocion.Clientes)
                         {
-                            var Objetos = new ClientesPromociones();
-                            Objetos.idPromocion = Promo.id;
-                            Objetos.idCliente = item.idCliente;
+
+                            var ClientePromocion = db.ClientesPromociones.Where(a => a.idPromocion == item.idPromocion && a.idCliente == item.idCliente).FirstOrDefault();
+                            if (ClientePromocion == null)
+                            {
+                                var Objetos = new ClientesPromociones();
+                                Objetos.idPromocion = Promo.id;
+                                Objetos.idCliente = item.idCliente;
 
 
-                            db.ClientesPromociones.Add(Objetos);
-                            db.SaveChanges();
+                                db.ClientesPromociones.Add(Objetos);
+                                db.SaveChanges();
 
 
 
 
 
-                            x++;
+                                x++;
+                            }
+                            else
+                            {
+                                var Client = db.Clientes.Where(a => a.id == item.idCliente).FirstOrDefault();
+                                throw new Exception("Ya el Cliente" + Client.Codigo + "-" + Client.Nombre + " esta asignado a la promocion #" + Promo.id);
+                            }
+
+
+
+
+
+
+
                         }
-                        else
-                        {
-                            var Client = db.Clientes.Where(a => a.id == item.idCliente).FirstOrDefault();
-                            throw new Exception("Ya el Cliente" + Client.Codigo + "-" + Client.Nombre + " esta asignado a la promocion #" + Promo.id);
-                        }
-
-
-
-
-
-
-
-                    }
                     }
                     var i = 0;
                     foreach (var item in promocion.Detalle)
@@ -426,7 +454,7 @@ namespace WATickets.Controllers
 
                     }
 
-                
+
 
                     t.Commit();
                 }
