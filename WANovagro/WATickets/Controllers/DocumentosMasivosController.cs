@@ -123,13 +123,13 @@ namespace WATickets.Controllers
                                     //documentoSAP.Lines.CostingCode2 = param.CostingCode2;
                                     documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto; //Cambiar progra para Novagro
                                     documentoSAP.Lines.CostingCode3 = param.CostingCode3;
-                                  
-                                        
-                                       
 
-                                    }
 
-                               
+
+
+                                }
+
+
                                 else
                                 {
                                     switch (Sucursal.Dimension)
@@ -292,7 +292,7 @@ namespace WATickets.Controllers
 
                                                     var SumatoriaEfectivo = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Efectivo".ToUpper()).Sum(a => a.Monto);
                                                     var PagosTarjetas = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Tarjeta".ToUpper()).ToList(); //.Sum(a => a.Monto);
-                                                  
+
                                                     var SumatoriaTransferencia = MetodosPagosColones.Where(a => a.Metodo.ToUpper() == "Transferencia".ToUpper()).Sum(a => a.Monto);
 
                                                     if (SumatoriaEfectivo > 0)
@@ -781,7 +781,7 @@ namespace WATickets.Controllers
                                         }
                                     }
 
-                                      
+
 
 
                                 }
@@ -794,7 +794,7 @@ namespace WATickets.Controllers
                             }
                             else
                             {
-                                var error = "Hubo un error en la factura #  "+ Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
+                                var error = "Hubo un error en la factura #  " + Documento.id + " -> " + Conexion.Company.GetLastErrorDescription();
                                 BitacoraErrores be = new BitacoraErrores();
                                 be.Descripcion = error;
                                 be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
@@ -840,240 +840,241 @@ namespace WATickets.Controllers
                     EncDocumento Documento = db.EncDocumento.Where(a => a.id == item2.id).FirstOrDefault();
 
                     //aqui va la logica 
-
-                    if (Documento.TipoDocumento == "03") // Si es una nota de credito
+                    if (Documento.ProcesadaSAP == false)
                     {
-                        try
+                        if (Documento.TipoDocumento == "03") // Si es una nota de credito
                         {
-                            var DocumentoG = db.EncDocumento.Where(a => a.id == Documento.BaseEntry).FirstOrDefault();
-                            var DetalleG = db.DetDocumento.Where(a => a.idEncabezado == DocumentoG.id).ToList();
-                            var Sucursal = db.Sucursales.Where(a => a.CodSuc == Documento.CodSuc).FirstOrDefault();
-                            var documentoSAP = (Documents)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oCreditNotes);
-
-                            //Encabezado
-
-                            documentoSAP.DocObjectCode = BoObjectTypes.oCreditNotes;
-                            documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
-                            documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
-                            documentoSAP.DocDate = Documento.Fecha;
-                            //documentoSAP.DocDueDate = Documento.FechaVencimiento;
-
-                            //documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
-                            documentoSAP.NumAtCard = "APP NC" + " " + Documento.id;
-                            documentoSAP.Comments = Documento.Comentarios;
-
-                            // documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
-
-                            documentoSAP.Series = Sucursal.SerieNC; //Quemada
-                            if (Documento.Moneda == "USD")
+                            try
                             {
-                                documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
-                            }
-                            else
-                            {
-                                documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
-                            }
-                            //documentoSAP.GroupNumber = -1;
-                            documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
-                            documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda;
-                            documentoSAP.UserFields.Fields.Item(param.CampoClave).Value = Documento.ClaveHacienda;
-                            documentoSAP.UserFields.Fields.Item("U_DYD_Estado").Value = "A";
-                            var Lotes1 = db.Lotes.Where(a => a.idEncabezado == Documento.id && a.Tipo == "F").ToList();
-                            //Detalle
-                            int z = 0;
-                            var Detalle = db.DetDocumento.Where(a => a.idEncabezado == Documento.id).ToList();
-                            foreach (var item in Detalle)
-                            {
+                                var DocumentoG = db.EncDocumento.Where(a => a.id == Documento.BaseEntry).FirstOrDefault();
+                                var DetalleG = db.DetDocumento.Where(a => a.idEncabezado == DocumentoG.id).ToList();
+                                var Sucursal = db.Sucursales.Where(a => a.CodSuc == Documento.CodSuc).FirstOrDefault();
+                                var documentoSAP = (Documents)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oCreditNotes);
 
+                                //Encabezado
 
-                                var BodProducto = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
-                                var Bodega = db.Bodegas.Where(a => a.id == BodProducto).FirstOrDefault();
+                                documentoSAP.DocObjectCode = BoObjectTypes.oCreditNotes;
+                                documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
+                                documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
+                                documentoSAP.DocDate = Documento.Fecha;
+                                //documentoSAP.DocDueDate = Documento.FechaVencimiento;
 
+                                //documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
+                                documentoSAP.NumAtCard = "APP NC" + " " + Documento.id;
+                                documentoSAP.Comments = Documento.Comentarios;
 
+                                // documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
 
-                                documentoSAP.Lines.SetCurrentLine(z);
-
-                                documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
-                                documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
-                                documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
-                                documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
-                                var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
-                                var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
-                                var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
-                                var Producto =  db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
-                                var ProductoCabys = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Cabys;
-                                var DetExoneracion = db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault() == null ? 0 : db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault().id;
-                                if (ClienteMAG == true && ProductoMAG == true && DetExoneracion == 0)
+                                documentoSAP.Series = Sucursal.SerieNC; //Quemada
+                                if (Documento.Moneda == "USD")
+                                {
+                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
+                                else
+                                {
+                                    documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
+                                //documentoSAP.GroupNumber = -1;
+                                documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
+                                documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda;
+                                documentoSAP.UserFields.Fields.Item(param.CampoClave).Value = Documento.ClaveHacienda;
+                                documentoSAP.UserFields.Fields.Item("U_DYD_Estado").Value = "A";
+                                var Lotes1 = db.Lotes.Where(a => a.idEncabezado == Documento.id && a.Tipo == "F").ToList();
+                                //Detalle
+                                int z = 0;
+                                var Detalle = db.DetDocumento.Where(a => a.idEncabezado == Documento.id).ToList();
+                                foreach (var item in Detalle)
                                 {
 
-                                    documentoSAP.Lines.TaxCode = db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault() == null ? "IVA-1" : db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault().Codigo;
+
+                                    var BodProducto = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
+                                    var Bodega = db.Bodegas.Where(a => a.id == BodProducto).FirstOrDefault();
+
+
+
+                                    documentoSAP.Lines.SetCurrentLine(z);
+
+                                    documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
+                                    documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
+                                    documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                                    documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
+                                    var idImp = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idImpuesto;
+                                    var ClienteMAG = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? false : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().MAG;
+                                    var ProductoMAG = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? false : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().MAG;
+                                    var Producto = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
+                                    var ProductoCabys = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Cabys;
+                                    var DetExoneracion = db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault() == null ? 0 : db.DetExoneraciones.Where(a => a.CodCabys == ProductoCabys && a.idEncabezado == item.idExoneracion).FirstOrDefault().id;
+                                    if (ClienteMAG == true && ProductoMAG == true && DetExoneracion == 0)
+                                    {
+
+                                        documentoSAP.Lines.TaxCode = db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault() == null ? "IVA-1" : db.Impuestos.Where(a => a.Tarifa == 1).FirstOrDefault().Codigo;
+
+                                    }
+                                    else
+                                    {
+                                        documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EXONERA" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
+                                        if (item.idExoneracion > 0)
+                                        {
+                                            var Exoneracion = db.Exoneraciones.Where(a => a.id == item.idExoneracion).FirstOrDefault();
+
+                                            documentoSAP.Lines.UserFields.Fields.Item("U_Tipo_Doc").Value = Exoneracion.TipoDoc;
+                                            documentoSAP.Lines.UserFields.Fields.Item("U_NumDoc").Value = Exoneracion.NumDoc;
+                                            documentoSAP.Lines.UserFields.Fields.Item("U_NomInst").Value = Exoneracion.NomInst;
+                                            documentoSAP.Lines.UserFields.Fields.Item("U_FecEmis").Value = Exoneracion.FechaEmision;
+                                        }
+                                    }
+                                    documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
+
+
+                                    documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
+                                    var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
+                                    documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
+                                    //documentoSAP.Lines.BaseType = Convert.ToInt32(SAPbobsCOM.BoObjectTypes.oInvoices);
+                                    //documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
+
+                                    //documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea ;
+                                    if (param.CostingCode != "N" && param.CostingCode2 != "N" && param.CostingCode3 != "N")
+                                    {
+                                        documentoSAP.Lines.CostingCode = param.CostingCode;
+                                        //documentoSAP.Lines.CostingCode2 = param.CostingCode2;
+                                        documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto; //Cambiar progra para Novagro
+                                        documentoSAP.Lines.CostingCode3 = param.CostingCode3;
+                                    }
+                                    else
+                                    {
+                                        switch (Sucursal.Dimension)
+                                        {
+                                            case 1:
+                                                {
+                                                    documentoSAP.Lines.CostingCode = Sucursal.NormaReparto;
+
+                                                    break;
+                                                }
+                                            case 2:
+                                                {
+                                                    documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto;
+                                                    break;
+                                                }
+                                            case 3:
+                                                {
+                                                    documentoSAP.Lines.CostingCode3 = Sucursal.NormaReparto;
+                                                    break;
+                                                }
+                                            case 4:
+                                                {
+                                                    documentoSAP.Lines.CostingCode4 = Sucursal.NormaReparto;
+                                                    break;
+                                                }
+                                            case 5:
+                                                {
+                                                    documentoSAP.Lines.CostingCode5 = Sucursal.NormaReparto;
+                                                    break;
+                                                }
+
+                                        }
+                                        switch (Producto.Dimension)
+                                        {
+                                            case 1:
+                                                {
+                                                    documentoSAP.Lines.CostingCode = Producto.NormaReparto;
+
+                                                    break;
+                                                }
+                                            case 2:
+                                                {
+                                                    documentoSAP.Lines.CostingCode2 = Producto.NormaReparto;
+                                                    break;
+                                                }
+                                            case 3:
+                                                {
+                                                    documentoSAP.Lines.CostingCode3 = Producto.NormaReparto;
+                                                    break;
+                                                }
+                                            case 4:
+                                                {
+                                                    documentoSAP.Lines.CostingCode4 = Producto.NormaReparto;
+                                                    break;
+                                                }
+                                            case 5:
+                                                {
+                                                    documentoSAP.Lines.CostingCode5 = Producto.NormaReparto;
+                                                    break;
+                                                }
+
+                                        }
+                                    }
+
+                                    var ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
+                                    var Lotes2 = Lotes1.Where(a => a.ItemCode == ItemCode && a.idDetalle == item.id).ToList();
+
+                                    var x = 0;
+                                    foreach (var lot in Lotes2)
+                                    {
+
+
+                                        documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = lot.Serie;
+                                        documentoSAP.Lines.SerialNumbers.ItemCode = lot.ItemCode;
+                                        documentoSAP.Lines.SerialNumbers.Quantity = Convert.ToDouble(lot.Cantidad);
+
+                                        documentoSAP.Lines.SerialNumbers.Add();
+
+
+                                        x++;
+                                    }
+                                    documentoSAP.Lines.Add();
+                                    z++;
+                                }
+
+                                if (Documento.Redondeo != 0)
+                                {
+                                    documentoSAP.Rounding = BoYesNoEnum.tYES;
+                                    documentoSAP.RoundingDiffAmount = Convert.ToDouble(Documento.Redondeo);
+                                }
+
+
+                                var respuesta = documentoSAP.Add();
+                                if (respuesta == 0) //se creo exitorsamente 
+                                {
+                                    db.Entry(Documento).State = EntityState.Modified;
+                                    Documento.DocEntry = Conexion.Company.GetNewObjectKey().ToString();
+                                    Documento.ProcesadaSAP = true;
+                                    db.SaveChanges();
+
+
+
+
+
+                                    Conexion.Desconectar();
 
                                 }
                                 else
                                 {
-                                    documentoSAP.Lines.TaxCode = item.idExoneracion > 0 ? "EXONERA" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault() == null ? "IV" : db.Impuestos.Where(a => a.id == idImp).FirstOrDefault().Codigo;
-                                    if (item.idExoneracion > 0)
-                                    {
-                                        var Exoneracion = db.Exoneraciones.Where(a => a.id == item.idExoneracion).FirstOrDefault();
+                                    var error = "hubo un error " + Conexion.Company.GetLastErrorDescription();
+                                    BitacoraErrores be = new BitacoraErrores();
+                                    be.Descripcion = error;
+                                    be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                    be.Fecha = DateTime.Now;
+                                    be.JSON = JsonConvert.SerializeObject(DocumentoG);
+                                    db.BitacoraErrores.Add(be);
+                                    db.SaveChanges();
+                                    Conexion.Desconectar();
 
-                                        documentoSAP.Lines.UserFields.Fields.Item("U_Tipo_Doc").Value = Exoneracion.TipoDoc;
-                                        documentoSAP.Lines.UserFields.Fields.Item("U_NumDoc").Value = Exoneracion.NumDoc;
-                                        documentoSAP.Lines.UserFields.Fields.Item("U_NomInst").Value = Exoneracion.NomInst;
-                                        documentoSAP.Lines.UserFields.Fields.Item("U_FecEmis").Value = Exoneracion.FechaEmision;
-                                    }
+
                                 }
-                                documentoSAP.Lines.TaxOnly = BoYesNoEnum.tNO;
-
-
-                                documentoSAP.Lines.UnitPrice = Convert.ToDouble(item.PrecioUnitario);
-                                var idBod = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? 0 : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().idBodega;
-                                documentoSAP.Lines.WarehouseCode = db.Bodegas.Where(a => a.id == idBod).FirstOrDefault() == null ? "01" : db.Bodegas.Where(a => a.id == idBod).FirstOrDefault().CodSAP;
-                                //documentoSAP.Lines.BaseType = Convert.ToInt32(SAPbobsCOM.BoObjectTypes.oInvoices);
-                                //documentoSAP.Lines.BaseEntry = Convert.ToInt32(DocumentoG.DocEntry);
-
-                                //documentoSAP.Lines.BaseLine = DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault() == null ? 0 : DetalleG.Where(a => a.idProducto == item.idProducto).FirstOrDefault().NumLinea ;
-                                if (param.CostingCode != "N" && param.CostingCode2 != "N" && param.CostingCode3 != "N")
-                                {
-                                    documentoSAP.Lines.CostingCode = param.CostingCode;
-                                //documentoSAP.Lines.CostingCode2 = param.CostingCode2;
-                                    documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto; //Cambiar progra para Novagro
-                                    documentoSAP.Lines.CostingCode3 = param.CostingCode3;
-                                }
-                                else
-                                {
-                                    switch (Sucursal.Dimension)
-                                    {
-                                        case 1:
-                                            {
-                                                documentoSAP.Lines.CostingCode = Sucursal.NormaReparto;
-
-                                                break;
-                                            }
-                                        case 2:
-                                            {
-                                                documentoSAP.Lines.CostingCode2 = Sucursal.NormaReparto;
-                                                break;
-                                            }
-                                        case 3:
-                                            {
-                                                documentoSAP.Lines.CostingCode3 = Sucursal.NormaReparto;
-                                                break;
-                                            }
-                                        case 4:
-                                            {
-                                                documentoSAP.Lines.CostingCode4 = Sucursal.NormaReparto;
-                                                break;
-                                            }
-                                        case 5:
-                                            {
-                                                documentoSAP.Lines.CostingCode5 = Sucursal.NormaReparto;
-                                                break;
-                                            }
-
-                                    }
-                                    switch (Producto.Dimension)
-                                    {
-                                        case 1:
-                                            {
-                                                documentoSAP.Lines.CostingCode = Producto.NormaReparto;
-
-                                                break;
-                                            }
-                                        case 2:
-                                            {
-                                                documentoSAP.Lines.CostingCode2 = Producto.NormaReparto;
-                                                break;
-                                            }
-                                        case 3:
-                                            {
-                                                documentoSAP.Lines.CostingCode3 = Producto.NormaReparto;
-                                                break;
-                                            }
-                                        case 4:
-                                            {
-                                                documentoSAP.Lines.CostingCode4 = Producto.NormaReparto;
-                                                break;
-                                            }
-                                        case 5:
-                                            {
-                                                documentoSAP.Lines.CostingCode5 = Producto.NormaReparto;
-                                                break;
-                                            }
-
-                                    }
-                                }
-
-                                var ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
-                                var Lotes2 = Lotes1.Where(a => a.ItemCode == ItemCode && a.idDetalle == item.id).ToList();
-
-                                var x = 0;
-                                foreach (var lot in Lotes2)
-                                {
-
-
-                                    documentoSAP.Lines.SerialNumbers.ManufacturerSerialNumber = lot.Serie;
-                                    documentoSAP.Lines.SerialNumbers.ItemCode = lot.ItemCode;
-                                    documentoSAP.Lines.SerialNumbers.Quantity = Convert.ToDouble(lot.Cantidad);
-
-                                    documentoSAP.Lines.SerialNumbers.Add();
-
-
-                                    x++;
-                                }
-                                documentoSAP.Lines.Add();
-                                z++;
                             }
-
-                            if (Documento.Redondeo != 0)
+                            catch (Exception ex)
                             {
-                                documentoSAP.Rounding = BoYesNoEnum.tYES;
-                                documentoSAP.RoundingDiffAmount = Convert.ToDouble(Documento.Redondeo);
-                            }
-
-
-                            var respuesta = documentoSAP.Add();
-                            if (respuesta == 0) //se creo exitorsamente 
-                            {
-                                db.Entry(Documento).State = EntityState.Modified;
-                                Documento.DocEntry = Conexion.Company.GetNewObjectKey().ToString();
-                                Documento.ProcesadaSAP = true;
-                                db.SaveChanges();
-
-
-
-
-
-                                Conexion.Desconectar();
-
-                            }
-                            else
-                            {
-                                var error = "hubo un error " + Conexion.Company.GetLastErrorDescription();
                                 BitacoraErrores be = new BitacoraErrores();
-                                be.Descripcion = error;
-                                be.StrackTrace = Conexion.Company.GetLastErrorCode().ToString();
+                                be.Descripcion = ex.Message;
+                                be.StrackTrace = ex.StackTrace;
                                 be.Fecha = DateTime.Now;
-                                be.JSON = JsonConvert.SerializeObject(DocumentoG);
+                                be.JSON = JsonConvert.SerializeObject(ex);
                                 db.BitacoraErrores.Add(be);
                                 db.SaveChanges();
                                 Conexion.Desconectar();
-
-
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            BitacoraErrores be = new BitacoraErrores();
-                            be.Descripcion = ex.Message;
-                            be.StrackTrace = ex.StackTrace;
-                            be.Fecha = DateTime.Now;
-                            be.JSON = JsonConvert.SerializeObject(ex);
-                            db.BitacoraErrores.Add(be);
-                            db.SaveChanges();
-                            Conexion.Desconectar();
-                        }
                     }
-
 
 
 
@@ -1604,7 +1605,7 @@ namespace WATickets.Controllers
                                     }
                                 }
 
-                              
+
 
 
                                 Conexion.Desconectar();

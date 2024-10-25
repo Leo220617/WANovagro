@@ -261,7 +261,7 @@ namespace WATickets.Controllers
 
                             i++;
                         }
-                        else
+                        else if (promocion.Clientes == null)
                         {
                             var Producto = db.Productos.Where(a => a.Codigo == PromoVieja.ItemCode && a.idCategoria == PromoVieja.idCategoria && a.idListaPrecios == PromoVieja.idListaPrecio).FirstOrDefault();
                             var EncVieja = db.EncPromociones.Where(a => a.id == PromoVieja.idEncabezado && a.idListaPrecio == PromoVieja.idListaPrecio).FirstOrDefault();
@@ -425,13 +425,21 @@ namespace WATickets.Controllers
                                 foreach (var item2 in ProductoX)
                                 {
                                     db.Entry(item2).State = EntityState.Modified;
-                                    if (param.Pais == "C")
+                                    if (Promo.Moneda == "CRC")
                                     {
-                                        item2.PrecioUnitario = det.PrecioFinal * TipoCambio.TipoCambio;
+                                        item2.PrecioUnitario = det.PrecioFinal;
                                     }
                                     else
                                     {
-                                        item2.PrecioUnitario = det.PrecioFinal;
+                                        if (param.Pais == "C")
+                                        {
+                                            item2.PrecioUnitario = det.PrecioFinal * TipoCambio.TipoCambio;
+                                        }
+                                        else
+                                        {
+                                            item2.PrecioUnitario = det.PrecioFinal;
+                                        }
+
                                     }
                                     item2.FechaActualizacion = DateTime.Now;
                                     db.SaveChanges();
@@ -441,7 +449,7 @@ namespace WATickets.Controllers
                             }
                             i++;
                         }
-                        else
+                        else if(promocion.Clientes == null)
                         {
                             var Producto = db.Productos.Where(a => a.Codigo == PromoVieja.ItemCode && a.idCategoria == PromoVieja.idCategoria && a.idListaPrecios == PromoVieja.idListaPrecio).FirstOrDefault();
                             var EncVieja = db.EncPromociones.Where(a => a.id == PromoVieja.idEncabezado && a.idListaPrecio == PromoVieja.idListaPrecio).FirstOrDefault();
