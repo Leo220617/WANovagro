@@ -38,14 +38,13 @@ namespace WATickets.Controllers
                 }
                 var Creditos = db.EncDocumentoCredito.Select(a => new
                 {
-
                     a.id,
                     a.idCliente,
                     a.idCondPago,
                     a.idVendedor,
                     a.CodSuc,
                     a.Fecha,
-                    a.FechaVencimiento,
+                     a.FechaVencimiento ,
                     a.TipoDocumento,
                     a.Comentarios,
                     a.Moneda,
@@ -65,13 +64,13 @@ namespace WATickets.Controllers
 
                     Detalle = db.DetDocumentoCredito.Where(b => b.idEncabezado == a.id).ToList()
 
-                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true) 
+                }).Where(a => (filtro.FechaInicial != time ? a.Fecha >= filtro.FechaInicial : true)
                 && (filtro.FechaFinal != time ? a.Fecha <= filtro.FechaFinal : true)
-                &&  (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto  : true)
-                && (filtro.Codigo1 > 0 ? a.idCliente == filtro.Codigo1  : true)
-                && (!string.IsNullOrEmpty(filtro.ItemCode) ? a.Status == filtro.ItemCode  : true)
-                && (!string.IsNullOrEmpty(filtro.Categoria) ? a.TipoDocumento == filtro.Categoria  : true)
-                && (filtro.Codigo3 > 0 ? a.idCondPago == filtro.Codigo3  : true)
+                && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto : true)
+                && (filtro.Codigo1 > 0 ? a.idCliente == filtro.Codigo1 : true)
+                && (!string.IsNullOrEmpty(filtro.ItemCode) ? a.Status == filtro.ItemCode : true)
+                && (!string.IsNullOrEmpty(filtro.Categoria) ? a.TipoDocumento == filtro.Categoria : true)
+                && (filtro.Codigo3 > 0 ? a.idCondPago == filtro.Codigo3 : true)
                 && (filtro.Codigo4 > 0 ? a.idVendedor == filtro.Codigo4 : true)
                 && (filtro.Codigo2 > 0 ? a.idCliente == filtro.Codigo2 && a.FechaVencimiento < Fecha && a.Saldo > 0 : true)
                 ).ToList(); //Traemos el listado de productos
@@ -110,7 +109,7 @@ namespace WATickets.Controllers
                     a.idVendedor,
                     a.CodSuc,
                     a.Fecha,
-                    a.FechaVencimiento,
+                     a.FechaVencimiento ,
                     a.TipoDocumento,
                     a.Comentarios,
                     a.Moneda,
@@ -169,7 +168,7 @@ namespace WATickets.Controllers
                 Da.Fill(Ds, "Encabezado");
 
 
-//                var Creditos = db.EncDocumentoCredito.ToList();
+                //                var Creditos = db.EncDocumentoCredito.ToList();
 
 
                 foreach (DataRow item in Ds.Tables["Encabezado"].Rows)
@@ -217,7 +216,7 @@ namespace WATickets.Controllers
                             Cn.Close();
                             Cn.Dispose();
 
-                            
+
 
 
                             SQL = parametros.SQLDetDocumentoCredito + "'" + DocEntry + "'";
@@ -362,13 +361,13 @@ namespace WATickets.Controllers
                             }
 
                             t.Commit();
-                            
+
 
                         }
                         catch (Exception ex1)
                         {
                             t.Rollback();
-                            
+
                         }
 
                     }
@@ -404,33 +403,43 @@ namespace WATickets.Controllers
             try
             {
                 var Fecha = DateTime.Now;
-                var Credito = db.EncDocumentoCredito.Select(a => new
-                {
-                    a.id,
-                    a.idCliente,
-                    a.idCondPago,
-                    a.idVendedor,
-                    a.CodSuc,
-                    a.Fecha,
-                    a.FechaVencimiento,
-                    a.TipoDocumento,
-                    a.Comentarios,
-                    a.Moneda,
-                    a.Subtotal,
-                    a.TotalImpuestos,
-                    a.TotalDescuento,
-                    a.TotalCompra,
-                    a.PorDescto,
-                    a.Status,
-                    a.DocEntry,
-                    a.DocNum,
-                    a.ClaveHacienda,
-                    a.ConsecutivoHacienda,
-                    a.Saldo,
+                var diasGracia = db.Clientes
+            .Where(b => b.id ==  idCliente)
+            .FirstOrDefault() == null ? 0 : db.Clientes
+            .Where(b => b.id ==  idCliente)
+            .FirstOrDefault().DiasGracia;
 
-                    Detalle = db.DetDocumentoCredito.Where(b => b.idEncabezado == a.id).ToList()
+                Fecha = Fecha.AddDays(- Convert.ToDouble(diasGracia));
+                var Credito = db.EncDocumentoCredito
+    .Where(a => a.idCliente == idCliente && a.FechaVencimiento < Fecha && a.Saldo > 0)
+    .Select(a => new
+    {
+        a.id,
+        a.idCliente,
+        a.idCondPago,
+        a.idVendedor,
+        a.CodSuc,
+        a.Fecha,
+          a.FechaVencimiento ,
+        a.TipoDocumento,
+        a.Comentarios,
+        a.Moneda,
+        a.Subtotal,
+        a.TotalImpuestos,
+        a.TotalDescuento,
+        a.TotalCompra,
+        a.PorDescto,
+        a.Status,
+        a.DocEntry,
+        a.DocNum,
+        a.ClaveHacienda,
+        a.ConsecutivoHacienda,
+        a.Saldo,
 
-                }).Where(a => a.idCliente == idCliente && a.FechaVencimiento < Fecha && a.Saldo > 0).ToList();
+        Detalle = db.DetDocumentoCredito.Where(b => b.idEncabezado == a.id).ToList()
+
+    }) 
+    .ToList();
 
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK, Credito);
