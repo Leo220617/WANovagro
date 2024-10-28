@@ -1426,43 +1426,92 @@ namespace WATickets.Controllers
                             client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
                             client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
                             client.UserFields.Fields.Item("U_LDT_State").Value = cliente.Provincia.ToString();
-                            switch (cliente.Provincia)
+                            if (param.Pais == "C")
                             {
-                                case 1:
-                                    {
-                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "San Jose";
+
+                                switch (cliente.Provincia)
+                                {
+                                    case 1:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "San Jose";
+                                            break;
+                                        }
+                                    case 2:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Alajuela";
+                                            break;
+                                        }
+                                    case 3:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Cartago";
+                                            break;
+                                        }
+                                    case 4:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Heredia";
+                                            break;
+                                        }
+                                    case 5:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Guanacaste";
+                                            break;
+                                        }
+                                    case 6:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Puntarenas";
+                                            break;
+                                        }
+                                    case 7:
+                                        {
+                                            client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Limon";
+                                            break;
+                                        }
+                                }
+
+                            }
+                            if (param.Pais == "P")
+                            {
+                                switch (cliente.Provincia)
+                                {
+                                    case 1:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Bocas del Toro";
                                         break;
-                                    }
-                                case 2:
-                                    {
-                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Alajuela";
+                                    case 2:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Coclé";
                                         break;
-                                    }
-                                case 3:
-                                    {
-                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Cartago";
+                                    case 3:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Colón";
                                         break;
-                                    }
-                                case 4:
-                                    {
-                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Heredia";
+                                    case 4:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Chiriquí";
                                         break;
-                                    }
-                                case 5:
-                                    {
-                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Guanacaste";
+                                    case 5:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Darién";
                                         break;
-                                    }
-                                case 6:
-                                    {
-                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Puntarenas";
+                                    case 6:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Herrera";
                                         break;
-                                    }
-                                case 7:
-                                    {
-                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Limon";
+                                    case 7:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Los Santos";
                                         break;
-                                    }
+                                    case 8:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Panamá";
+                                        break;
+                                    case 9:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Panamá Oeste";
+                                        break;
+                                    case 10:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Veraguas";
+                                        break;
+                                    case 11:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Emberá-Wounaan";
+                                        break;
+                                    case 12:
+                                        client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Ngäbe-Buglé";
+                                        break;
+
+                                }
+
                             }
                             client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia.ToString() + "-" + cliente.Canton;
                             var canton = Convert.ToInt32(cliente.Canton);
@@ -1472,8 +1521,12 @@ namespace WATickets.Controllers
                             var distrito = Convert.ToInt32(cliente.Distrito);
                             client.UserFields.Fields.Item("U_LDT_Nom_District").Value = db.Distritos.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito).FirstOrDefault().NomDistrito;
                             client.UserFields.Fields.Item("U_LDT_NeighB").Value = cliente.Provincia.ToString() + "-" + cliente.Canton + "-" + cliente.Distrito + "-" + cliente.Barrio;
-                            var barrio = Convert.ToInt32(cliente.Barrio);
-                            client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
+                            if(param.Pais == "P")
+                            {
+                                var barrio = Convert.ToInt32(cliente.Barrio);
+                                client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
+                            }
+                          
                             client.UserFields.Fields.Item("U_LDT_Direccion").Value = cliente.Sennas;
 
                             var respuesta = client.Add();
@@ -1606,8 +1659,19 @@ namespace WATickets.Controllers
                     }
                     client.UserFields.Fields.Item("U_LDT_TelLoc").Value = Convert.ToInt32(cliente.CodPais);
                     client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
-                    client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
+                    if(param.Pais == "C")
+                    {
+                        client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
+                    }
+                    if(param.Pais == "P")
+                    {
+                        client.UserFields.Fields.Item("U_LDT_Country").Value = "PA";
+                    }
+               
                     client.UserFields.Fields.Item("U_LDT_State").Value = cliente.Provincia.ToString();
+                    if(param.Pais == "C")
+                    {
+
                     switch (cliente.Provincia)
                     {
                         case 1:
@@ -1646,6 +1710,52 @@ namespace WATickets.Controllers
                                 break;
                             }
                     }
+
+                    }
+                    if(param.Pais == "P")
+                    {
+                        switch (cliente.Provincia)
+                        {
+                            case 1:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Bocas del Toro";
+                                break;
+                            case 2:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Coclé";
+                                break;
+                            case 3:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Colón";
+                                break;
+                            case 4:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Chiriquí";
+                                break;
+                            case 5:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Darién";
+                                break;
+                            case 6:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Herrera";
+                                break;
+                            case 7:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Los Santos";
+                                break;
+                            case 8:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Panamá";
+                                break;
+                            case 9:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Panamá Oeste";
+                                break;
+                            case 10:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Veraguas";
+                                break;
+                            case 11:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Emberá-Wounaan";
+                                break;
+                            case 12:
+                                client.UserFields.Fields.Item("U_LDT_Nom_State").Value = "Ngäbe-Buglé";
+                                break;
+                        
+                        }
+
+                    }
                     client.UserFields.Fields.Item("U_LDT_County").Value = cliente.Provincia.ToString() + "-" + cliente.Canton;
                     var canton = Convert.ToInt32(cliente.Canton);
                     client.UserFields.Fields.Item("U_LDT_Nom_County").Value = db.Cantones.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton).FirstOrDefault().NomCanton;
@@ -1654,8 +1764,12 @@ namespace WATickets.Controllers
                     var distrito = Convert.ToInt32(cliente.Distrito);
                     client.UserFields.Fields.Item("U_LDT_Nom_District").Value = db.Distritos.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito).FirstOrDefault().NomDistrito;
                     client.UserFields.Fields.Item("U_LDT_NeighB").Value = cliente.Provincia.ToString() + "-" + cliente.Canton + "-" + cliente.Distrito + "-" + cliente.Barrio;
-                    var barrio = Convert.ToInt32(cliente.Barrio);
-                    client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
+                    if(param.Pais == "C")
+                    {
+                        var barrio = Convert.ToInt32(cliente.Barrio);
+                        client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
+                    }
+                  
                     client.UserFields.Fields.Item("U_LDT_Direccion").Value = cliente.Sennas;
 
                     var respuesta = client.Add();
