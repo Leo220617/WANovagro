@@ -596,7 +596,7 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.VatDate = DateTime.Now;
                                         pagocuentaSAP.Remarks = "Pago procesado por NOVAPOS";
                                          pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
-                                        pagocuentaSAP.DocCurrency = "USD";
+                                        pagocuentaSAP.DocCurrency = param.MonedaDolar;
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                         //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                         //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
@@ -752,7 +752,7 @@ namespace WATickets.Controllers
 
 
                                     pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : PagoCuenta.Moneda;
+                                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                                     pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
                                     pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
                                     pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
@@ -911,7 +911,7 @@ namespace WATickets.Controllers
 
 
                                     pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : PagoCuenta.Moneda;
+                                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                                     pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
                                     pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
                                     pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
@@ -1030,7 +1030,7 @@ namespace WATickets.Controllers
                                     pagocuentaSAP.VatDate = DateTime.Now;
                                     pagocuentaSAP.Remarks = "Pago procesado por NOVAPOS";
                                     pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
-                                    pagocuentaSAP.DocCurrency = "USD";
+                                    pagocuentaSAP.DocCurrency = param.MonedaDolar;
                                     pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                     //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                     //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
@@ -1186,7 +1186,7 @@ namespace WATickets.Controllers
 
 
                                 pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                                pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : PagoCuenta.Moneda;
+                                pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                                 pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
                                 pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
                                 pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
@@ -1459,7 +1459,7 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.VatDate = DateTime.Now;
                                         pagocuentaSAP.Remarks = "Pago procesado por NOVAPOS";
                                         pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
-                                        pagocuentaSAP.DocCurrency = "USD";
+                                        pagocuentaSAP.DocCurrency = param.MonedaDolar;
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                         //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                         //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
@@ -1615,7 +1615,7 @@ namespace WATickets.Controllers
 
 
                                     pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : PagoCuenta.Moneda;
+                                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                                     pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
                                     pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
                                     pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
