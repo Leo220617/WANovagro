@@ -269,11 +269,14 @@ namespace WATickets.Controllers
                                 db.SaveChanges();
                                 Conexion.Desconectar();
 
+                                throw new Exception(error);
+
 
                             }
                         }
                         catch (Exception ex)
                         {
+
                             BitacoraErrores be = new BitacoraErrores();
                             be.Descripcion = ex.Message;
                             be.StrackTrace = ex.StackTrace;
@@ -281,6 +284,8 @@ namespace WATickets.Controllers
                             be.JSON = JsonConvert.SerializeObject(ex);
                             db.BitacoraErrores.Add(be);
                             db.SaveChanges();
+
+                            throw new Exception(ex.Message);
 
                         }
                     }
@@ -1014,6 +1019,7 @@ namespace WATickets.Controllers
                                             be.JSON = JsonConvert.SerializeObject(ex);
                                             db.BitacoraErrores.Add(be);
                                             db.SaveChanges();
+
                                         }
                                     }
 
@@ -1035,6 +1041,7 @@ namespace WATickets.Controllers
                                 db.BitacoraErrores.Add(be);
                                 db.SaveChanges();
                                 Conexion.Desconectar();
+                                throw new Exception(be.Descripcion);
 
 
                             }
@@ -1049,7 +1056,7 @@ namespace WATickets.Controllers
                             db.BitacoraErrores.Add(be);
                             db.SaveChanges();
                             Conexion.Desconectar();
-
+                            throw new Exception(be.Descripcion);
 
                         }
                     }
@@ -1121,6 +1128,7 @@ namespace WATickets.Controllers
                     a.ClaveHacienda,
                     a.ConsecutivoHacienda,
                     a.Redondeo,
+                    a.Validado,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList(),
                     Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
@@ -1197,6 +1205,7 @@ namespace WATickets.Controllers
                     a.ClaveHacienda,
                     a.ConsecutivoHacienda,
                     a.Redondeo,
+                    a.Validado,
                     MetodosPagos = db.MetodosPagos.Where(b => b.idEncabezado == a.id).ToList(),
                     Detalle = db.DetDocumento.Where(b => b.idEncabezado == a.id).ToList(),
                     Lotes = db.Lotes.Where(b => b.idEncabezado == a.id).ToList()
@@ -1265,6 +1274,7 @@ namespace WATickets.Controllers
                         Documento.ClaveHacienda = "";
                         Documento.ConsecutivoHacienda = "";
                         Documento.Redondeo = documento.Redondeo;
+                        Documento.Validado = documento.Validado;
                         db.EncDocumento.Add(Documento);
                         db.SaveChanges();
 
@@ -2467,6 +2477,7 @@ namespace WATickets.Controllers
                     Documento.idVendedor = documento.idVendedor;
 
                     // Documento.Status = documetno.Status;
+                    Documento.Validado = documento.Validado;
 
 
                     db.SaveChanges();

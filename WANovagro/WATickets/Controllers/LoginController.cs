@@ -224,7 +224,7 @@ namespace WATickets.Controllers
                     de.CodSuc = Sucursal.CodSuc;
                     de.token = token;
                     de.Seguridad = SeguridadModulos;
-
+                    de.PIN = Usuario.PIN;
                     de.Imagen = Sucursal.Imagen;
                     return Request.CreateResponse(HttpStatusCode.OK, de);
 
@@ -273,6 +273,7 @@ namespace WATickets.Controllers
         public string CodigoVendedor { get; set; }
         public string token { get; set; }
         public byte[] Imagen { get; set; }
+        public string PIN { get; set; }
         public List<SeguridadRolesModulos> Seguridad { get; set; }
     }
 

@@ -35,5 +35,6 @@ namespace WATickets.Models.Cliente
         public string ClaveHacienda { get; set; }
         public string ConsecutivoHacienda { get; set; }
         public decimal Redondeo { get; set; }
+        public bool Validado { get; set; }
     }
 }

@@ -94,6 +94,7 @@ namespace WATickets.Controllers
                     Usuario.FecUltSup = DateTime.Now;
                     Usuario.idVendedor = usuarios.idVendedor;
                     Usuario.Descuento = usuarios.Descuento;
+                    Usuario.PIN = usuarios.PIN;
                     db.Usuarios.Add(Usuario);
                     db.SaveChanges();
 
@@ -151,7 +152,11 @@ namespace WATickets.Controllers
                     Usuarios.idVendedor = usuarios.idVendedor;
                     Usuarios.novapos = usuarios.novapos;
                     Usuarios.Descuento = usuarios.Descuento;
+                    if(!string.IsNullOrEmpty(usuarios.PIN))
+                    {
+                        Usuarios.PIN = usuarios.PIN;
 
+                    }
 
                     db.SaveChanges();
 
