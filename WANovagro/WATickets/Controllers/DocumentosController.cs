@@ -61,12 +61,19 @@ namespace WATickets.Controllers
 
                             documentoSAP.Series = Sucursal.SerieNC; //Quemada
 
-
-                            if (Documento.Moneda == "USD")
+                            if (param.Pais == "C")
                             {
-                                documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                if (Documento.Moneda == "USD")
+                                {
+                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
+                                else
+                                {
+                                    documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
                             }
-                            else
+
+                            if (param.Pais == "P")
                             {
                                 documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
                             }
@@ -315,17 +322,33 @@ namespace WATickets.Controllers
 
 
 
-
-                            if (Documento.Moneda == "USD")
+                            if (param.Pais == "C")
                             {
-                                documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+
+
+                                if (Documento.Moneda == "USD")
+                                {
+                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
+                                else
+                                {
+                                    documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
                             }
-                            else
+
+                            if (param.Pais == "P")
                             {
-                                documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+
+
+                                if (Documento.Moneda == "USD")
+                                {
+                                    documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
+                                else
+                                {
+                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
                             }
-
-
 
                             documentoSAP.SalesPersonCode = Convert.ToInt32(db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault() == null ? "0" : db.Vendedores.Where(a => a.id == Documento.idVendedor).FirstOrDefault().CodSAP);
                             documentoSAP.UserFields.Fields.Item(param.CampoConsecutivo).Value = Documento.ConsecutivoHacienda; //"U_LDT_NumeroGTI"
@@ -550,6 +573,8 @@ namespace WATickets.Controllers
                                                     pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                                     pagoProcesado.Invoices.DocEntry = Convert.ToInt32(Documento.DocEntry);
 
+
+
                                                     if (Documento.Moneda != "CRC")
                                                     {
                                                         var SumatoriaPagoColones = MetodosPagosColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
@@ -562,6 +587,9 @@ namespace WATickets.Controllers
                                                         pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoColones);
 
                                                     }
+
+
+
                                                     pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
 
 
@@ -684,7 +712,14 @@ namespace WATickets.Controllers
 
 
                                                     var SumatoriaPagod = MetodosPagosDolares.Sum(a => a.Monto);
-                                                    pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                                    if (param.Pais == "C")
+                                                    {
+                                                        pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                                    }
+                                                    if (param.Pais == "P")
+                                                    {
+                                                        pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagod);
+                                                    }
                                                     pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
 
 
@@ -935,10 +970,18 @@ namespace WATickets.Controllers
                                                     //{
                                                     //    SumatoriaPagoColones = SumatoriaPagoColones / TipoCambio.TipoCambio;
                                                     //}
-                                                    pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
+                                                    if (param.Pais == "C")
+                                                    {
+                                                        pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
+                                                        pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares * TipoCambio.TipoCambio);
+
+                                                    }
+                                                    if (param.Pais == "P")
+                                                    {
+                                                        pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares);
+                                                    }
 
 
-                                                    pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares * TipoCambio.TipoCambio);
                                                     pagoProcesado.Invoices.Add();
 
 
@@ -1238,7 +1281,7 @@ namespace WATickets.Controllers
             try
             {
                 Parametros param = db.Parametros.FirstOrDefault();
-                EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id || (a.BaseEntry  == documento.BaseEntry && a.BaseEntry != 0 && a.TipoDocumento != "03" && documento.TipoDocumento != "03")).FirstOrDefault();
+                EncDocumento Documento = db.EncDocumento.Where(a => a.id == documento.id || (a.BaseEntry == documento.BaseEntry && a.BaseEntry != 0 && a.TipoDocumento != "03" && documento.TipoDocumento != "03")).FirstOrDefault();
 
                 if (Documento == null)
                 {
@@ -1374,7 +1417,7 @@ namespace WATickets.Controllers
                                         {
                                             TipoCambio = new TipoCambios(); // Inicializa el objeto para evitar nulos
                                             TipoCambio.TipoCambio = 1;      // Asigna el tipo de cambio en 1
-                                            TipoCambio.Moneda = "USD";      
+                                            TipoCambio.Moneda = "USD";
                                         }
 
                                         var PagadoMismaMoneda = item.Where(a => a.Moneda == documento.Moneda).Sum(a => a.Monto);
@@ -2345,7 +2388,7 @@ namespace WATickets.Controllers
 
                     ////Mandar al api de facturacion
                     ///
-                    if(param.Pais != "P")
+                    if (param.Pais != "P")
                     {
                         var Parametros = db.Parametros.FirstOrDefault();
                         HttpClient cliente = new HttpClient();

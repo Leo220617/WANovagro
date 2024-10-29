@@ -470,6 +470,7 @@ namespace WATickets.Controllers
                                             pagoSAP.CounterReference = "APP ABONO" + Pago.id;
                                             pagoSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "A";
 
+                                        
                                             if (Pago.Moneda != "CRC")
                                             {
                                                 var SumatoriaPagoColones = MetodosPagosAbonosColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
@@ -618,7 +619,14 @@ namespace WATickets.Controllers
 
 
                                             var SumatoriaPagod = MetodosPagosAbonosDolares.Sum(a => a.Monto);
-                                            pagoSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                            if (param.Pais == "C")
+                                            {
+                                                pagoSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                            }
+                                            if(param.Pais == "P")
+                                            {
+                                                pagoSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagod);
+                                            }
                                             pagoSAP.Series = Sucursal.SeriePago;//154; 161;
 
 
@@ -677,15 +685,22 @@ namespace WATickets.Controllers
                                                 if (Factura != null)
                                                 {
                                                     pagoSAP.Invoices.DocEntry = Convert.ToInt32(Factura.DocEntry);
-                                                    if (Pago.Moneda != "CRC")
+                                                    if(param.Pais == "C")
                                                     {
+                                                        if (Pago.Moneda != "CRC")
+                                                        {
 
-                                                        pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                                            pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                                        }
+                                                        else
+                                                        {
+                                                            pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+
+                                                        }
                                                     }
-                                                    else
+                                                 if(param.Pais == "P")
                                                     {
                                                         pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
-
                                                     }
                                                 }
                                                 else
@@ -795,15 +810,22 @@ namespace WATickets.Controllers
                                     if (Factura != null)
                                     {
                                         pagoSAP.Invoices.DocEntry = Convert.ToInt32(Factura.DocEntry);
-                                        if (Pago.Moneda != "CRC")
+                                        if(param.Pais == "C")
                                         {
+                                            if (Pago.Moneda != "CRC")
+                                            {
 
-                                            pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                                pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                            }
+                                            else
+                                            {
+                                                pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+
+                                            }
                                         }
-                                        else
+                                     if(param.Pais == "P")
                                         {
                                             pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
-
                                         }
                                     }
                                     else
@@ -843,7 +865,7 @@ namespace WATickets.Controllers
                                 {
                                     try
                                     {
-                                     
+
                                         var interesSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                         interesSAP.CounterReference = "APP INTÉRES" + Pago.id;
                                         interesSAP.DocDate = DateTime.Now;
@@ -1073,16 +1095,24 @@ namespace WATickets.Controllers
                         if (Factura != null)
                         {
                             pagoSAP.Invoices.DocEntry = Convert.ToInt32(Factura.DocEntry);
-                            if (Pago.Moneda != "CRC")
+                            if(param.Pais == "C")
                             {
+                                if (Pago.Moneda != "CRC")
+                                {
 
-                                pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                    pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                }
+                                else
+                                {
+                                    pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+
+                                }
                             }
-                            else
+                            if(param.Pais == "P")
                             {
                                 pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
-
                             }
+                         
                         }
                         else
                         {
@@ -1259,15 +1289,22 @@ namespace WATickets.Controllers
                             if (Factura != null)
                             {
                                 pagoSAP.Invoices.DocEntry = Convert.ToInt32(Factura.DocEntry);
-                                if (Pago.Moneda != "CRC")
+                                if(param.Pais == "C")
                                 {
+                                    if (Pago.Moneda != "CRC")
+                                    {
 
-                                    pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                        pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                    }
+                                    else
+                                    {
+                                        pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+
+                                    }
                                 }
-                                else
+                              if(param.Pais == "P")
                                 {
                                     pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
-
                                 }
 
                             }

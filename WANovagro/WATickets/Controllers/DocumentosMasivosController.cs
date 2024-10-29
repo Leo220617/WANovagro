@@ -56,11 +56,18 @@ namespace WATickets.Controllers
                             documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
                             var CondPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Nombre;
                             documentoSAP.Series = CondPago.ToLower().Contains("contado") ? Sucursal.SerieFECO : Sucursal.SerieFECR;  //4;  //param.SerieProforma; //Quemada
-                            if (Documento.Moneda == "USD")
+                            if(param.Pais == "C")
                             {
-                                documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                if (Documento.Moneda == "USD")
+                                {
+                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
+                                else
+                                {
+                                    documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                }
                             }
-                            else
+                        if(param.Pais == "P")
                             {
                                 documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
                             }
@@ -408,7 +415,15 @@ namespace WATickets.Controllers
 
 
                                                     var SumatoriaPagod = MetodosPagosDolares.Sum(a => a.Monto);
+                                                    if(param.Pais == "C")
+                                                    {
                                                     pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+
+                                                    }
+                                                    if(param.Pais == "P")
+                                                    {
+                                                        pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagod);
+                                                    }
                                                     pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
 
 
@@ -643,8 +658,15 @@ namespace WATickets.Controllers
                                                     //{
                                                     //    SumatoriaPagoColones = SumatoriaPagoColones / TipoCambio.TipoCambio;
                                                     //}
-                                                    pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
-                                                    pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares * TipoCambio.TipoCambio);
+                                                    if(param.Pais == "C")
+                                                    {
+                                                        pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
+                                                        pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares * TipoCambio.TipoCambio);
+                                                    }
+                                                   if(param.Pais == "P")
+                                                    {
+                                                        pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares);
+                                                    }
                                                     pagoProcesado.Invoices.Add();
 
 
@@ -866,11 +888,18 @@ namespace WATickets.Controllers
                                 // documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
 
                                 documentoSAP.Series = Sucursal.SerieNC; //Quemada
-                                if (Documento.Moneda == "USD")
+                                if(param.Pais == "C")
                                 {
-                                    documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                    if (Documento.Moneda == "USD")
+                                    {
+                                        documentoSAP.DocTotalFc = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                    }
+                                    else
+                                    {
+                                        documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
+                                    }
                                 }
-                                else
+                              if(param.Pais == "P")
                                 {
                                     documentoSAP.DocTotal = Convert.ToDouble(Documento.TotalCompra + Documento.Redondeo);
                                 }
@@ -1296,7 +1325,14 @@ namespace WATickets.Controllers
 
 
                                                 var SumatoriaPagod = MetodosPagosDolares.Sum(a => a.Monto);
-                                                pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                                if(param.Pais == "C")
+                                                {
+                                                    pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
+                                                }
+                                              if(param.Pais == "P")
+                                                {
+                                                    pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagod);
+                                                }
                                                 pagoProcesado.Series = Sucursal.SeriePago;//154; 161;
 
 
@@ -1531,8 +1567,16 @@ namespace WATickets.Controllers
                                                 //{
                                                 //    SumatoriaPagoColones = SumatoriaPagoColones / TipoCambio.TipoCambio;
                                                 //}
-                                                pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
-                                                pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares * TipoCambio.TipoCambio);
+                                                if(param.Pais == "C")
+                                                {
+                                                    pagoProcesado.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagoDolares);
+                                                    pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares * TipoCambio.TipoCambio);
+                                                }
+                                                if(param.Pais == "P")
+                                                {
+                                                    pagoProcesado.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagoDolares);
+                                                }
+                                               
                                                 pagoProcesado.Invoices.Add();
 
 

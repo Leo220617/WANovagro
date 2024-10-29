@@ -404,9 +404,17 @@ namespace WATickets.Controllers
 
                 }
                 var FechaS = DateTime.Now.Date;
-                var TP = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == FechaS).FirstOrDefault();
-                db.Entry(Cliente).State = EntityState.Modified;
-                Cliente.Saldo -= cuenta.Moneda == "USD" ? (cuenta.Total * TP.TipoCambio) : cuenta.Total;
+                if (param.Pais == "C")
+                {
+                    var TP = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == FechaS).FirstOrDefault();
+                    db.Entry(Cliente).State = EntityState.Modified;
+                    Cliente.Saldo -= cuenta.Moneda == "USD" ? (cuenta.Total * TP.TipoCambio) : cuenta.Total;
+                }
+                if (param.Pais == "P")
+                {
+                    db.Entry(Cliente).State = EntityState.Modified;
+                    Cliente.Saldo -= cuenta.Moneda == "USD" ? cuenta.Total : cuenta.Total;
+                }
                 db.SaveChanges();
 
                 t.Commit();
@@ -422,7 +430,7 @@ namespace WATickets.Controllers
                         var Sucursal = db.Sucursales.Where(a => a.CodSuc == PagoCuenta.CodSuc).FirstOrDefault();
 
                         var ClienteI = db.Clientes.Where(a => a.id == PagoCuenta.idCliente).FirstOrDefault();
-                      
+
                         //Procesamos el pago
 
 
@@ -463,7 +471,7 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.VatDate = DateTime.Now;
                                         pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
                                         pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
-                                    
+
                                         pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
                                         pagocuentaSAP.DocCurrency = param.MonedaLocal;
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
@@ -595,12 +603,12 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.TaxDate = DateTime.Now;
                                         pagocuentaSAP.VatDate = DateTime.Now;
                                         pagocuentaSAP.Remarks = "Pago procesado por NOVAPOS";
-                                         pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
+                                        pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
                                         pagocuentaSAP.DocCurrency = param.MonedaDolar;
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                         //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                         //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
-
+                                        pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
 
                                         var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
                                         //pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
@@ -733,7 +741,7 @@ namespace WATickets.Controllers
 
 
 
-                                   
+
                                     var pagocuentaSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                     pagocuentaSAP.CounterReference = "APP PAGO C" + PagoCuenta.id;
                                     pagocuentaSAP.DocDate = PagoCuenta.Fecha;
@@ -890,7 +898,7 @@ namespace WATickets.Controllers
                                 {
 
 
-                            
+
 
                                     var ClienteI = db.Clientes.Where(a => a.id == PagoCuenta.idCliente).FirstOrDefault();
                                     var pagocuentaSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
@@ -1034,7 +1042,7 @@ namespace WATickets.Controllers
                                     pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                     //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                     //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
-
+                                    pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
 
                                     var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
                                     //pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
@@ -1165,7 +1173,7 @@ namespace WATickets.Controllers
                             if (PagoCuenta != null)
                             {
 
-                              
+
 
                                 var ClienteI = db.Clientes.Where(a => a.id == PagoCuenta.idCliente).FirstOrDefault();
                                 var pagocuentaSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
@@ -1463,7 +1471,7 @@ namespace WATickets.Controllers
                                         pagocuentaSAP.HandWritten = BoYesNoEnum.tNO;
                                         //pagocuentaSAP.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                         //pagocuentaSAP.Invoices.DocEntry = Convert.ToInt32(PagoCuenta.DocEntry);
-
+                                        pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
 
                                         var SumatoriaPagod = MetodosPagosCuentasDolares.Sum(a => a.Monto);
                                         //pagocuentaSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
