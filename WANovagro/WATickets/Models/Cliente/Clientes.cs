@@ -83,6 +83,8 @@ namespace WATickets.Models.Cliente
         public string DV { get; set; }
         public decimal DiasGracia { get; set; }
 
+        public decimal MontoExtra { get; set; }
+
     }
        
 }
