@@ -19,5 +19,6 @@ namespace WATickets.Models.Cliente
         public decimal Cantidad1 { get; set; }
         public decimal Cantidad2 { get; set; }
         public decimal Cantidad3 { get; set; }
+
     }
 }

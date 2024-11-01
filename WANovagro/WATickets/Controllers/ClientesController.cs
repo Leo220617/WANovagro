@@ -68,24 +68,32 @@ namespace WATickets.Controllers
                             Cliente.Descuento = Convert.ToDecimal(item["Descuento"]);
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
-                            switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                            if(parametros.Pais == "P")
                             {
-                                case 9:
-                                    {
-                                        Cliente.TipoCedula = "01";
-                                        break;
-                                    }
-                                case 10:
-                                    {
-                                        Cliente.TipoCedula = "02";
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        Cliente.TipoCedula = "03";
-                                        break;
-                                    }
+                                Cliente.TipoCedula = item["TipoRUC"].ToString();
                             }
+                            if (parametros.Pais == "C")
+                            {
+                                switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                                {
+                                    case 9:
+                                        {
+                                            Cliente.TipoCedula = "01";
+                                            break;
+                                        }
+                                    case 10:
+                                        {
+                                            Cliente.TipoCedula = "02";
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            Cliente.TipoCedula = "03";
+                                            break;
+                                        }
+                                }
+                            }
+                             
                             string MAG = item["MAG"].ToString();
                             if (MAG == "SI")
                             {
@@ -200,30 +208,37 @@ namespace WATickets.Controllers
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
-                            switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                            if(parametros.Pais == "C")
                             {
-                                case 9:
-                                    {
-                                        Cliente.TipoCedula = "01";
-                                        break;
-                                    }
-                                case 10:
-                                    {
-                                        Cliente.TipoCedula = "02";
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        Cliente.TipoCedula = "03";
-                                        break;
-                                    }
+                                switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                                {
+                                    case 9:
+                                        {
+                                            Cliente.TipoCedula = "01";
+                                            break;
+                                        }
+                                    case 10:
+                                        {
+                                            Cliente.TipoCedula = "02";
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            Cliente.TipoCedula = "03";
+                                            break;
+                                        }
+                                }
                             }
+                
 
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CorreoEC = item["CorreoEC"].ToString();
                             Cliente.CodPais = "506";
                             Cliente.Telefono = item["Telefono"].ToString();
-
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.TipoCedula = item["TipoRUC"].ToString();
+                            }
                             if (!string.IsNullOrEmpty(item["Provincia"].ToString()))
                             {
                                 Cliente.Provincia = Convert.ToInt32(item["Provincia"]);
@@ -381,24 +396,32 @@ namespace WATickets.Controllers
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
-
-                            switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                            if(parametros.Pais == "C")
                             {
-                                case 9:
-                                    {
-                                        Cliente.TipoCedula = "01";
-                                        break;
-                                    }
-                                case 10:
-                                    {
-                                        Cliente.TipoCedula = "02";
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        Cliente.TipoCedula = "03";
-                                        break;
-                                    }
+                                switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                                {
+                                    case 9:
+                                        {
+                                            Cliente.TipoCedula = "01";
+                                            break;
+                                        }
+                                    case 10:
+                                        {
+                                            Cliente.TipoCedula = "02";
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            Cliente.TipoCedula = "03";
+                                            break;
+                                        }
+                                }
+                            }
+                          
+
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.TipoCedula = item["TipoRUC"].ToString();
                             }
 
                             Cliente.Email = item["Correo"].ToString();
@@ -516,23 +539,32 @@ namespace WATickets.Controllers
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
-                            switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                            if (parametros.Pais == "C")
                             {
-                                case 9:
-                                    {
-                                        Cliente.TipoCedula = "01";
-                                        break;
-                                    }
-                                case 10:
-                                    {
-                                        Cliente.TipoCedula = "02";
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        Cliente.TipoCedula = "03";
-                                        break;
-                                    }
+                                switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                                {
+                                    case 9:
+                                        {
+                                            Cliente.TipoCedula = "01";
+                                            break;
+                                        }
+                                    case 10:
+                                        {
+                                            Cliente.TipoCedula = "02";
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            Cliente.TipoCedula = "03";
+                                            break;
+                                        }
+                                }
+                            }
+
+
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.TipoCedula = item["TipoRUC"].ToString();
                             }
 
                             Cliente.Email = item["Correo"].ToString();
@@ -701,24 +733,34 @@ namespace WATickets.Controllers
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
 
-                            switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                            if (parametros.Pais == "C")
                             {
-                                case 9:
-                                    {
-                                        Cliente.TipoCedula = "01";
-                                        break;
-                                    }
-                                case 10:
-                                    {
-                                        Cliente.TipoCedula = "02";
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        Cliente.TipoCedula = "03";
-                                        break;
-                                    }
+                                switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                                {
+                                    case 9:
+                                        {
+                                            Cliente.TipoCedula = "01";
+                                            break;
+                                        }
+                                    case 10:
+                                        {
+                                            Cliente.TipoCedula = "02";
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            Cliente.TipoCedula = "03";
+                                            break;
+                                        }
+                                }
                             }
+
+
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.TipoCedula = item["TipoRUC"].ToString();
+                            }
+
 
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CorreoEC = item["CorreoEC"].ToString();
@@ -834,24 +876,34 @@ namespace WATickets.Controllers
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
-                            switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                            if (parametros.Pais == "C")
                             {
-                                case 9:
-                                    {
-                                        Cliente.TipoCedula = "01";
-                                        break;
-                                    }
-                                case 10:
-                                    {
-                                        Cliente.TipoCedula = "02";
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        Cliente.TipoCedula = "03";
-                                        break;
-                                    }
+                                switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
+                                {
+                                    case 9:
+                                        {
+                                            Cliente.TipoCedula = "01";
+                                            break;
+                                        }
+                                    case 10:
+                                        {
+                                            Cliente.TipoCedula = "02";
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            Cliente.TipoCedula = "03";
+                                            break;
+                                        }
+                                }
                             }
+
+
+                            if (parametros.Pais == "P")
+                            {
+                                Cliente.TipoCedula = item["TipoRUC"].ToString();
+                            }
+
 
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CorreoEC = item["CorreoEC"].ToString();
@@ -1195,6 +1247,12 @@ namespace WATickets.Controllers
                                 client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(clientes.TipoCedula);
                                 client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
                                 client.UserFields.Fields.Item("U_LDT_State").Value = clientes.Provincia.ToString();
+                                if(param.Pais == "P")
+                                {
+                                    client.UserFields.Fields.Item("U_TipoRUC").Value = clientes.TipoCedula.ToString();
+                                }
+                        
+
                                 switch (clientes.Provincia)
                                 {
                                     case 1:
@@ -1455,6 +1513,10 @@ namespace WATickets.Controllers
                             client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(cliente.TipoCedula);
                             client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
                             client.UserFields.Fields.Item("U_LDT_State").Value = cliente.Provincia.ToString();
+                            if (param.Pais == "P")
+                            {
+                                client.UserFields.Fields.Item("U_TipoRUC").Value = cliente.TipoCedula.ToString();
+                            }
                             if (param.Pais == "C")
                             {
 
@@ -1800,7 +1862,10 @@ namespace WATickets.Controllers
                     }
 
                     client.UserFields.Fields.Item("U_LDT_Direccion").Value = cliente.Sennas;
-
+                    if (param.Pais == "P")
+                    {
+                        client.UserFields.Fields.Item("U_TipoRUC").Value = cliente.TipoCedula.ToString();
+                    }
                     var respuesta = client.Add();
 
                     if (respuesta == 0)

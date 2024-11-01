@@ -203,7 +203,7 @@ namespace WATickets.Controllers
                     {
                         var ClientePromo = db.ClientesPromociones.Where(a => a.idPromocion == Promo.id).FirstOrDefault();
                         var PromoVieja = db.Promociones.Where(a => a.ItemCode == item.ItemCode && a.idListaPrecio == item.idListaPrecio && a.idCategoria == item.idCategoria && item.FechaVen > time).FirstOrDefault();
-                        if (PromoVieja == null)
+                        if (PromoVieja == null || promocion.Clientes.Count > 0)
                         {
                             Promociones det = new Promociones();
                             det.idEncabezado = Promo.id;
