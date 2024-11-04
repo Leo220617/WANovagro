@@ -27,7 +27,7 @@ namespace WATickets.Controllers
             {
                 Parametros param = db.Parametros.FirstOrDefault();
 
-                var DocumentosSP = db.EncDocumento.Where(a => a.ProcesadaSAP == false && a.TipoDocumento != "03").ToList();
+                var DocumentosSP = db.EncDocumento.Where(a => a.ProcesadaSAP == false && a.TipoDocumento != "03" && (a.ConsecutivoHacienda != "" || a.ConsecutivoHacienda != null)).ToList();
 
                 foreach (var item2 in DocumentosSP)
                 {
@@ -46,7 +46,7 @@ namespace WATickets.Controllers
 
                             documentoSAP.DocObjectCode = BoObjectTypes.oInvoices;
                             documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
-                            documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
+                            documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                             documentoSAP.DocDate = Documento.Fecha;
                             var Dias = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? 0 : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Dias;
                             documentoSAP.DocDueDate = Documento.Fecha.AddDays(Dias);
@@ -88,7 +88,7 @@ namespace WATickets.Controllers
                                 var Bodega = db.Bodegas.Where(a => a.id == BodProducto).FirstOrDefault();
                                 documentoSAP.Lines.SetCurrentLine(z);
 
-                                documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
+                                documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                                 documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
                                 documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
                                 documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
@@ -408,7 +408,7 @@ namespace WATickets.Controllers
                                                     pagoProcesado.VatDate = DateTime.Now;
                                                     pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
                                                     pagoProcesado.CounterReference = "APP FAC" + Documento.id;
-                                                    pagoProcesado.DocCurrency = "USD";
+                                                    pagoProcesado.DocCurrency = param.MonedaDolar;
                                                     pagoProcesado.HandWritten = BoYesNoEnum.tNO;
                                                     pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                                     pagoProcesado.Invoices.DocEntry = Convert.ToInt32(Documento.DocEntry);
@@ -647,7 +647,7 @@ namespace WATickets.Controllers
                                                     pagoProcesado.VatDate = DateTime.Now;
                                                     pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
                                                     pagoProcesado.CounterReference = "APP FAC" + Documento.id;
-                                                    pagoProcesado.DocCurrency = "USD";
+                                                    pagoProcesado.DocCurrency = param.MonedaDolar;
                                                     pagoProcesado.HandWritten = BoYesNoEnum.tNO;
                                                     //ligar la factura con el pago 
 
@@ -859,7 +859,7 @@ namespace WATickets.Controllers
 
                 foreach (var item2 in DocumentosSP)
                 {
-                    EncDocumento Documento = db.EncDocumento.Where(a => a.id == item2.id).FirstOrDefault();
+                    EncDocumento Documento = db.EncDocumento.Where(a => a.id == item2.id && (a.ConsecutivoHacienda != "" || a.ConsecutivoHacienda != null)).FirstOrDefault();
 
                     //aqui va la logica 
                     if (Documento.ProcesadaSAP == false)
@@ -877,7 +877,7 @@ namespace WATickets.Controllers
 
                                 documentoSAP.DocObjectCode = BoObjectTypes.oCreditNotes;
                                 documentoSAP.CardCode = db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Documento.idCliente).FirstOrDefault().Codigo;
-                                documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
+                                documentoSAP.DocCurrency = Documento.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                                 documentoSAP.DocDate = Documento.Fecha;
                                 //documentoSAP.DocDueDate = Documento.FechaVencimiento;
 
@@ -923,7 +923,7 @@ namespace WATickets.Controllers
 
                                     documentoSAP.Lines.SetCurrentLine(z);
 
-                                    documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? param.MonedaLocal : Documento.Moneda;
+                                    documentoSAP.Lines.Currency = Documento.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                                     documentoSAP.Lines.DiscountPercent = Convert.ToDouble(item.PorDescto);
                                     documentoSAP.Lines.ItemCode = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault() == null ? "0" : db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault().Codigo;
                                     documentoSAP.Lines.Quantity = Convert.ToDouble(item.Cantidad);
@@ -1318,7 +1318,7 @@ namespace WATickets.Controllers
                                                 pagoProcesado.VatDate = DateTime.Now;
                                                 pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
                                                 pagoProcesado.CounterReference = "APP FAC" + Documento.id;
-                                                pagoProcesado.DocCurrency = "USD";
+                                                pagoProcesado.DocCurrency = param.MonedaDolar;
                                                 pagoProcesado.HandWritten = BoYesNoEnum.tNO;
                                                 pagoProcesado.Invoices.InvoiceType = BoRcptInvTypes.it_Invoice;
                                                 pagoProcesado.Invoices.DocEntry = Convert.ToInt32(Documento.DocEntry);
@@ -1556,7 +1556,7 @@ namespace WATickets.Controllers
                                                 pagoProcesado.VatDate = DateTime.Now;
                                                 pagoProcesado.Remarks = "Pago procesado por NOVAPOS";
                                                 pagoProcesado.CounterReference = "APP FAC" + Documento.id;
-                                                pagoProcesado.DocCurrency = "USD";
+                                                pagoProcesado.DocCurrency = param.MonedaDolar;
                                                 pagoProcesado.HandWritten = BoYesNoEnum.tNO;
                                                 //ligar la factura con el pago 
 

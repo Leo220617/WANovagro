@@ -1612,7 +1612,7 @@ namespace WATickets.Controllers
                             var distrito = Convert.ToInt32(cliente.Distrito);
                             client.UserFields.Fields.Item("U_LDT_Nom_District").Value = db.Distritos.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito).FirstOrDefault().NomDistrito;
                             client.UserFields.Fields.Item("U_LDT_NeighB").Value = cliente.Provincia.ToString() + "-" + cliente.Canton + "-" + cliente.Distrito + "-" + cliente.Barrio;
-                            if (param.Pais == "P")
+                            if (param.Pais == "C")
                             {
                                 var barrio = Convert.ToInt32(cliente.Barrio);
                                 client.UserFields.Fields.Item("U_LDT_Nom_NeighB").Value = db.Barrios.Where(a => a.CodProvincia == cliente.Provincia && a.CodCanton == canton && a.CodDistrito == distrito && a.CodBarrio == barrio).FirstOrDefault().NomBarrio;
