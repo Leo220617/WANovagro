@@ -1032,10 +1032,10 @@ namespace WATickets.Controllers
             {
                 var Clientes = db.Clientes.AsQueryable();
 
-                if (!string.IsNullOrEmpty(filtro.CardName))
+                if (!string.IsNullOrEmpty(filtro.Buscar))
                 {
-                    filtro.CardName = filtro.CardName.TrimEnd();
-                    Clientes = Clientes.Where(a => a.Codigo.ToUpper().Contains(filtro.CardName.ToUpper()));
+                    filtro.Buscar = filtro.Buscar.TrimEnd();
+                    Clientes = Clientes.Where(a => a.Codigo.ToUpper().Contains(filtro.Buscar.ToUpper()));
                     return Request.CreateResponse(HttpStatusCode.OK, Clientes.ToList());
                 }
 
