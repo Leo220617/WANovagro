@@ -1189,7 +1189,7 @@ namespace WATickets.Controllers
                 && (filtro.Codigo6 > 0 ? a.idCaja == filtro.Codigo6 : true)
                 && (filtro.Procesado != null && filtro.Activo ? a.ProcesadaSAP == filtro.Procesado : true)
                 && (!string.IsNullOrEmpty(filtro.Texto) ? a.CodSuc == filtro.Texto : true)
-                //&& (filtro.PagoProcesado != null  ? a.PagoProcesadaSAP == filtro.PagoProcesado : true)
+                && (filtro.PagoProcesado != null  ? a.PagoProcesadaSAP == filtro.PagoProcesado : true)
                 ).ToList(); //Traemos el listado de productos
 
 

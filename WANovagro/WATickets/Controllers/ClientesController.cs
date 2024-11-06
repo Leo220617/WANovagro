@@ -68,7 +68,7 @@ namespace WATickets.Controllers
                             Cliente.Descuento = Convert.ToDecimal(item["Descuento"]);
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
-                            if(parametros.Pais == "P")
+                            if (parametros.Pais == "P")
                             {
                                 Cliente.TipoCedula = item["TipoRUC"].ToString();
                             }
@@ -93,7 +93,7 @@ namespace WATickets.Controllers
                                         }
                                 }
                             }
-                             
+
                             string MAG = item["MAG"].ToString();
                             if (MAG == "SI")
                             {
@@ -208,7 +208,7 @@ namespace WATickets.Controllers
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
-                            if(parametros.Pais == "C")
+                            if (parametros.Pais == "C")
                             {
                                 switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
                                 {
@@ -229,7 +229,7 @@ namespace WATickets.Controllers
                                         }
                                 }
                             }
-                
+
 
                             Cliente.Email = item["Correo"].ToString();
                             Cliente.CorreoEC = item["CorreoEC"].ToString();
@@ -251,8 +251,8 @@ namespace WATickets.Controllers
                                 if (parametros.Pais == "C")
                                 {
 
-                                var barrio = item["Barrio"].ToString();
-                                Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
+                                    var barrio = item["Barrio"].ToString();
+                                    Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
                                 }
 
                                 Cliente.Sennas = item["Sennas"].ToString();
@@ -396,7 +396,7 @@ namespace WATickets.Controllers
                             Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
-                            if(parametros.Pais == "C")
+                            if (parametros.Pais == "C")
                             {
                                 switch (Cliente.Cedula.Replace("-", "").Replace("-", "").Length)
                                 {
@@ -417,7 +417,7 @@ namespace WATickets.Controllers
                                         }
                                 }
                             }
-                          
+
 
                             if (parametros.Pais == "P")
                             {
@@ -438,11 +438,11 @@ namespace WATickets.Controllers
                                 Cliente.Distrito = db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault() == null ? db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2).FirstOrDefault().CodDistrito.ToString() : db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault().CodDistrito.ToString();
                                 var distrito2 = Convert.ToInt32(Cliente.Distrito);
 
-                                if(parametros.Pais == "C")
+                                if (parametros.Pais == "C")
                                 {
 
-                                var barrio = item["Barrio"].ToString();
-                                Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
+                                    var barrio = item["Barrio"].ToString();
+                                    Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
                                 }
 
                                 Cliente.Sennas = item["Sennas"].ToString();
@@ -582,10 +582,10 @@ namespace WATickets.Controllers
                                 Cliente.Distrito = db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault() == null ? db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2).FirstOrDefault().CodDistrito.ToString() : db.Distritos.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.NomDistrito.ToUpper().Contains(distrito.ToUpper())).FirstOrDefault().CodDistrito.ToString();
                                 var distrito2 = Convert.ToInt32(Cliente.Distrito);
 
-                                if(parametros.Pais == "C")
+                                if (parametros.Pais == "C")
                                 {
-                                var barrio = item["Barrio"].ToString();
-                                Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
+                                    var barrio = item["Barrio"].ToString();
+                                    Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
 
                                 }
 
@@ -778,8 +778,8 @@ namespace WATickets.Controllers
                                 if (parametros.Pais == "C")
                                 {
 
-                                var barrio = item["Barrio"].ToString();
-                                Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
+                                    var barrio = item["Barrio"].ToString();
+                                    Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
                                 }
 
                                 Cliente.Sennas = item["Sennas"].ToString();
@@ -922,8 +922,8 @@ namespace WATickets.Controllers
                                 if (parametros.Pais == "C")
                                 {
 
-                                var barrio = item["Barrio"].ToString();
-                                Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
+                                    var barrio = item["Barrio"].ToString();
+                                    Cliente.Barrio = db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault() == null ? db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2).FirstOrDefault().CodBarrio.ToString() : db.Barrios.Where(a => a.CodProvincia == Cliente.Provincia && a.CodCanton == canton2 && a.CodDistrito == distrito2 && a.NomBarrio.ToUpper().Contains(barrio.ToUpper())).FirstOrDefault().CodBarrio.ToString();
                                 }
 
                                 Cliente.Sennas = item["Sennas"].ToString();
@@ -1031,13 +1031,20 @@ namespace WATickets.Controllers
             try
             {
                 var Clientes = db.Clientes.AsQueryable();
+
+                if (!string.IsNullOrEmpty(filtro.CardName))
+                {
+                    filtro.CardName = filtro.CardName.TrimEnd();
+                    Clientes = Clientes.Where(a => a.Codigo.ToUpper().Contains(filtro.CardName.ToUpper()));
+                    return Request.CreateResponse(HttpStatusCode.OK, Clientes.ToList());
+                }
+
+
                 Clientes = Clientes.Where(a => (filtro.Codigo1 > 0 ? a.idListaPrecios == filtro.Codigo1 : true)
-              && (filtro.Procesado != null && filtro.Externo == false ? a.ProcesadoSAP == filtro.Procesado : true)
-              && (filtro.Codigo2 > 0 ? a.idGrupo == filtro.Codigo2 : true)
-              && (filtro.Activo ? (!filtro.Externo ? a.Activo == filtro.Activo : true) : true)
-              );
-
-
+          && (filtro.Procesado != null && filtro.Externo == false ? a.ProcesadoSAP == filtro.Procesado : true)
+          && (filtro.Codigo2 > 0 ? a.idGrupo == filtro.Codigo2 : true)
+          && (filtro.Activo ? (!filtro.Externo ? a.Activo == filtro.Activo : true) : true)
+          );
 
                 if (!string.IsNullOrEmpty(filtro.Texto))
                 {
@@ -1146,7 +1153,7 @@ namespace WATickets.Controllers
                         Cliente.MAG = false;
                         Cliente.INT = false;
                         Cliente.CxC = false;
-                        Cliente.Transitorio = false; //Cambiar
+                        Cliente.Transitorio = true; //Cambiar
                         Cliente.CorreoEC = "";
                         Cliente.DiasGracia = 0;
                         Cliente.MontoExtra = 0;
@@ -1247,11 +1254,11 @@ namespace WATickets.Controllers
                                 client.UserFields.Fields.Item("U_LDT_IDType").Value = Convert.ToInt32(clientes.TipoCedula);
                                 client.UserFields.Fields.Item("U_LDT_Country").Value = "CR";
                                 client.UserFields.Fields.Item("U_LDT_State").Value = clientes.Provincia.ToString();
-                                if(param.Pais == "P")
+                                if (param.Pais == "P")
                                 {
                                     client.UserFields.Fields.Item("U_TipoRUC").Value = clientes.TipoCedula.ToString();
                                 }
-                        
+
 
                                 switch (clientes.Provincia)
                                 {

@@ -378,7 +378,8 @@ namespace WATickets.Controllers
 				// Filtro por CardName si está presente
 				if (!string.IsNullOrEmpty(filtro.CardName))
 				{
-					Productos = Productos.Where(a => a.Codigo.ToUpper().Contains(filtro.CardName.ToUpper()));
+                    filtro.CardName = filtro.CardName.TrimEnd();
+                    Productos = Productos.Where(a => a.Codigo.ToUpper().Contains(filtro.CardName.ToUpper()));
 					return Request.CreateResponse(HttpStatusCode.OK, Productos.ToList());
 				}
 
