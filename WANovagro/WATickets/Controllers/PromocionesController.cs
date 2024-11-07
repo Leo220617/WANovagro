@@ -213,7 +213,11 @@ namespace WATickets.Controllers
                             det.FechaVen = item.FechaVen.Date;
                             det.Fecha = item.Fecha.Date;
                             det.Moneda = item.Moneda;
-                            det.PrecioFinal = item.PrecioFinal;
+
+                     
+                          det.PrecioFinal = item.PrecioFinal;
+                         
+                           
                             det.PrecioAnterior = item.PrecioAnterior;
                             if (ClientePromo != null)
                             {
