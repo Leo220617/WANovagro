@@ -376,15 +376,15 @@ namespace WATickets.Controllers
 				var Productos = db.Productos.AsQueryable();
 
 				// Filtro por CardName si está presente
-				if (!string.IsNullOrEmpty(filtro.CardName))
+				if (!string.IsNullOrEmpty(filtro.Buscar))
 				{
-                    filtro.CardName = filtro.CardName.TrimEnd();
-                    Productos = Productos.Where(a => a.Codigo.ToUpper().Contains(filtro.CardName.ToUpper()));
+                    filtro.Buscar = filtro.Buscar.TrimEnd();
+                    Productos = Productos.Where(a => a.Codigo.ToUpper().Contains(filtro.Buscar.ToUpper()));
 					return Request.CreateResponse(HttpStatusCode.OK, Productos.ToList());
 				}
 
 				// Si no hay CardName, filtra por CardCode si está presente
-				if (!string.IsNullOrEmpty(filtro.CardCode))
+				if (!string.IsNullOrEmpty(filtro.CardName))
 				{
 					var Bodegas = db.Bodegas.Where(a => a.CodSuc != filtro.CardCode).Select(a => a.id).ToList();
 					Productos = Productos.Where(a =>
