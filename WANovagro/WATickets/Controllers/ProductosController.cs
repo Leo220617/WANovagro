@@ -384,7 +384,7 @@ namespace WATickets.Controllers
 				}
 
 				// Si no hay CardName, filtra por CardCode si está presente
-				if (!string.IsNullOrEmpty(filtro.CardName))
+				if (!string.IsNullOrEmpty(filtro.CardCode))
 				{
 					var Bodegas = db.Bodegas.Where(a => a.CodSuc != filtro.CardCode).Select(a => a.id).ToList();
 					Productos = Productos.Where(a =>
