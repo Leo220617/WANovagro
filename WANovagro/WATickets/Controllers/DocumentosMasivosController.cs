@@ -52,7 +52,7 @@ namespace WATickets.Controllers
                             documentoSAP.DocDueDate = Documento.Fecha.AddDays(Dias);
                             documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
                             documentoSAP.NumAtCard = "APP FAC: " + " " + Documento.id;
-                            documentoSAP.Comments = Documento.Comentarios;
+                            documentoSAP.Comments = Documento.Comentarios.Length > 200 ? Documento.Comentarios.Substring(0, 200) : Documento.Comentarios;
                             documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
                             var CondPago = db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().Nombre;
                             documentoSAP.Series = CondPago.ToLower().Contains("contado") ? Sucursal.SerieFECO : Sucursal.SerieFECR;  //4;  //param.SerieProforma; //Quemada
@@ -883,7 +883,7 @@ namespace WATickets.Controllers
 
                                 //documentoSAP.DocType = BoDocumentTypes.dDocument_Items;
                                 documentoSAP.NumAtCard = "APP NC" + " " + Documento.id;
-                                documentoSAP.Comments = Documento.Comentarios;
+                                documentoSAP.Comments = Documento.Comentarios.Length > 200 ? Documento.Comentarios.Substring(0, 200) : Documento.Comentarios;
 
                                 // documentoSAP.PaymentGroupCode = Convert.ToInt32(db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault() == null ? "0" : db.CondicionesPagos.Where(a => a.id == Documento.idCondPago).FirstOrDefault().CodSAP);
 
