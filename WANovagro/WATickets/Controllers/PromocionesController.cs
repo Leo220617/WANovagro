@@ -162,7 +162,8 @@ namespace WATickets.Controllers
 
 
 
-                    var x = 0; if (promocion.Clientes != null)
+                    var x = 0;
+                    if (promocion.Clientes != null)
                     {
                         foreach (var item in promocion.Clientes)
                         {
@@ -202,7 +203,7 @@ namespace WATickets.Controllers
                     foreach (var item in promocion.Detalle)
                     {
                         var ClientePromo = db.ClientesPromociones.Where(a => a.idPromocion == Promo.id).FirstOrDefault();
-                        var PromoVieja = db.Promociones.Where(a => a.ItemCode == item.ItemCode && a.idListaPrecio == item.idListaPrecio && a.idCategoria == item.idCategoria && item.FechaVen > time).FirstOrDefault();
+                        var PromoVieja = db.Promociones.Where(a => a.ItemCode == item.ItemCode && a.idListaPrecio == item.idListaPrecio && a.idCategoria == item.idCategoria && a.FechaVen > time).FirstOrDefault();
                         if (PromoVieja == null || promocion.Clientes.Count > 0)
                         {
                             Promociones det = new Promociones();
@@ -395,7 +396,7 @@ namespace WATickets.Controllers
                     foreach (var item in promocion.Detalle)
                     {
                         var ClientePromo = db.ClientesPromociones.Where(a => a.idPromocion == Promo.id).FirstOrDefault();
-                        var PromoVieja = db.Promociones.Where(a => a.ItemCode == item.ItemCode && a.idListaPrecio == item.idListaPrecio && a.idCategoria == item.idCategoria && item.FechaVen > time).FirstOrDefault();
+                        var PromoVieja = db.Promociones.Where(a => a.ItemCode == item.ItemCode && a.idListaPrecio == item.idListaPrecio && a.idCategoria == item.idCategoria && a.FechaVen > time).FirstOrDefault();
                         if (PromoVieja == null)
                         {
                             Promociones det = new Promociones();

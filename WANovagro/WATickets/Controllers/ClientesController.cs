@@ -61,7 +61,16 @@ namespace WATickets.Controllers
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
-                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+
+                            if (parametros.Pais == "C")
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            }
+                            else
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString();
+                            }
+                           
 
                             Cliente.Saldo = Convert.ToDecimal(item["Saldo"]);
                             Cliente.LimiteCredito = Convert.ToDecimal(item["LimiteCredito"]);
@@ -205,7 +214,15 @@ namespace WATickets.Controllers
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
-                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            if (parametros.Pais == "C")
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            }
+                            else
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString();
+                            }
+
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
                             if (parametros.Pais == "C")
@@ -393,7 +410,15 @@ namespace WATickets.Controllers
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
-                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            if (parametros.Pais == "C")
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            }
+                            else
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString();
+                            }
+
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
                             if (parametros.Pais == "C")
@@ -536,7 +561,15 @@ namespace WATickets.Controllers
                                 Cliente.DV = item["DV"].ToString();
                             }
                             Cliente.Nombre = item["Nombre"].ToString();
-                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            if (parametros.Pais == "C")
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            }
+                            else
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString();
+                            }
+
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
                             if (parametros.Pais == "C")
@@ -729,7 +762,15 @@ namespace WATickets.Controllers
                             var idLista = item["ListaPrecio"].ToString();
                             Cliente.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
                             Cliente.Nombre = item["Nombre"].ToString();
-                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            if (parametros.Pais == "C")
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            }
+                            else
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString();
+                            }
+
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
 
@@ -873,7 +914,15 @@ namespace WATickets.Controllers
                                 Cliente.DV = item["DV"].ToString();
                             }
                             Cliente.Nombre = item["Nombre"].ToString();
-                            Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            if (parametros.Pais == "C")
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString().Replace("-", "").Replace("-", "");
+                            }
+                            else
+                            {
+                                Cliente.Cedula = item["Cedula"].ToString();
+                            }
+
                             Cliente.DiasGracia = Convert.ToDecimal(item["DiasGracia"]);
                             Cliente.MontoExtra = Convert.ToDecimal(item["MontoExtra"]);
                             if (parametros.Pais == "C")
