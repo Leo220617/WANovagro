@@ -24,6 +24,7 @@ namespace WATickets.Models.Cliente
         public string Cabys { get; set; }
         public int idExoneracion { get; set; }
         public string NomPro { get; set; }
-  
+        public string Localizacion { get; set; }
+
     }
 }

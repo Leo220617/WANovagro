@@ -65,5 +65,7 @@ namespace WATickets.Models.Cliente
 
         public DateTime FechaConteo { get; set; }
 
+        public string Localizacion { get; set; }
+
     }
 }

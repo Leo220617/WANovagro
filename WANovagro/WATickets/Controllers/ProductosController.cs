@@ -73,7 +73,7 @@ namespace WATickets.Controllers
 
                                     var idCategoria = item["Categoria"].ToString();
                                     Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
-
+                                    Producto.Localizacion = item["Localizacion"].ToString();
                                     Producto.Nombre = item["Nombre"].ToString();
                                     Producto.PrecioUnitario = Convert.ToDecimal(item["PrecioUnitario"]);
                                     Producto.UnidadMedida = item["UnidadMedida"].ToString();
@@ -139,7 +139,7 @@ namespace WATickets.Controllers
 
                                     var idCategoria = item["Categoria"].ToString();
                                     Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
-
+                                    Producto.Localizacion = item["Localizacion"].ToString();
                                     Producto.Nombre = item["Nombre"].ToString();
                                     Producto.Dimension = Convert.ToInt32(item["Dimension"]);
                                     Producto.NormaReparto = item["Norma"].ToString();
@@ -665,7 +665,7 @@ namespace WATickets.Controllers
                             Producto.Moneda = item["Moneda"].ToString();
                             Producto.Activo = true;
                             Producto.ProcesadoSAP = true;
-
+                            Producto.Localizacion = item["Localizacion"].ToString();
                             var MAG = Convert.ToInt32(item["MAG"]);
                             if (MAG == 1)
                             {
@@ -720,7 +720,7 @@ namespace WATickets.Controllers
                             Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
                             Producto.Costo = Convert.ToDecimal(item["Costo"]);
                             Producto.Moneda = item["Moneda"].ToString();
-
+                            Producto.Localizacion = item["Localizacion"].ToString();
                             var time = DateTime.Now.Date;
                             var Promocion = db.Promociones.Where(a => a.ItemCode == Producto.Codigo && a.idListaPrecio == Producto.idListaPrecios && a.idCategoria == Producto.idCategoria && a.Fecha <= time && a.FechaVen >= time && a.Cliente == false).FirstOrDefault();
                             var Margenes = db.EncMargenes.Where(a => a.idListaPrecio == Producto.idListaPrecios && a.Moneda == Producto.Moneda && a.idCategoria == Producto.idCategoria).FirstOrDefault();
@@ -854,7 +854,7 @@ namespace WATickets.Controllers
                                 Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
                                 var idLista = item["ListaPrecio"].ToString();
                                 Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
-
+                                Producto.Localizacion = item["Localizacion"].ToString();
                                 var idCategoria = item["Categoria"].ToString();
                                 Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
 
@@ -923,7 +923,7 @@ namespace WATickets.Controllers
 
                                 var idCategoria = item["Categoria"].ToString();
                                 Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
-
+                                Producto.Localizacion = item["Localizacion"].ToString();
                                 Producto.Nombre = item["Nombre"].ToString();
                                 Producto.Dimension = Convert.ToInt32(item["Dimension"]);
                                 Producto.NormaReparto = item["Norma"].ToString();
@@ -1102,7 +1102,7 @@ namespace WATickets.Controllers
                                     Producto.idImpuesto = db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault() == null ? 0 : db.Impuestos.Where(a => a.Codigo == idImpuesto).FirstOrDefault().id;
                                     var idLista = item["ListaPrecio"].ToString();
                                     Producto.idListaPrecios = db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault() == null ? 0 : db.ListaPrecios.Where(a => a.CodSAP == idLista).FirstOrDefault().id;
-
+                                    Producto.Localizacion = item["Localizacion"].ToString();
                                     var idCategoria = item["Categoria"].ToString();
                                     Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
 
@@ -1171,7 +1171,7 @@ namespace WATickets.Controllers
 
                                     var idCategoria = item["Categoria"].ToString();
                                     Producto.idCategoria = db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault() == null ? 0 : db.Categorias.Where(a => a.CodSAP == idCategoria).FirstOrDefault().id;
-
+                                    Producto.Localizacion = item["Localizacion"].ToString();
                                     Producto.Nombre = item["Nombre"].ToString();
                                     Producto.Dimension = Convert.ToInt32(item["Dimension"]);
                                     Producto.NormaReparto = item["Norma"].ToString();
