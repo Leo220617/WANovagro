@@ -341,8 +341,32 @@ namespace WATickets.Controllers
 
                     var Detalles = db.Promociones.Where(a => a.idEncabezado == Promo.id).ToList();
 
+
                     foreach (var item in Detalles)
                     {
+                        var Producto = db.Productos.Where(a => a.Codigo == item.ItemCode && a.idCategoria == item.idCategoria && a.idListaPrecios == item.idListaPrecio).FirstOrDefault();
+                        if(Producto != null)
+                        {
+                            db.Entry(Producto).State = EntityState.Modified;
+                            if (Promo.Moneda == "CRC")
+                            {
+                                Producto.PrecioUnitario = item.PrecioAnterior;
+                            }
+                            else
+                            {
+                                if (param.Pais == "C")
+                                {
+                                    Producto.PrecioUnitario = item.PrecioAnterior * TipoCambio.TipoCambio;
+                                }
+                                else
+                                {
+                                    Producto.PrecioUnitario = item.PrecioAnterior;
+                                }
+
+                            }
+                            Producto.FechaActualizacion = DateTime.Now;
+                            db.SaveChanges();
+                        }
                         db.Promociones.Remove(item);
                         db.SaveChanges();
                     }
