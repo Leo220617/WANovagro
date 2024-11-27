@@ -298,6 +298,7 @@
     <Compile Include="Controllers\ImpuestosController.cs" />
     <Compile Include="Controllers\ListaPreciosController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\LogsProductosAprovController.cs" />
     <Compile Include="Controllers\MargenesController.cs" />
     <Compile Include="Controllers\MetodosPagosAbonosController.cs" />
     <Compile Include="Controllers\MetodosPagosController.cs" />
@@ -317,6 +318,7 @@
     <Compile Include="Controllers\SeguridadModulosController.cs" />
     <Compile Include="Controllers\SeguridadRolesModulosController.cs" />
     <Compile Include="Controllers\SeriesProductosController.cs" />
+    <Compile Include="Controllers\SubCategoriasController.cs" />
     <Compile Include="Controllers\SucursalesController.cs" />
     <Compile Include="Controllers\TipoCambiosController.cs" />
     <Compile Include="Controllers\TokenGenerator.cs" />
@@ -332,6 +334,7 @@
     <Compile Include="Models\APIS\DocumentosCredito.cs" />
     <Compile Include="Models\APIS\ExoneracionesViewModel.cs" />
     <Compile Include="Models\APIS\ExoneracionesX.cs" />
+    <Compile Include="Models\APIS\LogsProductosAprovisionamiento.cs" />
     <Compile Include="Models\APIS\Margenes.cs" />
     <Compile Include="Models\APIS\Ofertas.cs" />
     <Compile Include="Models\APIS\PagoCuentaViewModel.cs" />
@@ -380,6 +383,7 @@
     <Compile Include="Models\Cliente\GruposClientes.cs" />
     <Compile Include="Models\Cliente\Impuestos.cs" />
     <Compile Include="Models\Cliente\ListaPrecios.cs" />
+    <Compile Include="Models\Cliente\LogsProductosAprov.cs" />
     <Compile Include="Models\Cliente\Lotes.cs" />
     <Compile Include="Models\Cliente\MetodosPagos.cs" />
     <Compile Include="Models\Cliente\MetodosPagosAbonos.cs" />
@@ -395,6 +399,7 @@
     <Compile Include="Models\Cliente\Roles.cs" />
     <Compile Include="Models\Cliente\SeguridadModulos.cs" />
     <Compile Include="Models\Cliente\SeguridadRolesModulos.cs" />
+    <Compile Include="Models\Cliente\SubCategorias.cs" />
     <Compile Include="Models\Cliente\Sucursales.cs" />
     <Compile Include="Models\Cliente\TipoCambios.cs" />
     <Compile Include="Models\Cliente\Usuarios.cs" />

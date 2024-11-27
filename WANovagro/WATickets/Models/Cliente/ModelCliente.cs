@@ -70,6 +70,8 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<DetArqueos> DetArqueos { get; set; }
         public virtual DbSet<PalabrasClaves> PalabrasClaves { get; set; }
         public virtual DbSet<ClientesPromociones> ClientesPromociones { get; set; }
+        public virtual DbSet<SubCategorias> SubCategorias { get; set; }
+        public virtual DbSet<LogsProductosAprov> LogsProductosAprov { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

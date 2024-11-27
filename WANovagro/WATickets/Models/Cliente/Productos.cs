@@ -21,6 +21,8 @@ namespace WATickets.Models.Cliente
 
         public int idCategoria { get; set; }
 
+        public int idSubCategoria { get; set; }
+
         [StringLength(500)]
         public string Nombre { get; set; }
 
@@ -66,6 +68,11 @@ namespace WATickets.Models.Cliente
         public DateTime FechaConteo { get; set; }
 
         public string Localizacion { get; set; }
+
+        public decimal Minimo { get; set; }
+
+
+        public string Clasificacion { get; set; }
 
     }
 }
