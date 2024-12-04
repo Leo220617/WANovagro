@@ -143,26 +143,26 @@ namespace WATickets.Controllers
 
                             try
                             {
-                                var client = (SAPbobsCOM.IItemWarehouseInfo)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.ItemW);
+                                //var client = (SAPbobsCOM.IItemWarehouseInfo)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.ItemW);
 
                                 var Bodega = db.Bodegas.Where(a => a.id == Producto.idBodega).FirstOrDefault();
-                                if (client.GetByKey(Producto.Codigo))
-                                {
+                                //if (client.GetByKey(Producto.Codigo))
+                                //{
                                 
-                                    oitemWarehouseInfo = oItems.WhsInfo;
+                                //    oitemWarehouseInfo = oItems.WhsInfo;
 
-                                    oitemWarehouseInfo.SetCurrentLine("your warehouse line number");
+                                //    oitemWarehouseInfo.SetCurrentLine("your warehouse line number");
 
-                                    oitemWarehouseInfo.MinimalOrder = 501;
+                                //    oitemWarehouseInfo.MinimalOrder = 501;
 
-                                    if (oItems.Update() != 0)
+                                //    if (oItems.Update() != 0)
 
-                                    {
+                                //    {
 
-                                        MessageBox.Show(oComp.GetLastErrorDescription());
+                                //        MessageBox.Show(oComp.GetLastErrorDescription());
 
-                                    }
-                                }
+                                //    }
+                                //}
 
                             }
                             catch (Exception)

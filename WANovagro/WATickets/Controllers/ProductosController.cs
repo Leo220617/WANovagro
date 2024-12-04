@@ -89,6 +89,8 @@ namespace WATickets.Controllers
                                     Producto.FechaActualizacion = DateTime.Now;
                                     Producto.FechaConteo = DateTime.Now;
                                     Producto.ProcesadoSAP = true;
+                                    Producto.idSubCategoria = 0;
+                                    Producto.Minimo = 0;
                                     var MAG = Convert.ToInt32(item["MAG"]);
                                     if (MAG == 1)
                                     {
@@ -667,6 +669,8 @@ namespace WATickets.Controllers
                             Producto.ProcesadoSAP = true;
                             Producto.Localizacion = item["Localizacion"].ToString();
                             var MAG = Convert.ToInt32(item["MAG"]);
+                            Producto.idSubCategoria = 0;
+                            Producto.Minimo = 0;
                             if (MAG == 1)
                             {
                                 Producto.MAG = true;
@@ -873,6 +877,8 @@ namespace WATickets.Controllers
                                 Producto.FechaActualizacion = DateTime.Now;
                                 Producto.FechaConteo = DateTime.Now;
                                 Producto.ProcesadoSAP = true;
+                                Producto.idSubCategoria = 0;
+                                Producto.Minimo = 0;
                                 var MAG = Convert.ToInt32(item["MAG"]);
                                 if (MAG == 1)
                                 {
@@ -1120,6 +1126,8 @@ namespace WATickets.Controllers
                                     Producto.Activo = true;
                                     Producto.FechaActualizacion = DateTime.Now;
                                     Producto.FechaConteo = DateTime.Now;
+                                    Producto.idSubCategoria = 0;
+                                    Producto.Minimo = 0;
                                     Producto.ProcesadoSAP = true;
                                     var MAG = Convert.ToInt32(item["MAG"]);
                                     if (MAG == 1)
