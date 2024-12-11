@@ -18,5 +18,6 @@ namespace WATickets.Models.Cliente
         public DateTime Fecha { get; set; }
         public string Clasificacion { get; set; }
         public string ItemCode { get; set; }
+        public bool ProcesadoSAP { get; set; }
     }
 }

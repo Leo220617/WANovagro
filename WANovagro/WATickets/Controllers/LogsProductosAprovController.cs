@@ -143,32 +143,55 @@ namespace WATickets.Controllers
 
                             try
                             {
-                                //var client = (SAPbobsCOM.IItemWarehouseInfo)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.ItemW);
+                                var client = (SAPbobsCOM.Items)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oItems);
 
                                 var Bodega = db.Bodegas.Where(a => a.id == Producto.idBodega).FirstOrDefault();
-                                //if (client.GetByKey(Producto.Codigo))
-                                //{
-                                
-                                //    oitemWarehouseInfo = oItems.WhsInfo;
+                                if (client.GetByKey(Producto.Codigo))
+                                {
+                                    client.UserFields.Fields.Item("U_CategoriaABC").Value = Producto.Clasificacion;
+                                    client.UserFields.Fields.Item("U_SubCategoria").Value = item.idSubCategoria.ToString();
+                                    bool warehouseFound = false;
+                                    for (int i = 0; i < client.WhsInfo.Count; i++)
+                                    {
+                                        client.WhsInfo.SetCurrentLine(i);
 
-                                //    oitemWarehouseInfo.SetCurrentLine("your warehouse line number");
+                                        if (client.WhsInfo.WarehouseCode == Bodega.CodSAP)
+                                        {
+                                            // Actualizar el MinStock para el almacén especificado
+                                            client.WhsInfo.MinimalStock = Convert.ToDouble(Producto.Minimo); // Nuevo valor de MinStock
+                                            warehouseFound = true;
+                                            break;
+                                        }
+                                    }
 
-                                //    oitemWarehouseInfo.MinimalOrder = 501;
+                                    if (warehouseFound)
+                                    {
+                                        var resp = client.Update();
+                                        if(resp == 0)
+                                        {
+                                            db.Entry(Producto).State = EntityState.Modified;
+                                            Producto.FechaActualizacion = DateTime.Now;
+                                            db.SaveChanges();
+                                        }
+                                        else
+                                        {
+                                            throw new Exception("Error al actualizar minimo en SAP " + Conexion.Company.GetLastErrorDescription());
+                                        }
+                                    }
 
-                                //    if (oItems.Update() != 0)
-
-                                //    {
-
-                                //        MessageBox.Show(oComp.GetLastErrorDescription());
-
-                                //    }
-                                //}
+                                }
 
                             }
-                            catch (Exception)
+                            catch (Exception ex )
                             {
-
-                                throw;
+                                ModelCliente db2 = new ModelCliente();
+                                BitacoraErrores be = new BitacoraErrores();
+                                be.Descripcion = ex.Message;
+                                be.StrackTrace = ex.StackTrace;
+                                be.Fecha = DateTime.Now;
+                                be.JSON = JsonConvert.SerializeObject(ex);
+                                db2.BitacoraErrores.Add(be);
+                                db2.SaveChanges();
                             }
                         }
 
@@ -200,6 +223,114 @@ namespace WATickets.Controllers
 
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, be);
             }
+        }
+
+        [HttpGet]
+        [Route("api/LogsProductosAprov/SincronizarSAP")]
+        public HttpResponseMessage GetSincronizar()
+        {
+            try
+            {
+                var Productos = db.LogsProductosAprov.Where(a => a.ProcesadoSAP == false).ToList();
+                Parametros param = db.Parametros.FirstOrDefault();
+
+                foreach(var item in Productos)
+                {
+                    try
+                    {
+                        var SubCategoria = db.SubCategorias.Where(a => a.id == item.idSubCategoria && a.ProcesadoSAP == false).FirstOrDefault();
+
+                        if (SubCategoria != null)
+                        {
+                             
+
+                            var Datos = db.ConexionSAP.FirstOrDefault();
+                             
+
+                            var SQL = "INSERT INTO [" + Datos.SQLBD + "].dbo.[@NPOS_SUBCA] (Code, Name, U_idCategoria) VALUES (" + SubCategoria.id + ",'" + SubCategoria.Nombre + "'," + SubCategoria.idCategoria + ")";
+
+                            db.Database.ExecuteSqlCommand(SQL);
+
+
+
+                            db.Entry(SubCategoria).State = EntityState.Modified;
+                            SubCategoria.ProcesadoSAP = true;
+                            db.SaveChanges();
+                        }
+
+
+                        var client = (SAPbobsCOM.Items)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oItems);
+                        var Producto = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
+                        var Bodega = db.Bodegas.Where(a => a.id == Producto.idBodega).FirstOrDefault();
+                        if (client.GetByKey(item.ItemCode))
+                        {
+                            client.UserFields.Fields.Item("U_CategoriaABC").Value = item.Clasificacion;
+                            client.UserFields.Fields.Item("U_SubCategoria").Value = item.idSubCategoria.ToString();
+                            bool warehouseFound = false;
+                            for (int i = 0; i < client.WhsInfo.Count; i++)
+                            {
+                                client.WhsInfo.SetCurrentLine(i);
+
+                                if (client.WhsInfo.WarehouseCode == Bodega.CodSAP)
+                                {
+                                    // Actualizar el MinStock para el almacén especificado
+                                    client.WhsInfo.MinimalStock = Convert.ToDouble(item.Minimo); // Nuevo valor de MinStock
+                                    warehouseFound = true;
+                                    break;
+                                }
+                            }
+
+                            if (warehouseFound)
+                            {
+                                var resp = client.Update();
+                                if (resp == 0)
+                                {
+                                    db.Entry(Producto).State = EntityState.Modified;
+                                    Producto.FechaActualizacion = DateTime.Now;
+                                    db.SaveChanges();
+
+                                    db.Entry(item).State = EntityState.Modified;
+                                    item.ProcesadoSAP = true;
+                                    db.SaveChanges();
+                                }
+                                else
+                                {
+                                    throw new Exception("Error al actualizar minimo en SAP " + Conexion.Company.GetLastErrorDescription());
+                                }
+                            }
+
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelCliente db2 = new ModelCliente();
+                        BitacoraErrores be = new BitacoraErrores();
+                        be.Descripcion = ex.Message;
+                        be.StrackTrace = ex.StackTrace;
+                        be.Fecha = DateTime.Now;
+                        be.JSON = JsonConvert.SerializeObject(ex);
+                        db2.BitacoraErrores.Add(be);
+                        db2.SaveChanges();
+                    }
+                }
+                
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db.BitacoraErrores.Add(be);
+                db.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+
+            }
+
         }
     }
 }
