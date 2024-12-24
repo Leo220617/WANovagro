@@ -264,6 +264,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AprobacionesCreditosController.cs" />
+    <Compile Include="Controllers\AprovisionamientoProductosController.cs" />
     <Compile Include="Controllers\ArqueosController.cs" />
     <Compile Include="Controllers\AsientosController.cs" />
     <Compile Include="Controllers\BarriosController.cs" />

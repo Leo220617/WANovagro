@@ -89,5 +89,7 @@
         public string SQLProductosDomingos { get; set; }
 
         public string MonedaDolar { get; set; }
+
+        public string SQLAprovisionamiento { get; set; }
     }
 }
