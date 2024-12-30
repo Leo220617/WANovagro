@@ -85,7 +85,7 @@ namespace WATickets.Controllers
                 {
                     var SubCategoria = db.SubCategorias.Where(a => a.Nombre.ToUpper().Contains(logs.PalabraClave.ToUpper())).FirstOrDefault();
 
-                    if (SubCategoria == null)
+                    if (SubCategoria == null && logs.PalabraClave != "")
                     {
                         SubCategoria = new SubCategorias();
                         SubCategoria.Nombre = logs.PalabraClave;
@@ -118,27 +118,40 @@ namespace WATickets.Controllers
 
                     foreach (var item in logs.Detalle)
                     {
-
+                        var Producto = db.Productos.Where(a => a.id == item.idProducto).FirstOrDefault();
                         LogsProductosAprov det = new LogsProductosAprov();
                         det.idProducto = item.idProducto;
                         det.idCategoria = item.idCategoria;
-                        det.idSubCategoria = SubCategoria.id;
+                        det.Solo = item.Solo;
+                        if(det.Solo == false)
+                        {
+                            det.idSubCategoria = SubCategoria.id;
+                        }
+                        else
+                        {
+                            det.idSubCategoria = Producto.idSubCategoria;
+                        }
+                    
                         det.idUsuarioModificador = logs.idUsuarioModificador;
                         det.Minimo = item.Minimo;
-
+                     
                         det.Fecha = DateTime.Now;
                         det.Clasificacion = item.Clasificacion;
                         det.ItemCode = item.ItemCode;
                         db.LogsProductosAprov.Add(det);
                         db.SaveChanges();
 
-                        var Producto = db.Productos.Where(a => a.id == det.idProducto).FirstOrDefault();
+                      
                         if (Producto != null)
                         {
                             db.Entry(Producto).State = EntityState.Modified;
                             Producto.Minimo = det.Minimo;
                             Producto.Clasificacion = det.Clasificacion;
-                            Producto.idSubCategoria = det.idSubCategoria;
+                            if(det.Solo == false)
+                            {
+                                Producto.idSubCategoria = det.idSubCategoria;
+                            }
+                      
                             db.SaveChanges();
 
                             try
@@ -149,7 +162,10 @@ namespace WATickets.Controllers
                                 if (client.GetByKey(Producto.Codigo))
                                 {
                                     client.UserFields.Fields.Item("U_CategoriaABC").Value = Producto.Clasificacion;
-                                    client.UserFields.Fields.Item("U_SubCategoria").Value = item.idSubCategoria.ToString();
+                                    if (det.Solo == false)
+                                    {
+                                        client.UserFields.Fields.Item("U_SubCategoria").Value = item.idSubCategoria.ToString();
+                                    }
                                     bool warehouseFound = false;
                                     for (int i = 0; i < client.WhsInfo.Count; i++)
                                     {
@@ -265,7 +281,10 @@ namespace WATickets.Controllers
                         if (client.GetByKey(item.ItemCode))
                         {
                             client.UserFields.Fields.Item("U_CategoriaABC").Value = item.Clasificacion;
-                            client.UserFields.Fields.Item("U_SubCategoria").Value = item.idSubCategoria.ToString();
+                            if (item.Solo == false)
+                            {
+                                client.UserFields.Fields.Item("U_SubCategoria").Value = item.idSubCategoria.ToString();
+                            }
                             bool warehouseFound = false;
                             for (int i = 0; i < client.WhsInfo.Count; i++)
                             {

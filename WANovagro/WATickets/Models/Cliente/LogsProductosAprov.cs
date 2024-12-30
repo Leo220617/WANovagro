@@ -19,5 +19,6 @@ namespace WATickets.Models.Cliente
         public string Clasificacion { get; set; }
         public string ItemCode { get; set; }
         public bool ProcesadoSAP { get; set; }
+        public bool Solo { get; set; }
     }
 }

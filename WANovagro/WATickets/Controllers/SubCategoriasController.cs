@@ -27,7 +27,7 @@ namespace WATickets.Controllers
                 {
                     SubCategorias = SubCategorias.Where(a => a.idCategoria == filtro.Codigo1).ToList();
                 }
-                   if (filtro.Procesado != null)
+                   if (filtro.Procesado != null && filtro.Externo == false)
                 {
                     SubCategorias = SubCategorias.Where(a => a.ProcesadoSAP == filtro.Procesado).ToList();
                 }
