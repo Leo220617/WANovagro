@@ -40,7 +40,7 @@ namespace WATickets.Models.Cliente
         [StringLength(100)]
         public string TipoCod { get; set; }
 
-        [StringLength(50)]
+ 
         public string CodBarras { get; set; }
 
         [Column(TypeName = "money")]

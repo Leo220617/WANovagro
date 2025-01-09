@@ -264,6 +264,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AprobacionesCreditosController.cs" />
+    <Compile Include="Controllers\AprovisionamientosController.cs" />
     <Compile Include="Controllers\AprovisionamientoProductosController.cs" />
     <Compile Include="Controllers\ArqueosController.cs" />
     <Compile Include="Controllers\AsientosController.cs" />
@@ -330,6 +331,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\APIS\Aprovisionamientos.cs" />
     <Compile Include="Models\APIS\Arqueos.cs" />
     <Compile Include="Models\APIS\Documentos.cs" />
     <Compile Include="Models\APIS\DocumentosCredito.cs" />
@@ -364,6 +366,7 @@
     <Compile Include="Models\Cliente\CorreoEnvio.cs" />
     <Compile Include="Models\Cliente\CuentasBancarias.cs" />
     <Compile Include="Models\Cliente\Depositos.cs" />
+    <Compile Include="Models\Cliente\DetAprovisionamiento.cs" />
     <Compile Include="Models\Cliente\DetArqueos.cs" />
     <Compile Include="Models\Cliente\DetDocumento.cs" />
     <Compile Include="Models\Cliente\DetDocumentoCredito.cs" />
@@ -372,6 +375,7 @@
     <Compile Include="Models\Cliente\DetOferta.cs" />
     <Compile Include="Models\Cliente\DetPagos.cs" />
     <Compile Include="Models\Cliente\Distritos.cs" />
+    <Compile Include="Models\Cliente\EncAprovisionamiento.cs" />
     <Compile Include="Models\Cliente\EncArqueos.cs" />
     <Compile Include="Models\Cliente\EncDocumento.cs" />
     <Compile Include="Models\Cliente\EncDocumentoCredito.cs" />

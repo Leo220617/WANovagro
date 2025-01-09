@@ -72,6 +72,8 @@ namespace WATickets.Models.Cliente
         public virtual DbSet<ClientesPromociones> ClientesPromociones { get; set; }
         public virtual DbSet<SubCategorias> SubCategorias { get; set; }
         public virtual DbSet<LogsProductosAprov> LogsProductosAprov { get; set; }
+        public virtual DbSet<EncAprovisionamiento> EncAprovisionamiento { get; set; }
+        public virtual DbSet<DetAprovisionamiento> DetAprovisionamiento { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
