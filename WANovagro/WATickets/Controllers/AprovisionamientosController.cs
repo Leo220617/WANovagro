@@ -163,6 +163,7 @@ namespace WATickets.Controllers
                         det.StockTodas = item.StockTodas;
                         det.PromedioVentaTodas = item.PromedioVentaTodas;
                         det.IndicadorSTTodas = item.IndicadorSTTodas;
+                        det.PrecioCompra = item.PrecioCompra;
 
                         db.DetAprovisionamiento.Add(det);
                         db.SaveChanges();
@@ -254,6 +255,7 @@ namespace WATickets.Controllers
                             det.StockTodas = item.StockTodas;
                             det.PromedioVentaTodas = item.PromedioVentaTodas;
                             det.IndicadorSTTodas = item.IndicadorSTTodas;
+                            det.PrecioCompra = item.PrecioCompra;
 
                             db.DetAprovisionamiento.Add(det);
                             db.SaveChanges();

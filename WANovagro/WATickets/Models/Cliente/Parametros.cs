@@ -91,5 +91,7 @@
         public string MonedaDolar { get; set; }
 
         public string SQLAprovisionamiento { get; set; }
+
+        public string SQLProveedores { get; set; }
     }
 }
