@@ -470,7 +470,7 @@ namespace WATickets.Controllers
                                             pagoSAP.CounterReference = "APP ABONO" + Pago.id;
                                             pagoSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "A";
 
-                                        
+
                                             if (Pago.Moneda != "CRC")
                                             {
                                                 var SumatoriaPagoColones = MetodosPagosAbonosColones.Sum(a => a.Monto) / TipoCambio.TipoCambio;
@@ -623,7 +623,7 @@ namespace WATickets.Controllers
                                             {
                                                 pagoSAP.Invoices.AppliedFC = Convert.ToDouble(SumatoriaPagod);
                                             }
-                                            if(param.Pais == "P")
+                                            if (param.Pais == "P")
                                             {
                                                 pagoSAP.Invoices.SumApplied = Convert.ToDouble(SumatoriaPagod);
                                             }
@@ -685,7 +685,7 @@ namespace WATickets.Controllers
                                                 if (Factura != null)
                                                 {
                                                     pagoSAP.Invoices.DocEntry = Convert.ToInt32(Factura.DocEntry);
-                                                    if(param.Pais == "C")
+                                                    if (param.Pais == "C")
                                                     {
                                                         if (Pago.Moneda != "CRC")
                                                         {
@@ -698,7 +698,7 @@ namespace WATickets.Controllers
 
                                                         }
                                                     }
-                                                 if(param.Pais == "P")
+                                                    if (param.Pais == "P")
                                                     {
                                                         pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
                                                     }
@@ -784,20 +784,54 @@ namespace WATickets.Controllers
                                 var pagoSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
 
                                 //Encabezado 
-                                pagoSAP.DocDate = DateTime.Now;
+                                pagoSAP.DocDate = Pago.Fecha;
                                 pagoSAP.DueDate = Pago.FechaVencimiento;
                                 pagoSAP.TaxDate = Pago.FechaContabilizacion;
                                 pagoSAP.VatDate = DateTime.Now;
                                 pagoSAP.CardCode = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault().Codigo;
                                 pagoSAP.Remarks = "Abono procesado por NOVAPOS";
-                                pagoSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
+                                var Fecha = Pago.Fecha.Date;
+                                var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                var MetodosPagos = db.MetodosPagosAbonos.Where(a => a.idEncabezado == Pago.id).FirstOrDefault();
+                                if (MetodosPagos.Moneda == "CRC")
+                                {
+                                    pagoSAP.DocCurrency = param.MonedaLocal;
+                                }
+                                else
+                                {
+                                    pagoSAP.DocCurrency = param.MonedaDolar;
+                                }
+
                                 pagoSAP.HandWritten = SAPbobsCOM.BoYesNoEnum.tNO;
                                 pagoSAP.CounterReference = "APP ABONO" + Pago.id;
-                                var Cuenta2 = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
+                                var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault().CuentaSAP;
 
-                                pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
+                                if (MetodosPagos.Moneda == "CRC")
+                                {
+
+                                    if (Pago.Moneda == "CRC")
+                                    {
+                                        pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
+                                    }
+                                    else
+                                    {
+                                        pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital * TipoCambio.TipoCambio);
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (Pago.Moneda == "USD")
+                                    {
+                                        pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
+                                    }
+                                    else
+                                    {
+                                        pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital / TipoCambio.TipoCambio);
+                                    }
+                                }
                                 pagoSAP.Series = Sucursal.SeriePago; //154; 161;
-                                pagoSAP.CashAccount = Cuenta2;
+                                pagoSAP.CashAccount = Cuenta;
                                 pagoSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "A";
 
                                 int z = 0;
@@ -810,31 +844,50 @@ namespace WATickets.Controllers
                                     if (Factura != null)
                                     {
                                         pagoSAP.Invoices.DocEntry = Convert.ToInt32(Factura.DocEntry);
-                                        if(param.Pais == "C")
-                                        {
-                                            if (Pago.Moneda != "CRC")
-                                            {
 
-                                                pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
-                                            }
-                                            else
+                                        if (param.Pais == "C")
+                                        {
+
+                                            if (MetodosPagos.Moneda != "CRC")
                                             {
-                                                pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+                                                if (Pago.Moneda != "CRC")
+                                                {
+                                                    pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                                }
+                                                else
+                                                {
+                                                    pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital / TipoCambio.TipoCambio);
+                                                }
+
+                                            }
+                                            else if (MetodosPagos.Moneda == "CRC")
+                                            {
+                                                if (Pago.Moneda == "CRC")
+                                                {
+                                                    pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+                                                }
+                                                else
+                                                {
+                                                    pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital * TipoCambio.TipoCambio);
+                                                }
+
+
 
                                             }
                                         }
-                                     if(param.Pais == "P")
+                                        if (param.Pais == "P")
                                         {
                                             pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
                                         }
+
                                     }
                                     else
                                     {
                                         throw new Exception("Esta factura no existe");
                                     }
-
                                     pagoSAP.Invoices.Add();
                                     z++;
+
                                 }
 
                                 var respuestaPago = pagoSAP.Add();
@@ -866,19 +919,53 @@ namespace WATickets.Controllers
                                     try
                                     {
 
+                                      
+                                        var Cliente = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault();
                                         var interesSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
                                         interesSAP.CounterReference = "APP INTÉRES" + Pago.id;
                                         interesSAP.DocDate = DateTime.Now;
                                         interesSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
-                                        interesSAP.CardCode = ClienteI.Codigo;
-                                        interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
-                                        var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
-                                        interesSAP.CashAccount = CuentaI;
+                                        interesSAP.CardCode = Cliente.Codigo;
+
+
+
+                                   
+                                      
+                                  
+                                        interesSAP.CashAccount = Cuenta;
                                         interesSAP.Remarks = "Interés procesado por NOVAPOS";
-                                        interesSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
+
+                                        if (MetodosPagos.Moneda == "CRC")
+                                        {
+                                            interesSAP.DocCurrency = param.MonedaLocal;
+                                            if (Pago.Moneda == "CRC")
+                                            {
+                                                interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
+                                            }
+                                            else
+                                            {
+                                                interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres * TipoCambio.TipoCambio);
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            interesSAP.DocCurrency = param.MonedaDolar;
+                                            if (Pago.Moneda != "CRC")
+                                            {
+                                                interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
+                                            }
+                                            else
+                                            {
+                                                interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres / TipoCambio.TipoCambio);
+                                            }
+                                        }
+
+
                                         interesSAP.Series = Sucursal.SeriePago; //Crear en parametros
                                         interesSAP.JournalRemarks = Pago.Comentarios;
                                         interesSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "I";
+
 
                                         var respuestaInteres = interesSAP.Add();
                                         if (respuestaInteres == 0)
@@ -902,9 +989,8 @@ namespace WATickets.Controllers
                                             db.SaveChanges();
                                             Conexion.Desconectar();
 
-
-
                                         }
+
                                     }
                                     catch (Exception ex)
                                     {
@@ -1075,12 +1161,46 @@ namespace WATickets.Controllers
                     pagoSAP.VatDate = DateTime.Now;
                     pagoSAP.CardCode = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault().Codigo;
                     pagoSAP.Remarks = "Abono procesado por NOVAPOS";
-                    pagoSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
+                    var Fecha = Pago.Fecha.Date;
+                    var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                    var MetodosPagos = db.MetodosPagosAbonos.Where(a => a.idEncabezado == Pago.id).FirstOrDefault();
+                    if(MetodosPagos.Moneda == "CRC")
+                    {
+                        pagoSAP.DocCurrency = param.MonedaLocal;
+                    }
+                    else
+                    {
+                        pagoSAP.DocCurrency = param.MonedaDolar;
+                    }
+                 
                     pagoSAP.HandWritten = SAPbobsCOM.BoYesNoEnum.tNO;
                     pagoSAP.CounterReference = "APP ABONO" + Pago.id;
-                    var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
+                    var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault().CuentaSAP;
 
-                    pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
+                    if (MetodosPagos.Moneda == "CRC")
+                    {
+                   
+                        if (Pago.Moneda == "CRC")
+                        {
+                            pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
+                        }
+                        else
+                        {
+                            pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital * TipoCambio.TipoCambio);
+                        }
+
+                    }
+                    else
+                    {
+                        if (Pago.Moneda == "USD")
+                        {
+                            pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
+                        }
+                        else
+                        {
+                            pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital / TipoCambio.TipoCambio);
+                        }
+                    }
                     pagoSAP.Series = Sucursal.SeriePago; //154; 161;
                     pagoSAP.CashAccount = Cuenta;
                     pagoSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "A";
@@ -1095,24 +1215,42 @@ namespace WATickets.Controllers
                         if (Factura != null)
                         {
                             pagoSAP.Invoices.DocEntry = Convert.ToInt32(Factura.DocEntry);
-                            if(param.Pais == "C")
+                           
+                            if (param.Pais == "C")
                             {
-                                if (Pago.Moneda != "CRC")
-                                {
 
-                                    pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
-                                }
-                                else
+                                if (MetodosPagos.Moneda != "CRC")
                                 {
-                                    pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+                                    if (Pago.Moneda != "CRC")
+                                    {
+                                        pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                    }
+                                    else
+                                    {
+                                        pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital / TipoCambio.TipoCambio);
+                                    }
+
+                                }
+                                else if (MetodosPagos.Moneda == "CRC")
+                                {
+                                    if (Pago.Moneda == "CRC")
+                                    {
+                                        pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+                                    }
+                                    else
+                                    {
+                                        pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital * TipoCambio.TipoCambio);
+                                    }
+
+
 
                                 }
                             }
-                            if(param.Pais == "P")
+                            if (param.Pais == "P")
                             {
                                 pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
                             }
-                         
+
                         }
                         else
                         {
@@ -1162,11 +1300,43 @@ namespace WATickets.Controllers
                         interesSAP.DocDate = DateTime.Now;
                         interesSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
                         interesSAP.CardCode = Cliente.Codigo;
-                        interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
-                        var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
+                        
+                
+
+                        var Fecha = Pago.Fecha.Date;
+                        var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                        var MetodosPagos = db.MetodosPagosAbonos.Where(a => a.idEncabezado == Pago.id).FirstOrDefault();
+                        var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault().CuentaSAP;
                         interesSAP.CashAccount = Cuenta;
                         interesSAP.Remarks = "Interés procesado por NOVAPOS";
-                        interesSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
+
+                        if (MetodosPagos.Moneda == "CRC")
+                        {
+                            interesSAP.DocCurrency = param.MonedaLocal;
+                            if(Pago.Moneda == "CRC")
+                            {
+                                interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
+                            }
+                            else
+                            {
+                                interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres * TipoCambio.TipoCambio);
+                            }
+                            
+                        }
+                        else
+                        {
+                            interesSAP.DocCurrency = param.MonedaDolar;
+                            if (Pago.Moneda != "CRC")
+                            {
+                                interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
+                            }
+                            else
+                            {
+                                interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres / TipoCambio.TipoCambio);
+                            }
+                        }
+
+                       
                         interesSAP.Series = Sucursal.SeriePago; //Crear en parametros
                         interesSAP.JournalRemarks = Pago.Comentarios;
                         interesSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "I";
@@ -1263,18 +1433,52 @@ namespace WATickets.Controllers
                         var pagoSAP = (SAPbobsCOM.Payments)Conexion.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
 
                         //Encabezado 
-                        pagoSAP.DocDate = DateTime.Now;
+                        pagoSAP.DocDate = Pago.Fecha;
                         pagoSAP.DueDate = Pago.FechaVencimiento;
                         pagoSAP.TaxDate = Pago.FechaContabilizacion;
                         pagoSAP.VatDate = DateTime.Now;
                         pagoSAP.CardCode = db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault() == null ? "0" : db.Clientes.Where(a => a.id == Pago.idCliente).FirstOrDefault().Codigo;
                         pagoSAP.Remarks = "Abono procesado por NOVAPOS";
-                        pagoSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
+                        var Fecha = Pago.Fecha.Date;
+                        var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                        var MetodosPagos = db.MetodosPagosAbonos.Where(a => a.idEncabezado == Pago.id).FirstOrDefault();
+                        if (MetodosPagos.Moneda == "CRC")
+                        {
+                            pagoSAP.DocCurrency = param.MonedaLocal;
+                        }
+                        else
+                        {
+                            pagoSAP.DocCurrency = param.MonedaDolar;
+                        }
+
                         pagoSAP.HandWritten = SAPbobsCOM.BoYesNoEnum.tNO;
                         pagoSAP.CounterReference = "APP ABONO" + Pago.id;
-                        var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
+                        var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault().CuentaSAP;
 
-                        pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
+                        if (MetodosPagos.Moneda == "CRC")
+                        {
+
+                            if (Pago.Moneda == "CRC")
+                            {
+                                pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
+                            }
+                            else
+                            {
+                                pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital * TipoCambio.TipoCambio);
+                            }
+
+                        }
+                        else
+                        {
+                            if (Pago.Moneda == "USD")
+                            {
+                                pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital);
+                            }
+                            else
+                            {
+                                pagoSAP.CashSum = Convert.ToDouble(Pago.TotalCapital / TipoCambio.TipoCambio);
+                            }
+                        }
                         pagoSAP.Series = Sucursal.SeriePago; //154; 161;
                         pagoSAP.CashAccount = Cuenta;
                         pagoSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "A";
@@ -1289,33 +1493,49 @@ namespace WATickets.Controllers
                             if (Factura != null)
                             {
                                 pagoSAP.Invoices.DocEntry = Convert.ToInt32(Factura.DocEntry);
-                                if(param.Pais == "C")
-                                {
-                                    if (Pago.Moneda != "CRC")
-                                    {
 
-                                        pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
-                                    }
-                                    else
+                                if (param.Pais == "C")
+                                {
+
+                                    if (MetodosPagos.Moneda != "CRC")
                                     {
-                                        pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+                                        if (Pago.Moneda != "CRC")
+                                        {
+                                            pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital);
+                                        }
+                                        else
+                                        {
+                                            pagoSAP.Invoices.AppliedFC = Convert.ToDouble(item.Capital / TipoCambio.TipoCambio);
+                                        }
+
+                                    }
+                                    else if (MetodosPagos.Moneda == "CRC")
+                                    {
+                                        if (Pago.Moneda == "CRC")
+                                        {
+                                            pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
+                                        }
+                                        else
+                                        {
+                                            pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital * TipoCambio.TipoCambio);
+                                        }
+
+
 
                                     }
                                 }
-                              if(param.Pais == "P")
+                                if (param.Pais == "P")
                                 {
                                     pagoSAP.Invoices.SumApplied = Convert.ToDouble(item.Capital);
                                 }
 
                             }
-
                             else
                             {
                                 throw new Exception("Esta factura no existe");
                             }
                             pagoSAP.Invoices.Add();
                             z++;
-
 
                         }
 
@@ -1326,6 +1546,8 @@ namespace WATickets.Controllers
                             Pago.DocEntryPago = Conexion.Company.GetNewObjectKey().ToString();
                             Pago.ProcesadaSAP = true;
                             db.SaveChanges();
+                            Conexion.Desconectar();
+
                         }
                         else
                         {
@@ -1337,12 +1559,13 @@ namespace WATickets.Controllers
                             be.JSON = JsonConvert.SerializeObject(pagoSAP);
                             db.BitacoraErrores.Add(be);
                             db.SaveChanges();
+                            Conexion.Desconectar();
+
                         }
 
 
 
                     }
-
                     if (Pago.IntProcesadaSAP != true)
                     {
                         try
@@ -1355,11 +1578,43 @@ namespace WATickets.Controllers
                             interesSAP.DocDate = DateTime.Now;
                             interesSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
                             interesSAP.CardCode = Cliente.Codigo;
-                            interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
-                            var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == Pago.Moneda).FirstOrDefault().CuentaSAP;
+
+
+
+                            var Fecha = Pago.Fecha.Date;
+                            var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                            var MetodosPagos = db.MetodosPagosAbonos.Where(a => a.idEncabezado == Pago.id).FirstOrDefault();
+                            var Cuenta = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == Pago.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault().CuentaSAP;
                             interesSAP.CashAccount = Cuenta;
                             interesSAP.Remarks = "Interés procesado por NOVAPOS";
-                            interesSAP.DocCurrency = Pago.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
+
+                            if (MetodosPagos.Moneda == "CRC")
+                            {
+                                interesSAP.DocCurrency = param.MonedaLocal;
+                                if (Pago.Moneda == "CRC")
+                                {
+                                    interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
+                                }
+                                else
+                                {
+                                    interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres * TipoCambio.TipoCambio);
+                                }
+
+                            }
+                            else
+                            {
+                                interesSAP.DocCurrency = param.MonedaDolar;
+                                if (Pago.Moneda != "CRC")
+                                {
+                                    interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres);
+                                }
+                                else
+                                {
+                                    interesSAP.CashSum = Convert.ToDouble(Pago.TotalInteres / TipoCambio.TipoCambio);
+                                }
+                            }
+
+
                             interesSAP.Series = Sucursal.SeriePago; //Crear en parametros
                             interesSAP.JournalRemarks = Pago.Comentarios;
                             interesSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "I";
@@ -1372,6 +1627,8 @@ namespace WATickets.Controllers
                                 Pago.DocEntryInt = Conexion.Company.GetNewObjectKey().ToString();
                                 Pago.IntProcesadaSAP = true;
                                 db.SaveChanges();
+                                Conexion.Desconectar();
+
                             }
                             else
                             {
@@ -1383,6 +1640,8 @@ namespace WATickets.Controllers
                                 be.JSON = JsonConvert.SerializeObject(interesSAP);
                                 db.BitacoraErrores.Add(be);
                                 db.SaveChanges();
+                                Conexion.Desconectar();
+
                             }
 
                         }

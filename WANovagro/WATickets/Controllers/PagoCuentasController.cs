@@ -747,20 +747,49 @@ namespace WATickets.Controllers
                                     pagocuentaSAP.DocDate = PagoCuenta.Fecha;
                                     pagocuentaSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
                                     pagocuentaSAP.CardCode = ClienteI.Codigo;
-                                    pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                    var Fecha = PagoCuenta.Fecha.Date;
+                                    var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                    var MetodosPagos = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id).FirstOrDefault();
+
                                     if (param.MontosPagosSeparados)
                                     {
                                         pagocuentaSAP.CashAccount = db.CuentasBancarias.Where(a => a.id == PagoCuenta.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == PagoCuenta.idCuentaBancaria).FirstOrDefault().CuentaSAP;
                                     }
                                     else
                                     {
-                                        var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault().CuentaSAP;
+                                        var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault().CuentaSAP;
                                         pagocuentaSAP.CashAccount = CuentaI;
+                                    }
+                                    pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
+
+
+                                    if (MetodosPagos.Moneda == "CRC")
+                                    {
+                                        pagocuentaSAP.DocCurrency = param.MonedaLocal;
+                                        if (PagoCuenta.Moneda == "CRC")
+                                        {
+                                            pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                        }
+                                        else
+                                        {
+                                            pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total * TipoCambio.TipoCambio);
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        pagocuentaSAP.DocCurrency = param.MonedaDolar;
+                                        if (PagoCuenta.Moneda == "USD")
+                                        {
+                                            pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                        }
+                                        else
+                                        {
+                                            pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total / TipoCambio.TipoCambio);
+                                        }
                                     }
 
 
-                                    pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                                    pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                                     pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
                                     pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
                                     pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
@@ -1181,20 +1210,46 @@ namespace WATickets.Controllers
                                 pagocuentaSAP.DocDate = PagoCuenta.Fecha;
                                 pagocuentaSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
                                 pagocuentaSAP.CardCode = ClienteI.Codigo;
-                                pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                var Fecha = PagoCuenta.Fecha.Date;
+                                var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                var MetodosPagos = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id).FirstOrDefault();
                                 if (param.MontosPagosSeparados)
                                 {
                                     pagocuentaSAP.CashAccount = db.CuentasBancarias.Where(a => a.id == PagoCuenta.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == PagoCuenta.idCuentaBancaria).FirstOrDefault().CuentaSAP;
                                 }
                                 else
                                 {
-                                    var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault().CuentaSAP;
+                                    var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault().CuentaSAP;
                                     pagocuentaSAP.CashAccount = CuentaI;
                                 }
-
+                  
 
                                 pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
-                                pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
+                                if (MetodosPagos.Moneda == "CRC")
+                                {
+                                    pagocuentaSAP.DocCurrency = param.MonedaLocal;
+                                    if (PagoCuenta.Moneda == "CRC")
+                                    {
+                                        pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                    }
+                                    else
+                                    {
+                                        pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total * TipoCambio.TipoCambio);
+                                    }
+
+                                }
+                                else
+                                {
+                                    pagocuentaSAP.DocCurrency = param.MonedaDolar;
+                                    if (PagoCuenta.Moneda == "USD")
+                                    {
+                                        pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                    }
+                                    else
+                                    {
+                                        pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total / TipoCambio.TipoCambio);
+                                    }
+                                }
                                 pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros
                                 pagocuentaSAP.JournalRemarks = PagoCuenta.Comentarios;
                                 pagocuentaSAP.UserFields.Fields.Item("U_DYD_Tipo").Value = "P";
@@ -1611,17 +1666,44 @@ namespace WATickets.Controllers
                                     pagocuentaSAP.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
                                     pagocuentaSAP.CardCode = ClienteI.Codigo;
                                     pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                    var Fecha = PagoCuenta.Fecha.Date;
+                                    var TipoCambio = db.TipoCambios.Where(a => a.Moneda == "USD" && a.Fecha == Fecha).FirstOrDefault();
+                                    var MetodosPagos = db.MetodosPagosCuentas.Where(a => a.idEncabezado == PagoCuenta.id).FirstOrDefault();
                                     if (param.MontosPagosSeparados)
                                     {
                                         pagocuentaSAP.CashAccount = db.CuentasBancarias.Where(a => a.id == PagoCuenta.idCuentaBancaria).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.id == PagoCuenta.idCuentaBancaria).FirstOrDefault().CuentaSAP;
                                     }
                                     else
                                     {
-                                        var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == PagoCuenta.Moneda).FirstOrDefault().CuentaSAP;
+                                        var CuentaI = db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault() == null ? "0" : db.CuentasBancarias.Where(a => a.Tipo.ToLower().Contains("efectivo") && a.CodSuc == PagoCuenta.CodSuc && a.Moneda == MetodosPagos.Moneda).FirstOrDefault().CuentaSAP;
                                         pagocuentaSAP.CashAccount = CuentaI;
                                     }
 
+                                    if (MetodosPagos.Moneda == "CRC")
+                                    {
+                                        pagocuentaSAP.DocCurrency = param.MonedaLocal;
+                                        if (PagoCuenta.Moneda == "CRC")
+                                        {
+                                            pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                        }
+                                        else
+                                        {
+                                            pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total * TipoCambio.TipoCambio);
+                                        }
 
+                                    }
+                                    else
+                                    {
+                                        pagocuentaSAP.DocCurrency = param.MonedaDolar;
+                                        if (PagoCuenta.Moneda == "USD")
+                                        {
+                                            pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total);
+                                        }
+                                        else
+                                        {
+                                            pagocuentaSAP.CashSum = Convert.ToDouble(PagoCuenta.Total / TipoCambio.TipoCambio);
+                                        }
+                                    }
                                     pagocuentaSAP.Remarks = "Pago a cuenta procesado por NOVAPOS";
                                     pagocuentaSAP.DocCurrency = PagoCuenta.Moneda == "CRC" ? param.MonedaLocal : param.MonedaDolar;
                                     pagocuentaSAP.Series = Sucursal.SeriePago; //Crear en parametros

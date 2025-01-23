@@ -101,7 +101,7 @@ namespace WATickets.Controllers
 
 
 
-                        var SQL = "INSERT INTO " + Datos.SQLBD + ".dbo.[@NPOS_SUBCA] (Code, Name, U_idCategoria) VALUES (" + SubCategoria.id + "," + SubCategoria.Nombre + "," + SubCategoria.idCategoria + ")";
+                        var SQL = "INSERT INTO " + Datos.SQLBD + ".dbo.[@NPOS_SUBCA] (Code, Name, U_idCategoria) VALUES (" + SubCategoria.id + "," + "'" + SubCategoria.Nombre + "'" + "," + SubCategoria.idCategoria + ")";
 
                         db.Database.ExecuteSqlCommand(SQL);
 
