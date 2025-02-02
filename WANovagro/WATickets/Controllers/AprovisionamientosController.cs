@@ -176,7 +176,108 @@ namespace WATickets.Controllers
 
                     t.Commit();
 
+                    if (Aprovisionamiento.Status == "E")
+                    {
+                        var detallesAgrupados = aprovisionamiento.Detalle.Where(a => a.Compra > 0)
+                        .GroupBy(d => d.CodProveedor)
+                        .Select(grupo => new
+                        {
+                            CodProveedor = grupo.Key,
+                            NombreProveedor = grupo.First().NombreProveedor,
+                            Subtotal = grupo.Sum(d => d.TotalCompra - d.TotalImpuesto),
+                            TotalImpuesto = grupo.Sum(d => d.TotalImpuesto),
+                            TotalCompra = grupo.Sum(d => d.TotalCompra),
+                            Detalles = grupo.ToList()
+                        })
+                        .ToList();
+                        foreach (var grupo in detallesAgrupados)
+                        {
+                            EncCompras Compras = db.EncCompras.Where(a => a.idAprovisionamiento == Aprovisionamiento.id && a.CodProveedor == grupo.CodProveedor && a.ProcesadaSAP == false).FirstOrDefault();
 
+                            if (Compras == null)
+                            {
+                                Compras = new EncCompras();
+                                Compras.idAprovisionamiento = Aprovisionamiento.id;
+                                Compras.idUsuarioCreador = Aprovisionamiento.idUsuarioCreador;
+                                Compras.CodProveedor = grupo.CodProveedor;
+                                Compras.NombreProveedor = grupo.NombreProveedor;
+                                Compras.Fecha = DateTime.Now;
+                                Compras.FechaVencimiento = DateTime.Now;
+                                Compras.Subtotal = grupo.Subtotal;
+                                Compras.TotalImpuesto = grupo.TotalImpuesto;
+                                Compras.TotalCompra = grupo.TotalCompra;
+                                Compras.Moneda = "CRC";
+                                Compras.ProcesadaSAP = false;
+
+
+
+
+                                db.SaveChanges();
+
+                                foreach (var item in grupo.Detalles)
+                                {
+                                    DetCompras det = new DetCompras();
+                                    det.idEncabezado = Compras.id;
+                                    det.idDetAprovisionamiento = item.id;
+                                    det.CodigoProducto = item.CodigoProducto;
+                                    det.NombreProducto = item.NombreProducto;
+                                    det.Bodega = item.Bodega;
+                                    det.Cantidad = item.Compra;
+                                    det.Impuesto = item.Impuesto;
+                                    det.TotalImpuesto = item.TotalImpuesto;
+                                    det.TotalLinea = item.TotalCompra;
+
+
+                                    db.DetCompras.Add(det);
+                                    db.SaveChanges();
+                                }
+                            }
+                            else
+                            {
+                                db.Entry(Compras).State = EntityState.Modified;
+                                Compras.idAprovisionamiento = Aprovisionamiento.id;
+                                Compras.idUsuarioCreador = Aprovisionamiento.idUsuarioCreador;
+                                Compras.CodProveedor = grupo.CodProveedor;
+                                Compras.NombreProveedor = grupo.NombreProveedor;
+                                Compras.Fecha = DateTime.Now;
+                                Compras.FechaVencimiento = DateTime.Now;
+                                Compras.Subtotal = grupo.Subtotal;
+                                Compras.TotalImpuesto = grupo.TotalImpuesto;
+                                Compras.TotalCompra = grupo.TotalCompra;
+                                Compras.Moneda = "CRC";
+                                Compras.ProcesadaSAP = false;
+
+
+
+                                db.SaveChanges();
+
+                                var DetallesCompras = db.DetCompras.Where(a => a.idEncabezado == Compras.id).ToList();
+
+                                foreach (var item in DetallesCompras)
+                                {
+                                    db.DetCompras.Remove(item);
+                                    db.SaveChanges();
+                                }
+
+                                foreach (var item in grupo.Detalles)
+                                {
+                                    DetCompras det = new DetCompras();
+                                    det.idEncabezado = Compras.id;
+                                    det.idDetAprovisionamiento = item.id;
+                                    det.CodigoProducto = item.CodigoProducto;
+                                    det.NombreProducto = item.NombreProducto;
+                                    det.Bodega = item.Bodega;
+                                    det.Cantidad = item.Compra;
+                                    det.Impuesto = item.Impuesto;
+                                    det.TotalImpuesto = item.TotalImpuesto;
+                                    det.TotalLinea = item.TotalCompra;
+
+                                    db.DetCompras.Add(det);
+                                    db.SaveChanges();
+                                }
+                            }
+                        }
+                    }
 
 
                 }
@@ -223,7 +324,7 @@ namespace WATickets.Controllers
                     Aprovisionamiento.Clasificacion = aprovisionamiento.Clasificacion;
                     Aprovisionamiento.IndicadorMenor = aprovisionamiento.IndicadorMenor;
                     Aprovisionamiento.IndicadorMayor = aprovisionamiento.IndicadorMayor;
-                 
+
                     db.SaveChanges();
 
                     var Detalles = db.DetAprovisionamiento.Where(a => a.idEncabezado == Aprovisionamiento.id).ToList();
@@ -273,8 +374,108 @@ namespace WATickets.Controllers
 
                     t.Commit();
 
+                    if (Aprovisionamiento.Status == "E")
+                    {
+                        var detallesAgrupados = aprovisionamiento.Detalle.Where(a => a.Compra > 0)
+                        .GroupBy(d => d.CodProveedor)
+                        .Select(grupo => new
+                        {
+                            CodProveedor = grupo.Key,
+                            NombreProveedor = grupo.First().NombreProveedor,
+                            Subtotal = grupo.Sum(d => d.TotalCompra - d.TotalImpuesto),
+                            TotalImpuesto = grupo.Sum(d => d.TotalImpuesto),
+                            TotalCompra = grupo.Sum(d => d.TotalCompra),
+                            Detalles = grupo.ToList()
+                        })
+                        .ToList();
+                        foreach (var grupo in detallesAgrupados)
+                        {
+                            EncCompras Compras = db.EncCompras.Where(a => a.idAprovisionamiento == Aprovisionamiento.id && a.CodProveedor == grupo.CodProveedor && a.ProcesadaSAP == false).FirstOrDefault();
+
+                            if(Compras == null)
+                            {
+                                Compras = new EncCompras();
+                                Compras.idAprovisionamiento = Aprovisionamiento.id;
+                                Compras.idUsuarioCreador = Aprovisionamiento.idUsuarioCreador;
+                                Compras.CodProveedor = grupo.CodProveedor;
+                                Compras.NombreProveedor = grupo.NombreProveedor;
+                                Compras.Fecha = DateTime.Now;
+                                Compras.FechaVencimiento = DateTime.Now;
+                                Compras.Subtotal = grupo.Subtotal;
+                                Compras.TotalImpuesto = grupo.TotalImpuesto;
+                                Compras.TotalCompra = grupo.TotalCompra;
+                                Compras.Moneda = "CRC";
+                                Compras.ProcesadaSAP = false;
+                  
 
 
+
+                                db.SaveChanges();
+
+                                foreach (var item in grupo.Detalles)
+                                {
+                                    DetCompras det = new DetCompras();
+                                    det.idEncabezado = Compras.id;
+                                    det.idDetAprovisionamiento = item.id;
+                                    det.CodigoProducto = item.CodigoProducto;
+                                    det.NombreProducto = item.NombreProducto;
+                                    det.Bodega = item.Bodega;
+                                    det.Cantidad = item.Compra;
+                                    det.Impuesto = item.Impuesto;
+                                    det.TotalImpuesto = item.TotalImpuesto;
+                                    det.TotalLinea = item.TotalCompra;
+
+
+                                    db.DetCompras.Add(det);
+                                    db.SaveChanges();
+                                }
+                            }
+                            else
+                            {
+                                db.Entry(Compras).State = EntityState.Modified;
+                                Compras.idAprovisionamiento = Aprovisionamiento.id;
+                                Compras.idUsuarioCreador = Aprovisionamiento.idUsuarioCreador;
+                                Compras.CodProveedor = grupo.CodProveedor;
+                                Compras.NombreProveedor = grupo.NombreProveedor;
+                                Compras.Fecha = DateTime.Now;
+                                Compras.FechaVencimiento = DateTime.Now;
+                                Compras.Subtotal = grupo.Subtotal;
+                                Compras.TotalImpuesto = grupo.TotalImpuesto;
+                                Compras.TotalCompra = grupo.TotalCompra;
+                                Compras.Moneda = "CRC";
+                                Compras.ProcesadaSAP = false;
+
+
+
+                                db.SaveChanges();
+
+                                var DetallesCompras = db.DetCompras.Where(a => a.idEncabezado == Compras.id).ToList();
+
+                                foreach (var item in DetallesCompras)
+                                {
+                                    db.DetCompras.Remove(item);
+                                    db.SaveChanges();
+                                }
+
+                                foreach (var item in grupo.Detalles)
+                                {
+                                    DetCompras det = new DetCompras();
+                                    det.idEncabezado = Compras.id;
+                                    det.idDetAprovisionamiento = item.id;
+                                    det.CodigoProducto = item.CodigoProducto;
+                                    det.NombreProducto = item.NombreProducto;
+                                    det.Bodega = item.Bodega;
+                                    det.Cantidad = item.Compra;
+                                    det.Impuesto = item.Impuesto;
+                                    det.TotalImpuesto = item.TotalImpuesto;
+                                    det.TotalLinea = item.TotalCompra;
+
+                                    db.DetCompras.Add(det);
+                                    db.SaveChanges();
+                                }
+                            }
+                        }
+                    }
 
                 }
                 else

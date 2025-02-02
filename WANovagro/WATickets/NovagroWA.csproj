@@ -369,6 +369,7 @@
     <Compile Include="Models\Cliente\Depositos.cs" />
     <Compile Include="Models\Cliente\DetAprovisionamiento.cs" />
     <Compile Include="Models\Cliente\DetArqueos.cs" />
+    <Compile Include="Models\Cliente\DetCompras.cs" />
     <Compile Include="Models\Cliente\DetDocumento.cs" />
     <Compile Include="Models\Cliente\DetDocumentoCredito.cs" />
     <Compile Include="Models\Cliente\DetExoneraciones.cs" />
@@ -378,6 +379,7 @@
     <Compile Include="Models\Cliente\Distritos.cs" />
     <Compile Include="Models\Cliente\EncAprovisionamiento.cs" />
     <Compile Include="Models\Cliente\EncArqueos.cs" />
+    <Compile Include="Models\Cliente\EncCompras.cs" />
     <Compile Include="Models\Cliente\EncDocumento.cs" />
     <Compile Include="Models\Cliente\EncDocumentoCredito.cs" />
     <Compile Include="Models\Cliente\EncMargenes.cs" />
