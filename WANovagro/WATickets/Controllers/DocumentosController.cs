@@ -2079,7 +2079,7 @@ namespace WATickets.Controllers
                         if (documento.MetodosPagos != null && documento.MetodosPagos.Count() > 0)
                         {
 
-                            foreach (var item in documento.MetodosPagos.Where(a => a.Metodo != "Pago a Cuenta"))
+                            foreach (var item in documento.MetodosPagos.Where(a => a.Metodo == "Pago a Cuenta"))
                             {
                                 var Usuario = db.Usuarios.Where(a => a.id == Documento.idUsuarioCreador).FirstOrDefault() == null ? "0" : db.Usuarios.Where(a => a.id == Documento.idUsuarioCreador).FirstOrDefault().Nombre;
                                 BitacoraMovimientos bm = new BitacoraMovimientos();

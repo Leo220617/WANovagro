@@ -65,7 +65,7 @@
     <Reference Include="Interop.SAPbobsCOM, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\..\..\..\OneDrive\Escritorio\Interop Nova\Interop.SAPbobsCOM.dll</HintPath>
+      <HintPath>..\..\..\..\..\Downloads\Interop Novagro\Interop.SAPbobsCOM.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.3\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -306,6 +306,7 @@
     <Compile Include="Controllers\MetodosPagosController.cs" />
     <Compile Include="Controllers\MetodosPagosCuentasController.cs" />
     <Compile Include="Controllers\OfertasController.cs" />
+    <Compile Include="Controllers\OrdenesCompraController.cs" />
     <Compile Include="Controllers\PagoCuentasController.cs" />
     <Compile Include="Controllers\PagosController.cs" />
     <Compile Include="Controllers\PalabrasClavesController.cs" />

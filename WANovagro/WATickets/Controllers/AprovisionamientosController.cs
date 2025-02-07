@@ -211,7 +211,7 @@ namespace WATickets.Controllers
 
 
 
-
+                                db.EncCompras.Add(Compras);
                                 db.SaveChanges();
 
                                 foreach (var item in grupo.Detalles)
@@ -271,6 +271,7 @@ namespace WATickets.Controllers
                                     det.Impuesto = item.Impuesto;
                                     det.TotalImpuesto = item.TotalImpuesto;
                                     det.TotalLinea = item.TotalCompra;
+                                    det.PrecioUnitario = item.PrecioCompra;
 
                                     db.DetCompras.Add(det);
                                     db.SaveChanges();
@@ -406,10 +407,10 @@ namespace WATickets.Controllers
                                 Compras.TotalCompra = grupo.TotalCompra;
                                 Compras.Moneda = "CRC";
                                 Compras.ProcesadaSAP = false;
-                  
 
 
 
+                                db.EncCompras.Add(Compras);
                                 db.SaveChanges();
 
                                 foreach (var item in grupo.Detalles)
@@ -424,7 +425,7 @@ namespace WATickets.Controllers
                                     det.Impuesto = item.Impuesto;
                                     det.TotalImpuesto = item.TotalImpuesto;
                                     det.TotalLinea = item.TotalCompra;
-
+                                    det.PrecioUnitario = item.PrecioCompra;
 
                                     db.DetCompras.Add(det);
                                     db.SaveChanges();
