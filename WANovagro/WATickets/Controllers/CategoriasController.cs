@@ -175,6 +175,44 @@ namespace WATickets.Controllers
             }
 
         }
+
+        [Route("api/Categorias/Reclasificacion")]
+        public HttpResponseMessage GetReclasificar([FromUri] int idCat)
+        {
+            try
+            {
+                Parametros parametros = db.Parametros.FirstOrDefault();
+                var conexion = G.DevuelveCadena(db);
+
+                var Datos = db.ConexionSAP.FirstOrDefault();
+
+
+                
+                var SQL = "EXEC" + " " + Datos.SQLBD + ".dbo.SP_ReclasificacionMargenesCategorias_ID @idCat";
+
+                db.Database.ExecuteSqlCommand(SQL, new SqlParameter("@idCat", idCat));
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+
+            }
+
+            catch (Exception ex)
+            {
+                ModelCliente db2 = new ModelCliente();
+                BitacoraErrores be = new BitacoraErrores();
+                be.Descripcion = ex.Message;
+                be.StrackTrace = ex.StackTrace;
+                be.Fecha = DateTime.Now;
+                be.JSON = JsonConvert.SerializeObject(ex);
+                db2.BitacoraErrores.Add(be);
+                db2.SaveChanges();
+
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex);
+
+            }
+
+        }
+
         [Route("api/Categorias/Insertar")]
         [HttpPost]
         public HttpResponseMessage Post([FromBody] Categorias categorias)
